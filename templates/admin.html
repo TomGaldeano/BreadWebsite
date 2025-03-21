@@ -1,0 +1,132 @@
+{% include "header.html" %}
+    <!-- main content -->
+
+<div class="container-fluid " style = "margin-top:100px">
+  <div class="row justify-content-md-center container d-flex mx-auto">
+    <h1>Today's Orders</h1>
+  </div>
+  <div class="row justify-content-md-center">
+    <div class="table-responsive" style="padding-left: 10%;padding-right: 10%;">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Time of day</th>
+            <th>Order</th>
+            <th>Price</th>
+            <th>User</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for i in today_orders%}
+          <tr>
+            <td>{{ today_orders.date }}</td>
+            <td>{{ today_orders.time_day }}</td>
+            <td>{{ today_orders.message }}</td>
+            <td>{{ today_orders.price }}€</td>
+            <td>{{ today_orders.customer }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+  <div class="row justify-content-md-center container d-flex mx-auto">
+    <h1>Today's Orders Simplified </h1>
+  </div>
+<div class="row justify-content-md-center">
+  <div class="table-responsive" style="padding-left: 10%;padding-right: 10%;">
+    <table class="table table-hover">
+      <thead>
+        <th>Bread type</th>
+        <th>Number</th>
+      </thead>
+      {% for i in today_orders.simple_order.keys() %}
+      {% if today_orders.simple_order[i] != 0 %}
+      <tr>
+        <td>{{ i }}</td>
+        <td>{{ today_orders.simple_order[i] }}</td>
+      </tr>
+      {% endif %}
+      {% endfor %}
+    </table>
+  </div>
+</div>
+
+<div class="container-fluid " style = "margin-top:100px">
+  <div class="row justify-content-md-center container d-flex mx-auto">
+    <h1>Future Orders</h1>
+  </div>
+  <div class="row justify-content-md-center">
+    <div class="table-responsive" style="padding-left: 10%;padding-right: 10%;">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Time of day</th>
+            <th>Order</th>
+            <th>Price</th>
+            <th>User</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+        <tbody>
+          <form method="POST" action="{{ url_for('baker') }}">
+            {{ form.csrf_token }}
+            {% for i in undelivered_orders%}
+            <tr>
+              <td>{{ undelivered_orders.date }}</td>
+              <td>{{ undelivered_orders.time_day }}</td>
+              <td>{{ undelivered_orders.message }}</td>
+              <td>{{ undelivered_orders.price }}€</td>
+              <td>{{ undelivered_orders.customer }}</td>
+              <td>{{ undelivered_orders.form_data }}</td>
+            </tr>
+            {% endfor %}
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td><input type="submit" value="Delete" class="btn btn-dark"></td>
+            </tr>
+          </form>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="container-fluid " style = "margin-top:100px">
+  <div class="row justify-content-md-center container d-flex mx-auto">
+    <h1>Old Orders</h1>
+  </div>
+  <div class="row justify-content-md-center">
+    <div class="table-responsive" style="padding-left: 10%;padding-right: 10%;">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Time of day</th>
+            <th>Order</th>
+            <th>Price</th>
+            <th>User</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for i in delivered_orders%}
+          <tr>
+            <td>{{ delivered_orders.date }}</td>
+            <td>{{ delivered_orders.time_day }}</td>
+            <td>{{ delivered_orders.message }}</td>
+            <td>{{ delivered_orders.price }}€</td>
+            <td>{{ delivered_orders.customer }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% include "footer.html" %}

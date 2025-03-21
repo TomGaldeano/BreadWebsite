@@ -1,0 +1,42 @@
+{% include "header.html" %}
+<!-- main content -->
+<div class="container-fluid " style = "margin-top:100px">
+    <div class="row justify-content-md-center container d-flex mx-auto">
+      <h1>Unpayed Orders</h1>
+    </div>
+    <div class="row justify-content-md-center">
+      <div class="table-responsive" style="padding-left: 10%;padding-right: 10%;">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Client</th>
+              <th>Price</th>
+              <th>Payed</th>
+            </tr>
+          </thead>
+          <tbody>
+          <form method="POST" action="{{ url_for('payments') }}">
+          {{ form.csrf_token }}
+          {% for i in delivered_orders%}
+            <tr>
+              <td>{{ delivered_orders.date }}</td>
+              <td>{{ delivered_orders.customer }}</td>
+              <td>{{ delivered_orders.price }}€</td>
+              <td>{{ delivered_orders.form_data }}</td>
+            </tr>
+          {% endfor %}
+          <tr>
+            <td><button class ="btn btn-dark"><a class="nav-link text-white" href="{{ url_for('future_payments') }}">Future Payments</a></td>
+            <td></td>
+            <td></td>
+            <td><input type="submit" value="Mark as Payed" class="btn btn-dark"></td>
+          </tr>
+          </form>
+          </tbody>
+        </table>
+     </div>
+    </div>
+</div>
+<!-- footer -->
+{% include "footer.html" %}

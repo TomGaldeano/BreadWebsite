@@ -1,0 +1,48 @@
+{% include "header.html" %}
+<!-- main content -->
+<div class="container-fluid " style = "margin-top:100px">
+  <div class="row justify-content-md-center container d-flex mx-auto">
+    <h1>Users</h1>
+  </div>
+  <div class="row justify-content-md-center">
+    <div class="table-responsive" style="padding-left: 10%;padding-right: 10%;">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>User id</th>
+            <th>User Name</th>
+            <th>VErified</th>
+            <th>User Group</th>
+            <!--th>User Address</th-->
+            <th>User date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for i in users%}
+          <tr>
+            <td>{{ i.id }}</td>
+            <td>{{ i.username }}</td>
+            <td>{{ i.verified }}</td>
+            <td>{{ i.group }}</td>
+            <!--td>{{ i.address }}</td-->
+            <td>{{ i.date }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="container d-flex justify-content-center">
+  <form method="POST" action="{{ url_for('baker_users') }}">
+    {{ form.csrf_token }}
+    <div class>{{ form.users_to_delete}}
+    </div>
+    <div class="mx-auto" style="height: 10px;">
+    </div>
+    <div class="justify-content-center container d-flex"><input type="submit" value="Delete" class="btn btn-dark">
+    </div>
+  </form>
+</div>
+</div>
+{% include "footer.html" %}

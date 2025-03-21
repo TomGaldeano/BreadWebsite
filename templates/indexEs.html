@@ -1,0 +1,176 @@
+{% include "cabezera.html" %}
+<!-- main content -->
+<div class="container-fluid " style = "margin-top:100px">
+  <div class="row justify-content-md-center container d-flex mx-auto">
+    <div class="table-responsive">
+      <form method="POST" action="{{ url_for('indexEs') }}">
+      <table class="table table-hover">
+        {{ order_form.csrf_token }}
+          <tbody>
+            <h1>Hogazas</h1>
+            <tr>
+              <td class="align-middle">Pan Blanco</td>
+              <td class="align-middle">3€</td>
+              <td class="align-middle" style="flex-wrap: wrap">{{order_form.White_loaf(style="width:50px")}}</td>
+              <td class = "d-none d-md-block"><img src="static/img/White loaf.jpg" alt="Imagen de una Hogaza de pan Blanco" class="img-thumbnail  bg-dark text-white" style="width:200px;height:123.6067px"></td>
+            </tr>
+            <tr>
+              <td class="align-middle">Pan con Semillas</td>
+              <td class="align-middle">3€</td>
+              <td class="align-middle" style="flex-wrap: wrap">{{order_form.Seeds_loaf(style="width:50px")}}</td>
+              <td class = "d-none d-md-block"><img src="static/img/Seeds loaf.jpg" alt="Imagen de una Hogaza de pan de Semillas" class="img-thumbnail  bg-dark text-white" style="width:200px;height:123.6067px"></td>
+            </tr>
+            <tr>
+              <td class="align-middle">Pan con Nueces</td>
+              <td class="align-middle">4€</td>
+              <td class="align-middle" style="flex-wrap: wrap">{{order_form.Walnut_loaf(style="width:50px")}}</td>
+              <td class = "d-none d-md-block"><img src="static/img/Walnut loaf.jpg" alt="Imagen de una Hogaza de pan de Nueces" class="img-thumbnail  bg-dark text-white" style="width:200px;height:123.6067px"></td>
+            </tr>
+            <tr>
+              <td class="align-middle">Pan con Nueces y Pasas</td>
+              <td class="align-middle">4€</td>
+              <td class="align-middle" style="flex-wrap: wrap">{{order_form.Walnut_and_Sultanas_loaf(style="width:50px")}}</td>
+              <td class = "d-none d-md-block"><img src="static/img/Walnut and Sultanas loaf.jpg" alt="Imagen de una Hogaza de pan de Nueces y Pasas" class="img-thumbnail  bg-dark text-white" style="width:200px;height:123.6067px"></td>
+            </tr>
+            <tr>
+              <td class="align-middle">Pan con Pistachos</td>
+              <td class="align-middle">4.5€</td>
+              <td class="align-middle" style="flex-wrap: wrap">{{order_form.Pistacho_loaf(style="width:50px")}}</td>
+              <td class = "d-none d-md-block"><img src="static/img/Pistacho loaf.jpg" alt="Image of a Pistacho loaf" class="img-thumbnail  bg-dark text-white" style="width:200px;height:123.6067px"></td>
+            </tr>
+            <tr>
+              <td class="align-middle">Pan con Pistachos Integral</td>
+              <td class="align-middle">5€</td>
+              <td class="align-middle" style="flex-wrap: wrap">{{order_form.Wholemeal_Pistacho_loaf(style="width:50px")}}</td>
+              <td class = "d-none d-md-block"><img src="static/img/Pistacho loaf.jpg" alt="Image of a Pistacho loaf" class="img-thumbnail  bg-dark text-white" style="width:200px;height:123.6067px"></td>
+            </tr>
+            <tr>
+              <td class="align-middle">Pan Integral de Espelta</td>
+              <td class="align-middle">4€</td>
+              <td class="align-middle" style="flex-wrap: wrap">{{order_form.Wholemeal_Spelt_loaf(style="width:50px")}}</td>
+              <td class = "d-none d-md-block"><img src="static/img/Wholemeal Spelt loaf.jpg" alt="Imagen de una Hogaza de pan Integral de Espelta" class="img-thumbnail  bg-dark text-white" style="width:200px;height:123.6067px"></td>
+            </tr>
+            <tr>
+              <td class="align-middle">Hogaza de Trigo Integral</td>
+              <td class="align-middle">4€</td>
+              <td class="align-middle" style="flex-wrap: wrap">{{order_form.Wholemeal_White_loaf(style="width:50px")}}</td>
+              <td class = "d-none d-md-block"><img src="static/img/Wholemeal White loaf.jpg" alt="Imagen de una Hogaza de pan de Trigo Integral" class="img-thumbnail  bg-dark text-white" style="width:200px;height:123.6067px"></td>
+            </tr>
+            <tr>
+              <td class="align-middle">Pan Integral con Semillas</td>
+              <td class="align-middle">4€</td>
+              <td class="align-middle" style="flex-wrap: wrap">{{order_form.Wholemeal_Seeds_loaf(style="width:50px")}}</td>
+              <td class = "d-none d-md-block"><img src="static/img/Wholemeal Seeds loaf.jpg" alt="Imagen de una Barra de pan de Trigo Integral" class="img-thumbnail  bg-dark text-white" style="width:200px;height:123.6067px"></td>
+            </tr>
+            <tr>
+              <td class="align-middle">Hogaza de Integra con Nueces</td>
+              <td class="align-middle">4€</td>
+              <td class="align-middle" style="flex-wrap: wrap">{{order_form.Wholemeal_Walnut_loaf(style="width:50px")}}</td>
+              <td class = "d-none d-md-block"><img src="static/img/Wholemeal Walnut loaf.jpg" alt="Imagen de una Barra de pan Integra con Semillas" class="img-thumbnail  bg-dark text-white" style="width:200px;height:123.6067px"></td>
+            </tr>
+            <tr>
+            <td class="align-middle">Pan Integral con Nueces y Pasas</td>
+            <td class="align-middle">4€</td>
+            <td class="align-middle" style="flex-wrap: wrap">{{order_form.Wholemeal_Walnut_and_Sultanas_loaf(style="width:50px")}}</td>
+            <td class = "d-none d-md-block"><img src="static/img/Wholemeal Walnut and Sultanas loaf.jpg" alt="Imagen de una Hogaza de pan Integral con Nueces y Pasas" class="img-thumbnail  bg-dark text-white" style="width:200px;height:123.6067px"></td>
+          </tr>
+        </tbody>
+        </table>
+        <table class="table table-hover">
+          <h1>Barras</h1>
+        <tbody>
+          <tr>
+            <td class="align-middle">Pan de trigo</td>
+            <td class="align-middle">2€</td>
+            <td class="align-middle" style="flex-wrap: wrap">{{order_form.White_stick(style="width:50px") }}</td>
+            <td class = "d-none d-md-block"><img src="static/img/White stick.jpg" alt="Imagen de una Hogaza de pan Blanco" class="img-thumbnail bg-dark text-white" style="width:200px;height:123.6067px"> </td>
+          </tr>
+          <tr>
+            <td class="align-middle">Pan con Semillas</td>
+            <td class="align-middle">2€</td>
+            <td class="align-middle" style="flex-wrap: wrap">{{order_form.Seeds_stick(style="width:50px") }}</td>
+            <td class = "d-none d-md-block"><img src="static/img/Seeds stick.jpg" alt="Imagen de una Barra de pan de Semillas" class="img-thumbnail bg-dark text-white" style="width:200px;height:123.6067px"> </td>
+          </tr>
+          <tr>
+            <td class="align-middle">Pan con Nueces</td>
+            <td class="align-middle">2.5€</td>
+            <td class="align-middle" style="flex-wrap: wrap">{{order_form.Walnut_stick(style="width:50px") }}</td>
+            <td class = "d-none d-md-block"><img src="static/img/Walnut stick.jpg" alt="Imagen de una Barra de pan de Nuece" class="img-thumbnail bg-dark text-white" style="width:200px;height:123.6067px"> </td>
+          </tr>
+          <tr>
+            <td class="align-middle">Pan con Nueces y Pasas</td>
+            <td class="align-middle">2.5€</td>
+            <td class="align-middle" style="flex-wrap: wrap">{{order_form.Walnut_and_Sultanas_stick(style="width:50px") }}</td>
+            <td class = "d-none d-md-block"><img src="static/img/Walnut and Sultanas stick.jpg" alt="Imagen de una Barra de Nueces y Pasas" class="img-thumbnail bg-dark text-white" style="width:200px;height:123.6067px"> </td>
+          </tr>
+          <tr>
+            <td class="align-middle">Pan con Pistachos</td>
+            <td class="align-middle">3€</td>
+            <td class="align-middle" style="flex-wrap: wrap">{{order_form.Wholemeal_Pistacho_stick(style="width:50px") }}</td>
+            <td class = "d-none d-md-block"><img src="static/img/Pistacho stick.jpg" alt="Image of a Pistacho stick" class="img-thumbnail bg-dark text-white" style="width:200px;height:123.6067px"></td>
+          </tr>
+          <tr>
+            <td class="align-middle">Pan con Pistachos Integral</td>
+            <td class="align-middle">3€</td>
+            <td class="align-middle" style="flex-wrap: wrap">{{order_form.Pistacho_stick(style="width:50px") }}</td>
+            <td class = "d-none d-md-block"><img src="static/img/Pistacho stick.jpg" alt="Image of a Pistacho stick" class="img-thumbnail bg-dark text-white" style="width:200px;height:123.6067px"></td>
+          </tr>
+          <tr>
+            <td class="align-middle">Barra Integral con harina de espelta</td>
+            <td class="align-middle">2.5€</td>
+            <td class="align-middle" style="flex-wrap: wrap">{{order_form.Wholemeal_Spelt_stick(style="width:50px") }}</td>
+            <td class = "d-none d-md-block"><img src="static/img/Wholemeal Spelt stick.jpg" alt="Imagen de una Barra de pan Integral de Espelta" class="img-thumbnail bg-dark text-white" style="width:200px;height:123.6067px"> </td>
+          </tr>
+          <tr>
+            <td class="align-middle">Pan de Trigo Integral</td>
+            <td class="align-middle">2.5€</td>
+            <td class="align-middle" style="flex-wrap: wrap">{{order_form.Wholemeal_White_stick(style="width:50px") }}</td>
+            <td class = "d-none d-md-block"><img src="static/img/Wholemeal White stick.jpg" alt="Imagen de una Wholemeal White stick" class="img-thumbnail bg-dark text-white" style="width:200px;height:123.6067px"> </td>
+          </tr>
+          <tr>
+            <td class="align-middle">Pan Integral con Semillas</td>
+            <td class="align-middle">2.5€</td>
+            <td class="align-middle" style="flex-wrap: wrap">{{order_form.Wholemeal_Seeds_stick(style="width:50px") }}</td>
+            <td class = "d-none d-md-block"><img src="static/img/Wholemeal Seeds stick.jpg" alt="Imagen de una Wholemeal Seeds stick" class="img-thumbnail bg-dark text-white" style="width:200px;height:123.6067px"> </td>
+          </tr>
+          <tr>
+            <td class="align-middle">Pan Integra con Nueces</td>
+            <td class="align-middle">2.5€</td>
+            <td class="align-middle" style="flex-wrap: wrap">{{order_form.Wholemeal_Walnut_stick(style="width:50px") }}</td>
+            <td class = "d-none d-md-block"><img src="static/img/Wholemeal Walnut stick.jpg" alt="Imagen de una Barra de pan Integra con Nueces" class="img-thumbnail bg-dark text-white" style="width:200px;height:123.6067px"> </td>
+          </tr>
+          <tr>
+            <td class="align-middle">Pan Integral con Nueces y pasas</td>
+            <td class="align-middle">2.5€</td>
+            <td class="align-middle" style="flex-wrap: wrap">{{order_form.Wholemeal_Walnut_and_Sultanas_stick(style="width:50px") }}</td>
+            <td class = "d-none d-md-block"><img src="static/img/Wholemeal Walnut and Sultanas stick.jpg" alt="Imagen de una Barra de pan Integral con Nueces y pasas" class="img-thumbnail bg-dark text-white" style="width:200px;height:123.6067px"> </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  {% if not current_user.is_authenticated: %}<div class="mx-auto d-none d-md-block"><h4>Debe usar su cuenta para realizar un pedido</h4></div>
+  <div class="mx-auto d-md-none d-block"><h6>Debe usar su cuenta para realizar un pedido</h6></div>
+  {% endif %}
+  {% if current_user.is_authenticated: %}
+    <div class="container-fluid position-absoulte">
+    <div class="container align-self-center" style="margin-top:100px">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto" style="bottom:0">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item align-self-center"><span style="color:red">{% if error3 %}{{error3}}{% endif %}</span></li>
+           <li class="list-group-item align-self-center">{{order_form.date}}<span style="color:red">{% if error1 %}{{error1}}{% endif %}</span></li>
+           <li class="list-group-item align-self-center">{{order_form.day_time(style="width:120px")}}<span style="color:red">{% if error2 %}{{error2}}{% endif %}</span></li>
+           <li class="list-group-item align-self-center">{{order_form.recurring(style="width:120px")}}</li>
+           <li class="list-group-item align-self-center">Número de semanas consecutivas a pedir</li>
+           <li class="list-group-item align-self-center"><input type="submit" value="Realizar pedido" class="btn btn-dark"></li>
+         </ul>
+        </div>
+      </div>
+    </div>
+    </div>
+    {% endif %}
+    </form>
+</div>
+</div>
+    <!-- footer -->
+{% include "footer.html" %}

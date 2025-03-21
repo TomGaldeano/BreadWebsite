@@ -1,0 +1,68 @@
+{% include "header.html" %}
+<!-- main content -->
+<div class="row justify-content-md-center container d-flex mx-auto">
+    <h1>Monthly report</h1>
+</div>
+<div class="container-fluid " style = "margin-top:100px">
+    <div class="row justify-content-md-center container d-flex mx-auto">
+      <h2>Accounting Info</h2>
+    </div>
+    <div class="row justify-content-md-center">
+      <div class="table-responsive" style="padding-left: 10%;padding-right: 10%;">
+        <table class="table table-hover">
+          <tbody>
+              <tr>
+                <td></td>
+                <td>Gross Income</td>
+                <td>Production costs</td>
+                <td>Benefits</td>
+                <td>Sold Loaves</td>
+                <td>Sold Sticks</td>
+              </tr>
+              <tr>
+                <td>Previous month</td>
+                <td>{{ data.past_month["gross"] }}</td>
+                <td>{{ data.past_month["costs"] }}</td>
+                <td>{{ data.past_month["benefit"] }}</td>
+                <td>{{ data.past_month["loaves"] }}</td>
+                <td>{{ data.past_month["sticks"] }}</td>
+              </tr>
+              <tr>
+                <td>Current month</td>
+                <td>{{ data.present_month["gross"] }}</td>
+                <td>{{ data.present_month["costs"] }}</td>
+                <td>{{ data.present_month["benefit"] }}</td>
+                <td>{{ data.present_month["loaves"] }}</td>
+                <td>{{ data.present_month["sticks"] }}</td>
+              </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+</div>
+<div class="container-fluid " style = "margin-top:100px">
+  <div class="row justify-content-md-center container d-flex mx-auto">
+    <h2>Bread ordered last month</h2>
+  </div>
+</div>   
+<div class="row justify-content-md-center">
+  <div class="table-responsive" style="padding-left: 10%;padding-right: 10%;">
+    <table class="table table-hover">
+      <thead>
+        <th>Bread type</th>
+        <th>Number</th>
+      </thead>
+      {% for i in data.num_breads.keys() %}
+      <tr>
+        <td>{{ i }}</td>
+        <td>{{ data.num_breads[i] }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+
+
+
+<!-- footer -->
+{% include "footer.html" %}

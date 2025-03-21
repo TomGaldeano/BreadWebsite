@@ -1,0 +1,98 @@
+{% include "header.html" %}
+<!-- main content -->
+<div class="container-fluid" style = "margin-top:100px">
+  <div class="row justify-content-md-center container d-flex mx-auto">
+    <h1>Current Orders</h1>
+  </div>
+  <div class="row justify-content-md-center">
+      <form method="POST" action="{{ url_for('orders') }}">
+        {{ form.csrf_token }}
+    <div class="table-responsive d-md-block d-none" style="padding-left: 10%;padding-right: 10%;">
+      <table class="table table-hover d-md-block d-none">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Order</th>
+            <th>Price</th>
+            <th>Time of day</th>
+            <th>Delete?</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for i in undelivered_orders%}
+            <tr>
+              <td>{{ undelivered_orders.date }}</td>
+              <td>{{ undelivered_orders.message }}</td>
+              <td>{{ undelivered_orders.price }}€</td>
+              <td>{{ undelivered_orders.time_day }}</td>
+              <td>{{ undelivered_orders.form_data }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+      </table>
+      </div>
+    <div class="table-responsive d-md-none" style="padding-left: 10%;padding-right: 10%;">
+      <table class="table table-hover">
+        <tbody>
+          {% for i in undelivered_orders%}
+            <tr>
+                <td style="font-weight: bold;">Date</td>
+                <td>{{ undelivered_orders.date }}</td>
+            </tr>
+            <tr>
+                <td style="font-weight: bold;">Order</td>
+                <td>{{ undelivered_orders.message }}</td>
+            </tr>
+            <tr>
+                <td style="font-weight: bold;">Price</td>
+                <td>{{ undelivered_orders.price }}€</td>
+            </tr>
+            <tr>
+                <td style="font-weight: bold;">Delivery</td>
+                <td>{{ undelivered_orders.time_day }}</td>
+            </tr>
+            <tr>
+                <td style="font-weight: bold;">Delete?</td>
+                <td>{{ undelivered_orders.form_data }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+      </table>
+      </div>
+      </div>
+    <div class="row justify-content-md-center container d-flex mx-auto">
+       <ul class="list-group list-group-flush">
+            <li class="list-group-item "><input type="submit" value="Delete" class="btn btn-dark"></li>
+        </ul>
+    </div>
+      </form>
+<div class="container-fluid d-md-block d-none" style = "margin-top:100px">
+  <div class="row justify-content-md-center container d-flex mx-auto">
+    <h1>Old Orders</h1>
+  </div>
+  <div class="row justify-content-md-center">
+    <div class="table-responsive" style="padding-left: 10%;padding-right: 10%;">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Order</th>
+            <th>Price</th>
+            <th>Time of day</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for i in delivered_orders%}
+          <tr>
+            <td>{{ delivered_orders.date }}</td>
+            <td>{{ delivered_orders.message }}</td>
+            <td>{{ delivered_orders.price }}€</td>
+            <td>{{ undelivered_orders.time_day }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+   </div>
+  </div>
+</div>
+{% include "footer.html" %}

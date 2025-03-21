@@ -1,0 +1,178 @@
+{% include "header.html" %}
+<!-- main content -->
+<div class="container-fluid " style = "margin-top:100px">
+  <div class="row justify-content-md-center container d-flex mx-auto">
+    <div class="table-responsive">
+         <form method="POST" action="{{ url_for('indexEng') }}">
+          <table class="table table-hover">
+        {{ order_form.csrf_token }}
+            <h1>Loaves</h1>
+            <tbody>
+            <tr>
+              <td class="align-middle">Wheat</td>
+              <td class="align-middle">3€</td>
+              <td class="align-middle" style="flex-wrap: wrap">{{order_form.White_loaf(style="width:50px")}}</td>
+              <td class = "d-none d-md-block"><img src="static/img/White loaf.jpg" alt="Image of a White loaf" class="img-thumbnail  bg-dark text-white" style="width:200px;height:123.6067px"></td>
+            </tr>
+            <tr>
+              <td class="align-middle">Seeds</td>
+              <td class="align-middle">3€</td>
+              <td class="align-middle" style="flex-wrap: wrap">{{order_form.Seeds_loaf(style="width:50px")}}</td>
+              <td class = "d-none d-md-block"><img src="static/img/Seeds loaf.jpg" alt="Image of a Seeds loaf" class="img-thumbnail  bg-dark text-white" style="width:200px;height:123.6067px"></td>
+            </tr>
+              <tr>
+              <td class="align-middle">Walnut</td>
+              <td class="align-middle">4€</td>
+              <td class="align-middle" style="flex-wrap: wrap">{{order_form.Walnut_loaf(style="width:50px")}}</td>
+              <td class = "d-none d-md-block"><img src="static/img/Walnut loaf.jpg" alt="Image of a Walnut loaf" class="img-thumbnail  bg-dark text-white" style="width:200px;height:123.6067px"></td>
+            </tr>
+            <tr>
+              <td class="align-middle">Walnut and Sultanas</td>
+              <td class="align-middle">4€</td>
+              <td class="align-middle" style="flex-wrap: wrap">{{order_form.Walnut_and_Sultanas_loaf(style="width:50px")}}</td>
+              <td class = "d-none d-md-block"><img src="static/img/Walnut and Sultanas loaf.jpg" alt="Image of a Walnut and Sultanas loaf" class="img-thumbnail  bg-dark text-white" style="width:200px;height:123.6067px"></td>
+            </tr>
+            <tr>
+              <td class="align-middle">Pistacho</td>
+              <td class="align-middle">4.5€</td>
+              <td class="align-middle" style="flex-wrap: wrap">{{order_form.Pistacho_loaf(style="width:50px")}}</td>
+              <td class = "d-none d-md-block"><img src="static/img/Pistacho loaf.jpg" alt="Image of a Pistacho loaf" class="img-thumbnail  bg-dark text-white" style="width:200px;height:123.6067px"></td>
+            </tr>
+            <tr>
+              <td class="align-middle">Wholemeal Pistacho</td>
+              <td class="align-middle">5€</td>
+              <td class="align-middle" style="flex-wrap: wrap">{{order_form.Wholemeal_Pistacho_loaf(style="width:50px")}}</td>
+              <td class = "d-none d-md-block"><img src="static/img/Pistacho loaf.jpg" alt="Image of a Pistacho loaf" class="img-thumbnail  bg-dark text-white" style="width:200px;height:123.6067px"></td>
+            </tr>
+            <tr>
+              <td class="align-middle">Wholemeal Spelt</td>
+              <td class="align-middle">4€</td>
+              <td class="align-middle" style="flex-wrap: wrap">{{order_form.Wholemeal_Spelt_loaf(style="width:50px")}}</td>
+              <td class = "d-none d-md-block"><img src="static/img/Wholemeal Spelt loaf.jpg" alt="Image of a Wholemeal Spelt loaf" class="img-thumbnail  bg-dark text-white" style="width:200px;height:123.6067px"></td>
+            </tr>
+            <tr>
+              <td class="align-middle">Wholemeal White</td>
+              <td class="align-middle">4€</td>
+              <td class="align-middle" style="flex-wrap: wrap">{{order_form.Wholemeal_White_loaf(style="width:50px")}}</td>
+              <td class = "d-none d-md-block"><img src="static/img/Wholemeal White loaf.jpg" alt="Image of a Wholemeal White loaf" class="img-thumbnail  bg-dark text-white" style="width:200px;height:123.6067px"></td>
+            </tr>
+            <tr>
+              <td class="align-middle">Wholemeal Seeds</td>
+              <td class="align-middle">4€</td>
+              <td class="align-middle" style="flex-wrap: wrap">{{order_form.Wholemeal_Seeds_loaf(style="width:50px")}}</td>
+              <td class = "d-none d-md-block"><img src="static/img/Wholemeal Seeds loaf.jpg" alt="Image of a Wholemeal Seeds loaf" class="img-thumbnail  bg-dark text-white" style="width:200px;height:123.6067px"></td>
+            </tr>
+            <tr>
+              <td class="align-middle">Wholemeal Walnut</td>
+              <td class="align-middle">4€</td>
+              <td class="align-middle" style="flex-wrap: wrap">{{order_form.Wholemeal_Walnut_loaf(style="width:50px")}}</td>
+              <td class = "d-none d-md-block"><img src="static/img/Wholemeal Walnut loaf.jpg" alt="Image of a Wholemeal Walnut loaf" class="img-thumbnail  bg-dark text-white" style="width:200px;height:123.6067px"></td>
+            </tr>
+            <tr>
+            <td class="align-middle">Wholemeal Walnut and Sultanas</td>
+            <td class="align-middle">4€</td>
+            <td class="align-middle" style="flex-wrap: wrap">{{order_form.Wholemeal_Walnut_and_Sultanas_loaf(style="width:50px")}}</td>
+            <td class = "d-none d-md-block"><img src="static/img/Wholemeal Walnut and Sultanas loaf.jpg" alt="Image of a Wholemeal Walnut and Sultanas loaf" class="img-thumbnail  bg-dark text-white" style="width:200px;height:123.6067px"></td>
+          </tr>
+          </tbody>
+        </table>
+        <table class="table table-hover">
+          <h1>Sticks</h1>
+        <tbody>
+          <tr>
+            <td class="align-middle">Wheat</td>
+            <td class="align-middle">2€</td>
+            <td class="align-middle" style="flex-wrap: wrap">{{order_form.White_stick(style="width:50px")}}</td>
+            <td class = "d-none d-md-block"><img src="static/img/White stick.jpg" alt="Image of a White stick" class="img-thumbnail bg-dark text-white" style="width:200px;height:123.6067px"> </td>
+          </tr>
+          <tr>
+            <td class="align-middle">Seeds </td>
+            <td class="align-middle">3€</td>
+            <td class="align-middle" style="flex-wrap: wrap">{{order_form.Seeds_stick(style="width:50px")}}</td>
+            <td class = "d-none d-md-block"><img src="static/img/Seeds stick.jpg" alt="Image of a Seed stick" class="img-thumbnail  bg-dark text-white" style="width:200px;height:123.6067px"></td>
+          </tr>
+          <tr>
+            <td class="align-middle">Walnut </td>
+            <td class="align-middle">2.5€</td>
+            <td class="align-middle" style="flex-wrap: wrap">{{order_form.Walnut_stick(style="width:50px") }}</td>
+            <td class = "d-none d-md-block"><img src="static/img/Walnut stick.jpg" alt="Image of a Walnut stick" class="img-thumbnail bg-dark text-white" style="width:200px;height:123.6067px"></td>
+          </tr>
+          <tr>
+            <td class="align-middle">Walnut and Sultanas </td>
+            <td class="align-middle">2.5€</td>
+            <td class="align-middle" style="flex-wrap: wrap">{{order_form.Walnut_and_Sultanas_stick(style="width:50px") }}</td>
+            <td class = "d-none d-md-block"><img src="static/img/Walnut and Sultanas stick.jpg" alt="Image of a Walnut and Sultanas stick" class="img-thumbnail bg-dark text-white" style="width:200px;height:123.6067px"> </td>
+          </tr>
+          <tr>
+            <td class="align-middle">Pistacho </td>
+            <td class="align-middle">3€</td>
+            <td class="align-middle" style="flex-wrap: wrap">{{order_form.Pistacho_stick(style="width:50px") }}</td>
+            <td class = "d-none d-md-block"><img src="static/img/Pistacho stick.jpg" alt="Image of a Pistacho stick" class="img-thumbnail bg-dark text-white" style="width:200px;height:123.6067px"></td>
+          </tr>
+          <tr>
+            <td class="align-middle">Wholemeal Pistacho </td>
+            <td class="align-middle">3€</td>
+            <td class="align-middle" style="flex-wrap: wrap">{{order_form.Wholemeal_Pistacho_stick(style="width:50px") }}</td>
+            <td class = "d-none d-md-block"><img src="static/img/Pistacho stick.jpg" alt="Image of a Pistacho stick" class="img-thumbnail bg-dark text-white" style="width:200px;height:123.6067px"></td>
+          </tr>
+          <tr>
+            <td class="align-middle">Wholemeal Spelt </td>
+            <td class="align-middle">2.5€</td>
+            <td class="align-middle" style="flex-wrap: wrap">{{order_form.Wholemeal_Spelt_stick(style="width:50px") }}</td>
+            <td class = "d-none d-md-block"><img src="static/img/Wholemeal Spelt stick.jpg" alt="Image of a Wholemeal Spelt stick" class="img-thumbnail bg-dark text-white" style="width:200px;height:123.6067px"> </td>
+          </tr>
+          <tr>
+            <td class="align-middle">Wholemeal wheat </td>
+            <td class="align-middle">2.5€</td>
+            <td class="align-middle" style="flex-wrap: wrap">{{order_form.Wholemeal_White_stick(style="width:50px") }}</td>
+            <td class = "d-none d-md-block"><img src="static/img/Wholemeal White stick.jpg" alt="Image of a Wholemeal White stick" class="img-thumbnail bg-dark text-white" style="width:200px;height:123.6067px"> </td>
+          </tr>
+          <tr>
+            <td class="align-middle">Wholemeal Seeds </td>
+            <td class="align-middle">2.5€</td>
+            <td class="align-middle" style="flex-wrap: wrap">{{order_form.Wholemeal_Seeds_stick(style="width:50px") }}</td>
+            <td class = "d-none d-md-block"><img src="static/img/Wholemeal Seeds stick.jpg" alt="Image of a Wholemeal Seeds stick" class="img-thumbnail bg-dark text-white" style="width:200px;height:123.6067px"> </td>
+          </tr>
+          <tr>
+            <td class="align-middle">Wholemal Walnut </td>
+            <td class="align-middle">2.5€</td>
+            <td class="align-middle" style="flex-wrap: wrap">{{order_form.Wholemeal_Walnut_stick(style="width:50px") }}</td>
+            <td class = "d-none d-md-block"><img src="static/img/Wholemeal Walnut stick.jpg" alt="Image of a Wholemeal Walnut stick" class="img-thumbnail bg-dark text-white" style="width:200px;height:123.6067px"> </td>
+          </tr>
+          <tr>
+            <td class="align-middle">Wholemal Walnut and Sultanas </td>
+            <td class="align-middle">2.5€</td>
+            <td class="align-middle" style="flex-wrap: wrap">{{order_form.Wholemeal_Walnut_and_Sultanas_stick(style="width:50px") }}</td>
+            <td class = "d-none d-md-block"><img src="static/img/Wholemeal Walnut and Sultanas stick.jpg" alt="Image of a Wholemeal Walnut and Sultanas stick" class="img-thumbnail bg-dark text-white" style="width:200px;height:123.6067px"> </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  <div class="mx-auto d-md-none d-block" style="width:100%;height: 10px;"></div>
+  {% if not current_user.is_authenticated: %}<div class="mx-auto d-none d-md-block"><h4>Must use your account to log in</h4></div>
+  <div class="mx-auto d-md-none d-block"><h6>Must use your account to log in</h6></div>
+  {% endif %}
+  {% if current_user.is_authenticated: %}
+    <div class="container-fluid position-absoulte">
+      <div class="container align-self-center" style="margin-top:100px">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto" style="bottom:0">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item align-self-center"><span style="color:red">{% if error3 %}{{error3}}{% endif %}</span></li>
+           <li class="list-group-item align-self-center">{{order_form.date}}<span style="color:red">{% if error1 %}{{error1}}{% endif %}</span></li>
+           <li class="list-group-item align-self-center">{{order_form.day_time(style="width:120px")}}<span style="color:red">{% if error2 %}{{error2}}{% endif %}</span></li>
+           <li class="list-group-item align-self-center">{{order_form.recurring(style="width:120px")}}</li>
+            <li class="list-group-item align-self-center">Number of consecutive weeks to order</li>
+
+           <li class="list-group-item align-self-center"><input type="submit" value="order" class="btn btn-dark"></li>
+              </ul>
+           </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+    </form>
+  </div>
+</div>
+<!-- footer -->
+{% include "footer.html" %}

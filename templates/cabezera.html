@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" class="h-100">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Website to order Tom's breas">
+  <meta name="author" content="Tom">
+  <link rel="shortcut icon" href="{{ url_for('static', filename='favicon_io/favicon.ico')}}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- link rel="stylesheet" type="text/css" href= "{{ url_for('static', filename='css/custom.css')}}" -->
+  <title>Bread Website</title>
+</head>
+<body class="d-flex flex-column h-100">
+<nav class="navbar navbar-expand-sm sticky-top bg-secondary">
+  <div class="container-fluid bg-secondary">
+    <ul class="nav justify-content-start ms-auto d-flex">
+        <li class="nav-item text-white bg-secondary">
+        <a class="navbar-item text-white" href="{{ url_for('indexEng') }}"><img src="static/icons/bread.png" alt="account" class="bg-secondary" style="height:30px"></a>
+        </li>
+      {% if current_user.is_authenticated and current_user.id != 1: %}
+      <li class="nav-item text-white bg-secondary">
+        <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('orders') }}"><img src="static/icons/cart.png" alt="account" class="bg-secondary" style="height:30px"></a>
+      </li>
+      {% endif %}
+    {% if current_user.id == 1: %}
+    <li class="nav-item dropdown">
+        <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+        <img src="static/icons/menu.png" alt="account" class="bg-secondary" style="height:30px"></a>
+    <ul class="dropdown-menu bg-secondary" aria-labelledby="dropdownMenuLink">
+         <li class="link-item text-white bg-secondary">
+          <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('baker') }}"><img src="static/icons/bread.png" alt="account" class="bg-secondary" style="height:30px"></a>
+        </li>
+        <li class="link-item text-white bg-secondary">
+          <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('baker_users') }}"><img src="static/icons/user.png" alt="account" class="bg-secondary" style="height:30px"></a>
+        </li>
+        <li class="link-item text-white bg-secondary gap-0 me-0">
+          <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('statistics') }}"><img src="static/icons/graph.png" alt="account" class="bg-secondary" style="height:30px"></a>
+        </li>
+        <li class="link-item text-white bg-secondary">
+          <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('payments') }}"><img src="static/icons/profit.png" alt="account" class="bg-secondary" style="height:30px"></a>
+        </li>
+        <li class="nav-item text-white bg-secondary">
+          <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('orders') }}"><img src="static/icons/cart.png" alt="account" class="bg-secondary" style="height:30px"></a>
+        </li>
+        <li class="nav-item text-white bg-secondary">
+            <h6>legacies</h6>
+        </li>
+        <li class="nav-item text-white bg-secondary">
+            <h6>bots</h6>
+        </li>
+    </ul>
+    </li>
+    {% endif %}
+    {% if current_user.id != 1: %}
+    <li class="nav-item text-white bg-secondary">
+      <a class="nav-link text-white" style="padding: .5rem" href="{{url_for('infoEng')}}"><img src="static/icons/info.png" alt="info" class="bg-secondary" style="height:30px"> </a>
+    </li>
+    {% endif %}
+    </ul>
+    <ul class="nav justify-content-end">
+      {% if not current_user.is_authenticated: %}
+      <li class="nav-item text-white bg-secondary">
+        <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('acceso') }}">Acceso</a>
+      </li>
+      {% endif %}
+      {% if not current_user.is_authenticated: %}
+      <li class="nav-item text-white bg-secondary">
+        <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('registro') }}">Registro</a>
+      </li>
+      {% endif %}
+      {% if current_user.is_authenticated: %}
+      <li class="nav-item text-white bg-secondary">
+        <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('desconectar') }}"><img src="static/icons/power-switch.png" alt="account" class="bg-secondary" style="height:30px"></a>
+      </li>
+      {% endif %}
+      {% if current_user.is_authenticated: %}
+      <li class="nav-item text-white bg-secondary">
+        <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('usuario') }}"><img src="static/icons/user.png" alt="usario" class="bg-secondary" style="height:30px"></a>
+      </li>
+      {% endif %}
+      <li class="nav-item text-white bg-secondary">
+        <a class="nav-link text-white" style="padding: .5rem" href="{{url_for('indexEng')}}"><img src="static/icons/united-kingdom.png" alt="spanish" class="bg-secondary" style="height:30px"> </a>
+      </li>
+    </ul>
+  </div>
+</nav>
