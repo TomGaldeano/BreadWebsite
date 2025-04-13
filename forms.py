@@ -43,7 +43,17 @@ def generate_basic_form(num_entries, message):
 
     return DynamicDeleteForm
 
-class DeleteUserForm(FlaskForm):
+class AddLegacyForm(FlaskForm):
+    users_to_add = StringField(validators=[DataRequired(message="required field"),
+                                       NoneOf(data.invalid_characters, message="invalid symbol used")])
+    Add = SubmitField("Add")
+
+class RemoveLegacyForm(FlaskForm):
+    users_to_remove = StringField(validators=[DataRequired(message="required field"),
+                                       NoneOf(data.invalid_characters, message="invalid symbol used")])
+    Remove = SubmitField("Remove")
+
+class Form(FlaskForm):
     users_to_delete = StringField(validators=[DataRequired(message="required field"),
                                        NoneOf(data.invalid_characters, message="invalid symbol used")])
     submit = SubmitField("Delete")

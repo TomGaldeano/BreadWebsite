@@ -3,18 +3,18 @@
 <div class="container-fluid position-absoulte">
   <div class="container align-self-center" style="margin-top:100px">
     <form method="POST" action="{{ url_for('registro') }}">
-    {{ form.csrf_token }}
+    {{ form.csrf_token() }}
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto" style="bottom:0">
           <div class="row">
             <div class="col-lg-8 col-md-10 mx-auto" style="bottom:0">
               <ul class="list-group list-group-flush">
                 <li class="list-group-item ">Usuario</li>
-                <li class="list-group-item ">{{form.username(style="width:200px")}} <span style="color:red">{% if error1 %}{{error1}}{% endif %}</span></li>
+                <li class="list-group-item ">{{form.username(style="width:200px")}} <span style="color:red">{% if errors[0] %}{{errors[0]}}{% endif %}</span></li>
                 <li class="list-group-item ">Grupo</li>
                 <li class="list-group-item ">{{form.group(style="width:200px")}}</li>
                 <li class="list-group-item ">Correo Electronico</li>
-                <li class="list-group-item ">{{form.email(style="width:200px")}}<span style="color:red">{% if error2 %}{{error2}}{% endif %}</span></li>
+                <li class="list-group-item ">{{form.email(style="width:200px")}}<span style="color:red">{% if errors[1] %}{{errors[1]}}{% endif %}</span></li>
                 <li class="list-group-item">Contraseña</li>
                 <li class="list-group-item ">{{form.password(style="width:200px")}}</li>
                 <li class="list-group-item "><input type="submit" value="Register" class="btn btn-dark"></li>

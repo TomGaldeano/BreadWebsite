@@ -8,11 +8,12 @@ from flask_login import UserMixin, login_user, LoginManager, login_required, cur
 from forms import *
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
-from sqlalchemy import ForeignKey, Column, Integer, String, and_, text
+from sqlalchemy import ForeignKey, Column, Integer, String, and_, text, desc
 import json
 from extra import *
 from config import Data, SecretData
 import datetime
+from flask_wtf.csrf import CSRFProtect
 
 MAX_BREADS = 20
 data = Data()
@@ -41,6 +42,7 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+mysqldb://{username}:{password_database}@{host_adress}/{name_database}"  # File-based SQL database
     db = SQLAlchemy(app)
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    csrf = CSRFProtect(app)
     return app
 
 create_app()
@@ -123,24 +125,24 @@ def index(lang):
     elif lang == "en":
         order_form = BreadOrderForm()
     order_form.validate_on_submit()
-    error1,error2,error3 = None, None, None
+    errors = [None, None, None, None]
     if order_form.validate_on_submit(): #
-        error1 = valid_day(order_form.date.data, lang)
-        error2 = valid_period(order_form.date.data, order_form.day_time.data, lang)
-        order_logger.info(f"{error1}---{error2}")
+        errors[0] = valid_day(order_form.date.data, lang)
+        errors[1] = valid_period(order_form.date.data, order_form.day_time.data, lang)
+        errors[3] = valid_month(order_form.date.data, lang)
         verifier = ReVerify(order_logger)
         order = {}
         # start of secondary vailidation
         valid_order = True
-        order_logger.info(f"{error1}--{error2}")
-        if (error1 or error2):
+        #if (errors[0] or errors[1] or errors[3]):
+        if (errors[0]  or errors[3]):
             valid_order = False
         order_logger.info(f"valid order:{valid_order}")
         for bread in data.prices.keys():
             if verifier.verify_int(eval(f'order_form.{bread}.data'), 0, 6):
                 order[bread] = eval(f'order_form.{bread}.data')
-        if error2:
-            order_logger.info(f"{error2}")
+        if errors[1]:
+            order_logger.info(f"{errors[1]}")
         if not verifier.verify_int(order_form.recurring.data, 0, 7):
             valid_order = False
         num_loafs = sum(list(order.values())[:len(order.values())-1])+sum(list(order.values())[len(order.values())-1:])/2
@@ -148,9 +150,9 @@ def index(lang):
             valid_order = False
         elif num_loafs > 15:
             if lang == "es":
-                error3 = f"No se puede pedir mas de {MAX_BREADS} panes"
+                errors[2] = f"No se puede pedir mas de {MAX_BREADS} panes"
             elif lang == "en":
-                error3 = f"You may not order more than {MAX_BREADS} breads"
+                errors[2] = f"You may not order more than {MAX_BREADS} breads"
             valid_order = False
         if valid_order:
             order_logger.info(f"{list(order.values())}--")
@@ -161,9 +163,9 @@ def index(lang):
                 previous = find_num_breads(date,order_form.day_time.data)
                 if num_loafs > MAX_BREADS:
                     if lang == "es":
-                        error3 = f"No se puede pedir mas de {MAX_BREADS} panes"
+                        errors[2] = f"No se puede pedir mas de {MAX_BREADS} panes"
                     elif lang == "en":
-                        error3 = f"You may not order more than {MAX_BREADS} breads"
+                        errors[2] = f"You may not order more than {MAX_BREADS} breads"
                 elif previous == None:
                     new_order = Order(user_id=current_user.id, order=json.dumps(order), date=date, payed=False,
                     delivered=False, time_day=order_form.day_time.data, client=current_user.username, num_breads = num_loafs)
@@ -171,9 +173,9 @@ def index(lang):
 
                 elif float(previous) + float(num_loafs) > MAX_BREADS:
                     if lang == "es":
-                        error3 = f"No se puede pedir mas de {MAX_BREADS-previous} panes el {date}"
+                        errors[2] = f"No se puede pedir mas de {MAX_BREADS-previous} panes el {date}"
                     elif lang == "en":
-                        error3 = f"You may not order more than {MAX_BREADS-previous} bread on {date}"
+                        errors[2] = f"You may not order more than {MAX_BREADS-previous} bread on {date}"
                 else:
                     new_order = Order(user_id=current_user.id, order=json.dumps(order), date=date, payed=False,
                     delivered=False, time_day=order_form.day_time.data, client=current_user.username, num_breads = num_loafs)
@@ -182,17 +184,17 @@ def index(lang):
                 date = date +datetime.timedelta(weeks=1)
                 db.session.commit()
                 order_logger.info("order received")
-            if not error3:
+            if not errors[2]:
                 if lang == "es":
                     return redirect(url_for("pedidos"))
                 elif lang == "en":
                     return redirect(url_for("orders"))
     if lang == "es":
         return render_template("indexEs.html",
-                           order_form=order_form, error1=error1, error2=error2, error3=error3)
+                           order_form=order_form, errors = errors)
     elif lang == "en":
         return render_template("indexEng.html",
-                           order_form=order_form, error1=error1, error2=error2, error3 = error3)
+                           order_form=order_form, errors = errors)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -218,14 +220,14 @@ def register():
     """
     form = RegisterForm()
     form.validate_on_submit()
-    error1, error2 = None, None
+    errors = [None, None]
     if form.validate_on_submit():
         valid = True
         if User.query.filter_by(username=form.username.data).first():
-            error1 = 'username taken'
+            errors[0] = 'username taken'
             valid = False
         if User.query.filter_by(email=form.email.data).first():
-            error2 = "email taken"
+            errors[1] = "email taken"
             valid = False
         if True:
             verifier = ReVerify(loggin_logger)
@@ -239,7 +241,7 @@ def register():
                 login_user(new_user)
                 loggin_logger.info(f"user {form.username.data} from group {form.group.data} registered correctly")
                 return redirect(url_for("indexEng"))
-    return render_template("register.html", form=form, error1=error1, error2=error2)
+    return render_template("register.html", form=form, errors=errors)
 
 @app.route('/registro', methods=['POST', 'GET'])
 def registro():
@@ -249,15 +251,14 @@ def registro():
     """
     form = RegisterForm()
     form.validate_on_submit()
-    error1 = None
-    error2 = None
+    errors = [None, None]
     if form.validate_on_submit():
         valid = True
         if User.query.filter_by(username=form.username.data).first():
-            error1 = 'este usario ya ha sido elegido'
+            errors[0] = 'este usario ya ha sido elegido'
             valid = False
         if User.query.filter_by(username=form.email.data).first():
-            error2 = "este correo ya ha sido elegido"
+            errors[1] = "este correo ya ha sido elegido"
             valid = False
         if valid:
             verifier = ReVerify(loggin_logger)
@@ -265,15 +266,13 @@ def registro():
                     form.password.data) and verifier.verify_string(form.group.data) and verifier.verify_string(
                 form.email.data):
                 new_user = User(username=form.username.data, password=generate_password_hash(str(form.password.data),
-                                                                                             method="pbkdf2:sha256",
-                                                                                             salt_length=14),
-                                group=form.group.data, date = (datetime.date.today()), email=form.email.data, verified = 0, legacy = 0)
+                method="pbkdf2:sha256",salt_length=14), group=form.group.data, date = (datetime.date.today()), email=form.email.data, verified = 0, legacy = 0)
                 db.session.add(new_user)
                 db.session.commit()
                 login_user(new_user)
                 loggin_logger.info(f"user {form.username.data} from group {form.group.data} registered correctly")
                 return redirect(url_for("indexEs"))
-    return render_template("registro.html", form=form, error1=error1, error2=error2)
+    return render_template("registro.html", form=form, errors=errors)
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
@@ -369,7 +368,7 @@ def orders():
     undelivered_orders = OrderViewer(db.session.query(Order).filter(
         and_(Order.user_id == user_id, Order.date > (datetime.date.today() - datetime.timedelta(days=1)))).all(), "en")
     delivered_orders = OrderViewer(db.session.query(Order).filter(
-        and_(Order.user_id == user_id, Order.date < (datetime.date.today() - datetime.timedelta(days=1)))).all(), "en")
+        and_(Order.user_id == user_id, Order.date < (datetime.date.today() - datetime.timedelta(days=1)))).order_by(desc(Order.id)).all(), "en")
     form = generate_basic_form(message="Delete",num_entries = 10)
     form = form()
     undelivered_orders.add_form(form)
@@ -392,7 +391,7 @@ def pedidos():
     undelivered_orders = OrderViewer(db.session.query(Order).filter(
         and_(Order.user_id == user_id, Order.date > (datetime.date.today() - datetime.timedelta(days=1)))).all(), "es")
     delivered_orders = OrderViewer(db.session.query(Order).filter(
-        and_(Order.user_id == user_id, Order.date < (datetime.date.today() - datetime.timedelta(days=1)))).all(), "es")
+        and_(Order.user_id == user_id, Order.date < (datetime.date.today() - datetime.timedelta(days=1)))).order_by(desc(Order.id)).all(), "es")
     form = generate_basic_form(message="Delete",num_entries = 10)
     form =form()
     undelivered_orders.add_form(form)
@@ -414,19 +413,18 @@ def account():
     """
     form = ModifyUser()
     form.validate_on_submit()
-    error1 = None
-    error2 = None
+    errors = [None, None]
     user_data = {"user": current_user.username, "email": current_user.email, "group": current_user.group}
     if form.validate_on_submit():
         valid = True
         user = User.query.filter_by(username=current_user.username).first()
         if User.query.filter_by(username=form.username.data).first():
             if user.username != form.username.data:
-                error1 = 'username taken'
+                errors[0] = 'username taken'
                 valid = False
         if User.query.filter_by(username=form.email.data).first():
             if user.email != form.email.data:
-                error2 = "email taken"
+                errors[1] = "email taken"
                 valid = False
         if valid:
             if werkzeug.security.check_password_hash(current_user.password, form.old_password.data):
@@ -438,7 +436,7 @@ def account():
                                                            salt_length=14)
                 db.session.commit()
                 return redirect(url_for("account"))
-    return render_template("user.html", form=form, error1=error1, error2=error2, user_data=user_data)
+    return render_template("user.html", form=form, errors = errors, user_data=user_data)
 
 @app.route('/usuario', methods=['POST', 'GET'])
 @user_required
@@ -448,19 +446,18 @@ def usuario():
     """
     form = ModifyUser()
     form.validate_on_submit()
-    error1 = None
-    error2 = None
+    errors = [None, None]
     user_data = {"user": current_user.username, "email": current_user.email, "group": current_user.group}
     if form.validate_on_submit():
         valid = True
         user = User.query.filter_by(username=current_user.username).first()
         if User.query.filter_by(username=form.username.data).first():
             if user.username != form.username.data:
-                error1 = 'Usuario ya cogido'
+                errors[0] = 'Usuario ya cogido'
                 valid = False
         if User.query.filter_by(username=form.email.data).first():
             if user.email != form.email.data:
-                error2 = "Correo ya escogido"
+                errors[1] = "Correo ya escogido"
                 valid = False
         if valid:
             if werkzeug.security.check_password_hash(current_user.password, form.old_password.data):
@@ -468,11 +465,10 @@ def usuario():
                 user.email = form.email.data
                 user.group = form.group.data
                 if form.new_password.data:
-                    user.password = generate_password_hash(str(form.new_password.data), method="pbkdf2:sha256",
-                                                           salt_length=14)
+                    user.password = generate_password_hash(str(form.new_password.data), method="pbkdf2:sha256", salt_length=14)
                 db.session.commit()
                 return redirect(url_for("usuario"))
-    return render_template("usuario.html", form=form, error1=error1, error2=error2, user_data=user_data)
+    return render_template("usuario.html", form=form, errors = errors, user_data=user_data)
 
 @app.route('/info', methods=['POST', 'GET'])
 def info():
@@ -491,7 +487,7 @@ def baker():
     """
     undelivered_orders = db.session.query(Order).filter(and_(Order.date > (datetime.date.today()))).all()
     undelivered_orders_viewer = OrderViewer(undelivered_orders, "en")
-    delivered_orders = db.session.query(Order).filter(and_(Order.date < (datetime.date.today()))).all()
+    delivered_orders = db.session.query(Order).filter(and_(Order.date < (datetime.date.today()))).order_by(desc(Order.id)).all()
     delivered_orders_viewer = OrderViewer(delivered_orders, "en")
     today_orders = db.session.query(Order).filter(Order.date == (datetime.date.today())).all()
     today_orders_viewer = OrderViewer(today_orders, "en")
@@ -548,7 +544,7 @@ def future_payments():
                 stmt = text(f'''UPDATE orders SET payed = 1 WHERE id = {str(delivered_orders.order_instance.id)};''')
                 db.session.execute(stmt)
         db.session.commit()
-        return redirect(url_for("payments"))
+        return redirect(url_for("future_payments"))
     return render_template("future_payments.html", form=form, delivered_orders=delivered_orders)
 
 @app.route('/baker_users', methods=['POST', 'GET'])
@@ -585,21 +581,17 @@ def statistics():
     generator = Statistic_generator(orders_last_month,orders_this_month)
     return render_template("statistics.html",data = generator)
 
-@app.route('/legacies')
+@app.route('/legacy<int:user_id>')
 @admin_required
-def legacies():
+def legacies(user_id):
     """
-    Admin page to control and allow new users to order breadk
+    Admin page to control and allow new users to order bread
     """
-    users = db.session.query(User).filter(User.legacies == 1).all()
-    form = DeleteUserForm()
-    form.validate_on_submit()
-    if form.validate_on_submit():
-        stmt = text(f'''UPDATE users SET verified = 0 WHERE id IN ('''+str(form.users_to_delete.data)+");")
-        db.session.execute(stmt)
-        db.session.commit()
-        return redirect(url_for("legacies"))
-    return render_template("legacy.html", users = users,form = form)
+    user = User.query.get(user_id)
+    if user:
+        return render_template("legacy.html")
+    else:
+        return "User not found", 404
 
 
 @app.route('/botcontrol')
@@ -620,8 +612,32 @@ def verify():
         stmt = text(f'''UPDATE users SET verified = 1 WHERE id IN ('''+str(form.users_to_delete.data)+");")
         db.session.execute(stmt)
         db.session.commit()
-        return redirect(url_for("baker_users"))
+        return redirect(url_for("verify"))
     return render_template("verify.html", users = users,form = form)
+
+@app.route('/legacymanager', methods=['POST', 'GET'])
+@admin_required
+def legacymanager():
+    """
+    Admin page to control and allow new users to order bread
+    """
+    legacy_users = db.session.query(User).filter(User.legacy == 1).all()
+    remove_form = RemoveLegacyForm()
+    remove_form.validate_on_submit()
+    nonlegacy_users = db.session.query(User).filter(User.legacy == 0).all()
+    add_form = AddLegacyForm()
+    add_form.validate_on_submit()
+    if remove_form.validate_on_submit() and remove_form.users_to_remove.data:
+        stmt = text(f'''UPDATE users SET legacy = 0 WHERE id IN ('''+str(remove_form.users_to_remove.data)+");")
+        db.session.execute(stmt)
+        db.session.commit()
+        return redirect(url_for("baker"))
+    if add_form.validate_on_submit() and add_form.users_to_add.data:
+        stmt = text(f'''UPDATE users SET legacy = 1 WHERE id IN ('''+str(add_form.users_to_add.data)+");")
+        db.session.execute(stmt)
+        db.session.commit()
+        return redirect(url_for("legacymanager"))
+    return render_template("legacymanager.html",legacy_users = legacy_users,remove_form = remove_form,nonlegacy_users = nonlegacy_users,add_form = add_form)
 
 # Run Stuff
 if __name__ == "__main__":

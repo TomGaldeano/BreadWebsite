@@ -1,0 +1,88 @@
+{% include "header.html" %}
+<!-- main content -->
+<div class="container-fluid " style = "margin-top:100px">
+  <div class="row justify-content-md-center container d-flex mx-auto">
+    <h1>Legacies</h1>
+  </div>
+  <div class="row justify-content-md-center">
+    <div class="table-responsive" style="padding-left: 10%;padding-right: 10%;">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>User id</th>
+            <th>User Name</th>
+            <th>User Group</th>
+            <!--th>User Address</th-->
+            <th>User date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for i in legacy_users%}
+          <tr>
+            <td>{{ i.id }}</td>
+            <td>{{ i.username }}</td>
+            <td>{{ i.group }}</td>
+            <!--td>{{ i.address }}</td-->
+            <td>{{ i.date }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="container d-flex justify-content-center">
+  <form method="POST" action="{{ url_for('legacymanager') }}">
+    {{ remove_form.csrf_token() }}
+    <div class>{{ remove_form.users_to_remove}}
+    </div>
+    <div class="mx-auto" style="height: 10px;">
+    </div>
+    <div class="justify-content-center container d-flex">{{ remove_form.Remove() }}
+    </div>
+  </form>
+</div>
+
+  <div class="row justify-content-md-center container d-flex mx-auto">
+    <h1>Non Legacies</h1>
+  </div>
+  <div class="row justify-content-md-center">
+    <div class="table-responsive" style="padding-left: 10%;padding-right: 10%;">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>User id</th>
+            <th>User Name</th>
+            <th>User Group</th>
+            <!--th>User Address</th-->
+            <th>User date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for i in nonlegacy_users%}
+          <tr>
+            <td>{{ i.id }}</td>
+            <td>{{ i.username }}</td>
+            <td>{{ i.group }}</td>
+            <!--td>{{ i.address }}</td-->
+            <td>{{ i.date }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="container d-flex justify-content-center">
+  <form method="POST" action="{{ url_for('legacymanager') }}">
+    {{ add_form.csrf_token() }}
+    <div class>{{ add_form.users_to_add}}
+    </div>
+    <div class="mx-auto" style="height: 10px;">
+    </div>
+    <div class="justify-content-center container d-flex">{{ add_form.Add() }}
+    </div>
+  </form>
+</div>
+</div>
+{% include "footer.html" %}

@@ -17,7 +17,7 @@
           </thead>
           <tbody>
           <form method="POST" action="{{ url_for('payments') }}">
-          {{ form.csrf_token }}
+          {{ form.csrf_token() }}
           {% for i in delivered_orders%}
             <tr>
               <td>{{ delivered_orders.date }}</td>

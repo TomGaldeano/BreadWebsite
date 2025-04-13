@@ -16,11 +16,11 @@
   <div class="container-fluid bg-secondary">
     <ul class="nav justify-content-start ms-auto d-flex">
         <li class="nav-item text-white bg-secondary">
-        <a class="navbar-item text-white" href="{{ url_for('indexEng') }}"><img src="static/icons/bread.png" alt="account" class="bg-secondary" style="height:30px"></a>
+        <a class="navbar-item text-white" href="{{ url_for('indexEng') }}"><img src="static/icons/bread.png" alt="pagina principal" class="bg-secondary" style="height:30px"></a>
         </li>
       {% if current_user.is_authenticated and current_user.id != 1: %}
       <li class="nav-item text-white bg-secondary">
-        <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('orders') }}"><img src="static/icons/cart.png" alt="account" class="bg-secondary" style="height:30px"></a>
+        <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('pedidos') }}"><img src="static/icons/cart.png" alt="pedidos" class="bg-secondary" style="height:30px"></a>
       </li>
       {% endif %}
     {% if current_user.id == 1: %}
@@ -29,25 +29,28 @@
         <img src="static/icons/menu.png" alt="account" class="bg-secondary" style="height:30px"></a>
     <ul class="dropdown-menu bg-secondary" aria-labelledby="dropdownMenuLink">
          <li class="link-item text-white bg-secondary">
-          <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('baker') }}"><img src="static/icons/bread.png" alt="account" class="bg-secondary" style="height:30px"></a>
+          <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('baker') }}"><img src="static/icons/bread.png" alt="baker" class="bg-secondary" style="height:30px"></a>
         </li>
         <li class="link-item text-white bg-secondary">
-          <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('baker_users') }}"><img src="static/icons/user.png" alt="account" class="bg-secondary" style="height:30px"></a>
+          <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('baker_users') }}"><img src="static/icons/user.png" alt="usuarios" class="bg-secondary" style="height:30px"></a>
         </li>
         <li class="link-item text-white bg-secondary gap-0 me-0">
-          <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('statistics') }}"><img src="static/icons/graph.png" alt="account" class="bg-secondary" style="height:30px"></a>
+          <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('statistics') }}"><img src="static/icons/graph.png" alt="estadisticas" class="bg-secondary" style="height:30px"></a>
         </li>
         <li class="link-item text-white bg-secondary">
-          <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('payments') }}"><img src="static/icons/profit.png" alt="account" class="bg-secondary" style="height:30px"></a>
+          <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('payments') }}"><img src="static/icons/profit.png" alt="pagos" class="bg-secondary" style="height:30px"></a>
         </li>
         <li class="nav-item text-white bg-secondary">
-          <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('orders') }}"><img src="static/icons/cart.png" alt="account" class="bg-secondary" style="height:30px"></a>
+          <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('orders') }}"><img src="static/icons/cart.png" alt="pedidos" class="bg-secondary" style="height:30px"></a>
         </li>
         <li class="nav-item text-white bg-secondary">
-            <h6>legacies</h6>
+          <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('legacymanager') }}">leacies</a>
         </li>
         <li class="nav-item text-white bg-secondary">
-            <h6>bots</h6>
+          <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('bot_control') }}">bots</a>
+        </li>
+        <li class="nav-item text-white bg-secondary">
+          <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('verify') }}">verify</a>
         </li>
     </ul>
     </li>
@@ -71,7 +74,7 @@
       {% endif %}
       {% if current_user.is_authenticated: %}
       <li class="nav-item text-white bg-secondary">
-        <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('desconectar') }}"><img src="static/icons/power-switch.png" alt="account" class="bg-secondary" style="height:30px"></a>
+        <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('desconectar') }}"><img src="static/icons/power-switch.png" alt="desconectar" class="bg-secondary" style="height:30px"></a>
       </li>
       {% endif %}
       {% if current_user.is_authenticated: %}

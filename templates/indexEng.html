@@ -5,7 +5,7 @@
     <div class="table-responsive">
          <form method="POST" action="{{ url_for('indexEng') }}">
           <table class="table table-hover">
-        {{ order_form.csrf_token }}
+        {{ order_form.csrf_token() }}
             <h1>Loaves</h1>
             <tbody>
             <tr>
@@ -158,9 +158,10 @@
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto" style="bottom:0">
           <ul class="list-group list-group-flush">
-            <li class="list-group-item align-self-center"><span style="color:red">{% if error3 %}{{error3}}{% endif %}</span></li>
-           <li class="list-group-item align-self-center">{{order_form.date}}<span style="color:red">{% if error1 %}{{error1}}{% endif %}</span></li>
-           <li class="list-group-item align-self-center">{{order_form.day_time(style="width:120px")}}<span style="color:red">{% if error2 %}{{error2}}{% endif %}</span></li>
+            {% if errors[3] %}<li class="list-group-item align-self-center"><span style="color:red">{{errors[3]}}</span></li>{% endif %}
+            {% if errors[2] %}<li class="list-group-item align-self-center"><span style="color:red">{{errors[2]}}</span></li>{% endif %}
+           <li class="list-group-item align-self-center">{{order_form.date}}<span style="color:red">{% if errors[0] %}{{errors[0]}}{% endif %}</span></li>
+           <li class="list-group-item align-self-center">{{order_form.day_time(style="width:120px")}}<span style="color:red">{% if errors[1] %}{{errors[1]}}{% endif %}</span></li>
            <li class="list-group-item align-self-center">{{order_form.recurring(style="width:120px")}}</li>
             <li class="list-group-item align-self-center">Number of consecutive weeks to order</li>
 

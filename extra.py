@@ -274,9 +274,24 @@ def valid_day(date, lang):
     data = date.weekday()
     if data in days:
         if lang == "en":
-            return "Current day is   not valid"
+            return "No bread this day"
         elif lang == "es":
-            return "Dia Invalido"
+            return "No hay pan este dia"
+    else:
+        return
+
+def valid_month(date, lang):
+    """
+    Checks if the date is valid to order bread
+    Returns None if valid and a message in the correct language if not
+    """
+    months = [8,7]
+    data = date.month
+    if data in months:
+        if lang == "en":
+            return "No bread in July or August"
+        elif lang == "es":
+            return "No hay pan en Julio o Agosto"
     else:
         return
 

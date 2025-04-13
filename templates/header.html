@@ -16,11 +16,11 @@
   <div class="container-fluid bg-secondary">
     <ul class="nav justify-content-start ms-auto d-flex">
         <li class="nav-link text-white bg-secondary">
-        <a class="navbar-item text-white" href="{{ url_for('indexEng') }}"><img src="static/icons/bread.png" alt="account" class="bg-secondary" style="height:30px"></a>
+        <a class="navbar-item text-white" href="{{ url_for('indexEng') }}"><img src="static/icons/bread.png" alt="home" class="bg-secondary" style="height:30px"></a>
         </li>
       {% if current_user.is_authenticated and current_user.id != 1: %}
       <li class="nav-item text-white bg-secondary">
-        <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('orders') }}"><img src="static/icons/cart.png" alt="account" class="bg-secondary" style="height:30px"></a>
+        <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('orders') }}"><img src="static/icons/cart.png" alt="order menu" class="bg-secondary" style="height:30px"></a>
       </li>
       {% endif %}
     {% if current_user.id == 1: %}
@@ -29,22 +29,22 @@
         <img src="static/icons/menu.png" alt="account" class="bg-secondary" style="height:30px"></a>
     <ul class="dropdown-menu bg-secondary" aria-labelledby="dropdownMenuLink">
          <li class="link-item text-white bg-secondary">
-          <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('baker') }}"><img src="static/icons/bread.png" alt="account" class="bg-secondary" style="height:30px"></a>
+          <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('baker') }}"><img src="static/icons/bread.png" alt="baker" class="bg-secondary" style="height:30px"></a>
         </li>
         <li class="link-item text-white bg-secondary">
-          <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('baker_users') }}"><img src="static/icons/user.png" alt="account" class="bg-secondary" style="height:30px"></a>
+          <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('baker_users') }}"><img src="static/icons/user.png" alt="users" class="bg-secondary" style="height:30px"></a>
         </li>
         <li class="link-item text-white bg-secondary gap-0 me-0">
-          <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('statistics') }}"><img src="static/icons/graph.png" alt="account" class="bg-secondary" style="height:30px"></a>
+          <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('statistics') }}"><img src="static/icons/graph.png" alt="statistics" class="bg-secondary" style="height:30px"></a>
         </li>
         <li class="link-item text-white bg-secondary">
-          <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('payments') }}"><img src="static/icons/profit.png" alt="account" class="bg-secondary" style="height:30px"></a>
+          <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('payments') }}"><img src="static/icons/profit.png" alt="payments" class="bg-secondary" style="height:30px"></a>
         </li>
         <li class="nav-item text-white bg-secondary">
-          <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('orders') }}"><img src="static/icons/cart.png" alt="account" class="bg-secondary" style="height:30px"></a>
+          <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('orders') }}"><img src="static/icons/cart.png" alt="orders" class="bg-secondary" style="height:30px"></a>
         </li>
         <li class="nav-item text-white bg-secondary">
-          <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('legacies') }}">leacies</a>
+          <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('legacymanager') }}">leacies</a>
         </li>
         <li class="nav-item text-white bg-secondary">
           <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('bot_control') }}">bots</a>
@@ -74,7 +74,7 @@
       {% endif %}
       {% if current_user.is_authenticated: %}
       <li class="nav-item text-white bg-secondary">
-        <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('logout') }}"><img src="static/icons/power-switch.png" alt="account" class="bg-secondary" style="height:30px"></a>
+        <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('logout') }}"><img src="static/icons/power-switch.png" alt="logout" class="bg-secondary" style="height:30px"></a>
       </li>
       {% endif %}
       {% if current_user.is_authenticated: %}
@@ -83,7 +83,7 @@
       </li>
       {% endif %}
       <li class="nav-item text-white bg-secondary">
-        <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('indexEs') }}"><img src="static/icons/spain.png" alt="spanish" class="bg-secondary" style="height:30px"> </a>
+        <a class="nav-link text-white" style="padding: .5rem" href="{{ url_for('indexEs') }}"><img src="static/icons/spain.png" alt="español" class="bg-secondary" style="height:30px"> </a>
       </li>
     </ul>
   </div>

@@ -33,7 +33,7 @@
 </div>
 <div class="container d-flex justify-content-center">
   <form method="POST" action="{{ url_for('verify') }}">
-    {{ form.csrf_token }}
+    {{ form.csrf_token() }}
     <div class>{{ form.users_to_delete}}
     </div>
     <div class="mx-auto" style="height: 10px;">

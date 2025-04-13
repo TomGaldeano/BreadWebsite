@@ -6,7 +6,7 @@
   </div>
   <div class="row justify-content-md-center">
   <form method="POST" action="{{ url_for('pedidos') }}">
-    {{ form.csrf_token }}
+    {{ form.csrf_token() }}
     <div class="table-responsive d-md-block d-none" style="padding-left: 10%;padding-right: 10%;">
       <table class="table table-hover">
         <thead>
@@ -31,7 +31,7 @@
         </tbody>
       </table>
   </div>
-      <div class="table-responsive d-md-block d-md-block" style="padding-left: 10%;padding-right: 10%;">
+      <div class="table-responsive d-md-none" style="padding-left: 10%;padding-right: 10%;">
       <table class="table table-hover">
         <tbody>
           {% for i in undelivered_orders%}
