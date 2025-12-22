@@ -39,7 +39,8 @@ def create_app():
     app.config['SECRET_KEY'] = "gdfgsksdflsdfjksjfkdsjfksjkfjdls"
     login_manager = LoginManager()
     login_manager.init_app(app)
-    app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+mysqldb://{username}:{password_database}@{host_adress}/{name_database}"  # File-based SQL database
+    # app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+mysqldb://{username}:{password_database}@{host_adress}/{name_database}"  # File-based SQL database
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///new_breadshop.db'
     db = SQLAlchemy(app)
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     csrf = CSRFProtect(app)
@@ -51,36 +52,159 @@ def find_num_breads(date,time):
         """
 
         """
-        stmt = text("""SELECT SUM(num_breads) FROM orders WHERE time_day = '"""+time+"""' AND date = '"""+str(date)+"""'""")
-        b = db.session.execute(stmt)
-        return b.first()[0]
+        # stmt = text("""SELECT SUM(num_breads) FROM orders WHERE time_day = '"""+time+"""' AND date = '"""+str(date)+"""'""")
+        # b = db.session.execute(stmt)
+        # return b.first()[0]
+        pass # Disabled for migration
 
+# class User(db.Model, UserMixin):
+#     __tablename__ = 'users'
+#     id = db.Column(db.Integer, primary_key=True)
+#     username = db.Column(db.String(255), nullable=False, unique=True)
+#     password = db.Column(db.String(255), nullable=False)
+#     email = db.Column(db.String(255), nullable=False, unique=True)
+#     group = db.Column(db.String(255), nullable=False)
+#     orders = relationship("Order", back_populates="customer")
+#     date = db.Column(db.String(255), nullable=False)
+#     verified = db.Column(db.Boolean(), nullable=False)
+#     legacy = db.Column(db.Boolean(), nullable=False)
 class User(db.Model, UserMixin):
-    __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(255), nullable=False, unique=True)
+    __tablename__ = 'usuario'
+    user_id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(255), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
-    email = db.Column(db.String(255), nullable=False, unique=True)
-    group = db.Column(db.String(255), nullable=False)
-    orders = relationship("Order", back_populates="customer")
+    zone = db.Column(db.String(255))
+    grup =db.Colmn(db.String(255))
+    
+    # Relationships
+    baker = relationship("Baker", back_populates="user", uselist=False)
+    client = relationship("Client", back_populates="user", uselist=False)
+
+    def get_id(self):
+        return (self.usuario_id)
+
+class Bakery(db.Model):
+    __tablename__ = 'bakery'
+    bakery_id = db.Column(db.Integer, primary_key=True)
+    address = db.Column(db.String(255))
+    
+    #Relations
+    bakers = relationship("Baker", back_populates="bakery")
+    orders = relationship("Pedido", back_populates="bakery")
+
+class Baker(db.Model):
+    __tablename__ = 'baker'
+    baker_id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255))
+    speciality = db.Column(db.String(255))
+    usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.usuario_id'))
+    bakery_id = db.Column(db.Integer, db.ForeignKey('bakery.bakery_id')) # Added based on diagram relationship "tiene"
+
+    #Relations
+    user = relationship("User", back_populates="baker")
+    bakery = relationship("Bakery", back_populates="bakers")
+    horarios = relationship("Timetable", back_populates="baker")
+
+class Timetable(db.Model):
+    __tablename__ = 'horario'
+    horario_id = db.Column(db.Integer, primary_key=True)
+    turn = db.Column(db.String(255))
+    day = db.Column(db.String(255))
+    baker_id = db.Column(db.Integer, db.ForeignKey('baker.baker_id'))
+    
+    #Relations
+    baker = relationship("Baker", back_populates="horarios")
+
+class Product(db.Model):
+    __tablename__ = 'product'
+    product_id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(255))
+    tipo = db.Column(db.String(255))
+    precio = db.Column(db.Float)
+    coste_produccion = db.Column(db.Float)
+
+    #Relations
+    ingredientes = relationship("Ingredient", back_populates="product")
+    details_order = relationship("DetailPedido", back_populates="product")
+
+class Ingredient(db.Model):
+    __tablename__ = 'product_ingredient'
+    id = db.Column(db.Integer, primary_key=True) # Surrogate key for easy handling
+    product_id = db.Column(db.Integer, db.ForeignKey('product.product_id'))
+    ingrediente_id = db.Column(db.Integer) # FK to unimplemented Ingredient table or just logic
+    cantidad = db.Column(db.Float)
+    price_100g = db.Column(db.Float)
+    
+    #Relations
+    product = relationship("Product", back_populates="ingredientes")
+
+class Client(db.Model):
+    __tablename__ = 'client'
+    client_id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255))
+    user_id = db.Column(db.Integer, db.ForeignKey('usuario.usuario_id'))
     date = db.Column(db.String(255), nullable=False)
     verified = db.Column(db.Boolean(), nullable=False)
     legacy = db.Column(db.Boolean(), nullable=False)
 
-
+    #Relations
+    user = relationship("User", back_populates="client")
+    orders = relationship("Order", back_populates="client")
 
 class Order(db.Model):
-    __tablename__ = 'orders'
+    __tablename__ = 'order'
+    order_id = db.Column(db.Integer, primary_key=True)
+    fecha = db.Column(db.Date) # Using Date type
+    total = db.Column(db.Float)
+    client_id = db.Column(db.Integer, db.ForeignKey('client.client_id'))
+    bakery_id = db.Column(db.Integer, db.ForeignKey('bakery.bakery_id')) # nullable=True?
+    delivery_cost = db.Column(db.Float)
+    
+    #Relations
+    client = relationship("Client", back_populates="orders")
+    bakery = relationship("Bakery", back_populates="orders")
+    details = relationship("DetailPedido", back_populates="order")
+
+class OrderDetail(db.Model):
+    __tablename__ = 'detail_order'
     id = db.Column(db.Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('users.id'))
-    order = db.Column(db.String(5000), nullable=False)
-    date = db.Column(db.String(255), nullable=False)
-    payed = db.Column(db.Boolean(), nullable=False)
-    delivered = db.Column(db.Boolean(), nullable=False)
-    time_day = db.Column(db.String(255), nullable=False)
-    customer = relationship("User", back_populates="orders")
-    client = db.Column(db.String(255), nullable=False)
-    num_breads = db.Column(db.Integer)
+    order_id = db.Column(db.Integer, db.ForeignKey('Orders.order_id'))
+    product_id = db.Column(db.Integer, db.ForeignKey('product.product_id'))
+    amount = db.Column(db.Float)
+    
+    #Relations
+    order = relationship("Order", back_populates="details")
+    product = relationship("Product", back_populates="details")
+
+
+
+# Old Models (Commented Out)
+# class User(db.Model, UserMixin):
+#     __tablename__ = 'users'
+#     id = db.Column(db.Integer, primary_key=True)
+#     username = db.Column(db.String(255), nullable=False, unique=True)
+#     password = db.Column(db.String(255), nullable=False)
+#     email = db.Column(db.String(255), nullable=False, unique=True)
+#     group = db.Column(db.String(255), nullable=False)
+#     orders = relationship("Order", back_populates="customer")
+#     date = db.Column(db.String(255), nullable=False)
+#     verified = db.Column(db.Boolean(), nullable=False)
+#     legacy = db.Column(db.Boolean(), nullable=False)
+# 
+# 
+# 
+# class Order(db.Model):
+#     __tablename__ = 'orders'
+#     id = db.Column(db.Integer, primary_key=True)
+#     user_id = Column(Integer, ForeignKey('users.id'))
+#     order = db.Column(db.String(5000), nullable=False)
+#     date = db.Column(db.String(255), nullable=False)
+#     payed = db.Column(db.Boolean(), nullable=False)
+#     delivered = db.Column(db.Boolean(), nullable=False)
+#     time_day = db.Column(db.String(255), nullable=False)
+#     customer = relationship("User", back_populates="orders")
+#     client = db.Column(db.String(255), nullable=False)
+#     num_breads = db.Column(db.Integer)
 
 def admin_required(f):
     """
@@ -186,7 +310,7 @@ def index(lang):
                 order_logger.info("order received")
             if not errors[2]:
                 if lang == "es":
-                    return redirect(url_for("pedidos"))
+                    return redirect(url_for("Orders"))
                 elif lang == "en":
                     return redirect(url_for("orders"))
     if lang == "es":
