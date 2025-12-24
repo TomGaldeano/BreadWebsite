@@ -1,0 +1,25 @@
+/* Variables (Global) */
+:root {
+  --black: #000000;
+  --blue: #051f8a;
+  --dark_gray: #929292;
+  --green: #15400a;
+  --grey: #cacaca;
+  --orange: #ff9800;
+  --red: #a80101;
+  --white: #FFFFFF;
+  --yellow: gold;
+}
+
+/* Dark theme overrides (scoped) */
+.dark {
+  --black: #FFFFFF;
+  --blue: aqua;
+  --dark_gray: #7c7c7c;
+  --green: #00ff00;
+  --grey: #363636;
+  --orange: #fcb852;
+  --red: #fc5656;
+  --white: #000000;
+  --yellow: #f6fa07;
+}

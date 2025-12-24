@@ -1,0 +1,78 @@
+/* Layout / Utilities */
+
+html {
+  background: var(--white);
+  margin: 0;
+  padding: 0;
+}
+
+#box-example {
+  margin: 40px auto;
+  position: relative;
+  width: 300px;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: 33.3% 33.3% 33.3%;
+}
+
+div.mycontainer {
+  overflow: auto;
+  width: 100%;
+}
+
+div.mycontainer div {
+  float: left;
+  width: 33.3%;
+}
+
+.mycontainer2 {
+  display: flex;
+}
+
+.mycontainer2 > div {
+  width: 33.3%;
+}
+
+.linediv {
+  display: inline-block;
+  font-size: 16px; /* reset to normal */
+  width: 33.3%;
+}
+
+.parent-inline {
+  font-size: 0;
+}
+
+.clearfix::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.div-clearfix {
+  border: 1px solid var(--black);
+  margin: 10px;
+  padding: 10px;
+}
+
+.img-clearfix {
+  float: left;
+}
+
+table {
+  border: 1px solid var(--black);
+  border-spacing: 0px;
+}
+
+td {
+  min-width: 70px;
+  padding: 5px;
+}
+
+footer {
+  justify-content: center;
+  margin: 0 auto;
+  bottom: 0;
+}
