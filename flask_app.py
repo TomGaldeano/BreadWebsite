@@ -14,6 +14,9 @@ from extra import *
 from config import Data, SecretData
 import datetime
 from flask_wtf.csrf import CSRFProtect
+import os
+import logging
+from pathlib import Path
 
 MAX_BREADS = 20
 data = Data()
@@ -21,7 +24,9 @@ secret_data = SecretData()
 
 app = Flask(__name__)
 # Flask-SQLAlchemy settings
-# Avoids SQLAlchemy warning
+# Create DB and login manager instances here so models can reference them
+db = SQLAlchemy()
+login_manager = LoginManager()
 
 def create_app():
     """
@@ -30,23 +35,24 @@ def create_app():
     global app
     global db
     global login_manager
-    username="breadtombakery"
-    host_adress="breadtombakery.mysql.eu.pythonanywhere-services.com"
-    name_database = "breadtombakery$breadshop"
-    password_database = "Flx6)]4frW"
-    app = Flask(__name__)
+    # Use DATABASE_URL environment variable if provided; otherwise default to local SQLite for dev
     Bootstrap(app)
-    app.config['SECRET_KEY'] = "gdfgsksdflsdfjksjfkdsjfksjkfjdls"
-    login_manager = LoginManager()
+    app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', "gdfgsksdflsdfjksjfkdsjfksjkfjdls")
     login_manager.init_app(app)
-    # app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+mysqldb://{username}:{password_database}@{host_adress}/{name_database}"  # File-based SQL database
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///new_breadshop.db'
-    db = SQLAlchemy(app)
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    dev_user = os.getenv('DEV_DB_USER', 'admin')
+    dev_pass = os.getenv('DEV_DB_PASSWORD', '1234')
+    dev_host = os.getenv('DEV_DB_HOST', '127.0.0.1')
+    dev_port = os.getenv('DEV_DB_PORT', '3306')
+    app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://{dev_user}:{dev_pass}@{dev_host}:{dev_port}/breadshop"
+    # Optional: allow SQL logging in development
+    app.config['SQLALCHEMY_ECHO'] = True
+
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    db.init_app(app)
     csrf = CSRFProtect(app)
     return app
 
-create_app()
+# Note: create_app() will be invoked when running the app (__main__)
 
 def find_num_breads(date,time):
         """
@@ -57,154 +63,30 @@ def find_num_breads(date,time):
         # return b.first()[0]
         pass # Disabled for migration
 
-# class User(db.Model, UserMixin):
-#     __tablename__ = 'users'
-#     id = db.Column(db.Integer, primary_key=True)
-#     username = db.Column(db.String(255), nullable=False, unique=True)
-#     password = db.Column(db.String(255), nullable=False)
-#     email = db.Column(db.String(255), nullable=False, unique=True)
-#     group = db.Column(db.String(255), nullable=False)
-#     orders = relationship("Order", back_populates="customer")
-#     date = db.Column(db.String(255), nullable=False)
-#     verified = db.Column(db.Boolean(), nullable=False)
-#     legacy = db.Column(db.Boolean(), nullable=False)
 class User(db.Model, UserMixin):
-    __tablename__ = 'usuario'
-    user_id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(255), unique=True, nullable=False)
+    __tablename__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(255), nullable=False, unique=True)
     password = db.Column(db.String(255), nullable=False)
-    zone = db.Column(db.String(255))
-    grup =db.Colmn(db.String(255))
-    
-    # Relationships
-    baker = relationship("Baker", back_populates="user", uselist=False)
-    client = relationship("Client", back_populates="user", uselist=False)
-
-    def get_id(self):
-        return (self.usuario_id)
-
-class Bakery(db.Model):
-    __tablename__ = 'bakery'
-    bakery_id = db.Column(db.Integer, primary_key=True)
-    address = db.Column(db.String(255))
-    
-    #Relations
-    bakers = relationship("Baker", back_populates="bakery")
-    orders = relationship("Pedido", back_populates="bakery")
-
-class Baker(db.Model):
-    __tablename__ = 'baker'
-    baker_id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255))
-    speciality = db.Column(db.String(255))
-    usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.usuario_id'))
-    bakery_id = db.Column(db.Integer, db.ForeignKey('bakery.bakery_id')) # Added based on diagram relationship "tiene"
-
-    #Relations
-    user = relationship("User", back_populates="baker")
-    bakery = relationship("Bakery", back_populates="bakers")
-    horarios = relationship("Timetable", back_populates="baker")
-
-class Timetable(db.Model):
-    __tablename__ = 'horario'
-    horario_id = db.Column(db.Integer, primary_key=True)
-    turn = db.Column(db.String(255))
-    day = db.Column(db.String(255))
-    baker_id = db.Column(db.Integer, db.ForeignKey('baker.baker_id'))
-    
-    #Relations
-    baker = relationship("Baker", back_populates="horarios")
-
-class Product(db.Model):
-    __tablename__ = 'product'
-    product_id = db.Column(db.Integer, primary_key=True)
-    nombre = db.Column(db.String(255))
-    tipo = db.Column(db.String(255))
-    precio = db.Column(db.Float)
-    coste_produccion = db.Column(db.Float)
-
-    #Relations
-    ingredientes = relationship("Ingredient", back_populates="product")
-    details_order = relationship("DetailPedido", back_populates="product")
-
-class Ingredient(db.Model):
-    __tablename__ = 'product_ingredient'
-    id = db.Column(db.Integer, primary_key=True) # Surrogate key for easy handling
-    product_id = db.Column(db.Integer, db.ForeignKey('product.product_id'))
-    ingrediente_id = db.Column(db.Integer) # FK to unimplemented Ingredient table or just logic
-    cantidad = db.Column(db.Float)
-    price_100g = db.Column(db.Float)
-    
-    #Relations
-    product = relationship("Product", back_populates="ingredientes")
-
-class Client(db.Model):
-    __tablename__ = 'client'
-    client_id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255))
-    user_id = db.Column(db.Integer, db.ForeignKey('usuario.usuario_id'))
+    email = db.Column(db.String(255), nullable=False, unique=True)
+    group = db.Column(db.String(255), nullable=False)
+    orders = relationship("Order", back_populates="customer")
     date = db.Column(db.String(255), nullable=False)
-    verified = db.Column(db.Boolean(), nullable=False)
-    legacy = db.Column(db.Boolean(), nullable=False)
-
-    #Relations
-    user = relationship("User", back_populates="client")
-    orders = relationship("Order", back_populates="client")
+    verified = db.Column(db.Boolean(), nullable=False, default=False)
+    legacy = db.Column(db.Boolean(), nullable=False, default=False)
 
 class Order(db.Model):
-    __tablename__ = 'order'
-    order_id = db.Column(db.Integer, primary_key=True)
-    fecha = db.Column(db.Date) # Using Date type
-    total = db.Column(db.Float)
-    client_id = db.Column(db.Integer, db.ForeignKey('client.client_id'))
-    bakery_id = db.Column(db.Integer, db.ForeignKey('bakery.bakery_id')) # nullable=True?
-    delivery_cost = db.Column(db.Float)
-    
-    #Relations
-    client = relationship("Client", back_populates="orders")
-    bakery = relationship("Bakery", back_populates="orders")
-    details = relationship("DetailPedido", back_populates="order")
-
-class OrderDetail(db.Model):
-    __tablename__ = 'detail_order'
+    __tablename__ = 'orders'
     id = db.Column(db.Integer, primary_key=True)
-    order_id = db.Column(db.Integer, db.ForeignKey('Orders.order_id'))
-    product_id = db.Column(db.Integer, db.ForeignKey('product.product_id'))
-    amount = db.Column(db.Float)
-    
-    #Relations
-    order = relationship("Order", back_populates="details")
-    product = relationship("Product", back_populates="details")
-
-
-
-# Old Models (Commented Out)
-# class User(db.Model, UserMixin):
-#     __tablename__ = 'users'
-#     id = db.Column(db.Integer, primary_key=True)
-#     username = db.Column(db.String(255), nullable=False, unique=True)
-#     password = db.Column(db.String(255), nullable=False)
-#     email = db.Column(db.String(255), nullable=False, unique=True)
-#     group = db.Column(db.String(255), nullable=False)
-#     orders = relationship("Order", back_populates="customer")
-#     date = db.Column(db.String(255), nullable=False)
-#     verified = db.Column(db.Boolean(), nullable=False)
-#     legacy = db.Column(db.Boolean(), nullable=False)
-# 
-# 
-# 
-# class Order(db.Model):
-#     __tablename__ = 'orders'
-#     id = db.Column(db.Integer, primary_key=True)
-#     user_id = Column(Integer, ForeignKey('users.id'))
-#     order = db.Column(db.String(5000), nullable=False)
-#     date = db.Column(db.String(255), nullable=False)
-#     payed = db.Column(db.Boolean(), nullable=False)
-#     delivered = db.Column(db.Boolean(), nullable=False)
-#     time_day = db.Column(db.String(255), nullable=False)
-#     customer = relationship("User", back_populates="orders")
-#     client = db.Column(db.String(255), nullable=False)
-#     num_breads = db.Column(db.Integer)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    order = db.Column(db.String(5000), nullable=False)
+    date = db.Column(db.Date)
+    payed = db.Column(db.Boolean(), nullable=False, default=False)
+    delivered = db.Column(db.Boolean(), nullable=False, default=False)
+    time_day = db.Column(db.String(255), nullable=False)
+    customer = relationship("User", back_populates="orders")
+    client = db.Column(db.String(255), nullable=False)
+    num_breads = db.Column(db.Integer)
 
 def admin_required(f):
     """
@@ -239,7 +121,7 @@ def user_required(f):
 loggin_logger = Log("login ssuccseful", "login_info.log")
 order_logger = Log("order succseful", "order_info.log")
 
-def index(lang):
+def render_index(lang):
     """
     Presents the main webpage in either spaninsh or english and allows for ordering the right amount of bread if logged in
     Checks that not more than 15 breads ordered in a day
@@ -309,16 +191,12 @@ def index(lang):
                 db.session.commit()
                 order_logger.info("order received")
             if not errors[2]:
-                if lang == "es":
-                    return redirect(url_for("Orders"))
-                elif lang == "en":
-                    return redirect(url_for("orders"))
+                return redirect(url_for("orders"))
     if lang == "es":
-        return render_template("indexEs.html",
-                           order_form=order_form, errors = errors)
+        # Spanish translations are available client-side; default server render is English
+        return render_template("index.html", order_form=order_form, errors=errors)
     elif lang == "en":
-        return render_template("indexEng.html",
-                           order_form=order_form, errors = errors)
+        return render_template("index.html", order_form=order_form, errors=errors)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -326,15 +204,22 @@ def load_user(user_id):
 
 @app.route('/')
 def home():
-    return redirect(url_for('indexEs'))
+    return redirect(url_for('index'))
 
-@app.route('/Eng', methods=['POST', 'GET'])
-def indexEng():
-    return index("en")
-
-@app.route('/Es', methods=['POST', 'GET'])
-def indexEs():
-    return index("es")
+@app.route('/home', methods=['POST', 'GET'])
+@app.route('/main', methods=['POST', 'GET'])
+@app.route('/app', methods=['POST', 'GET'])
+@app.route('/site', methods=['POST', 'GET'])
+@app.route('/lang', methods=['POST', 'GET'])
+@app.route('/index.html', methods=['POST', 'GET'])
+@app.route('/app/index', methods=['POST', 'GET'])
+@app.route('/app/home', methods=['POST', 'GET'])
+@app.route('/app/main', methods=['POST', 'GET'])
+@app.route('/app/site', methods=['POST', 'GET'])
+@app.route('/app/app', methods=['POST', 'GET'])
+@app.route('/index', methods=['POST', 'GET'])
+def index():
+    return render_index("en")
 
 @app.route('/register', methods=['POST', 'GET'])
 def register():
@@ -364,39 +249,9 @@ def register():
                 db.session.commit()
                 login_user(new_user)
                 loggin_logger.info(f"user {form.username.data} from group {form.group.data} registered correctly")
-                return redirect(url_for("indexEng"))
+                return redirect(url_for("index"))
     return render_template("register.html", form=form, errors=errors)
 
-@app.route('/registro', methods=['POST', 'GET'])
-def registro():
-    """
-    Backend of spanish registering a new user after checking the email and user do not exist already in database.
-    If no issues happen logs in new user, adds them to database and redirects to the mainpage
-    """
-    form = RegisterForm()
-    form.validate_on_submit()
-    errors = [None, None]
-    if form.validate_on_submit():
-        valid = True
-        if User.query.filter_by(username=form.username.data).first():
-            errors[0] = 'este usario ya ha sido elegido'
-            valid = False
-        if User.query.filter_by(username=form.email.data).first():
-            errors[1] = "este correo ya ha sido elegido"
-            valid = False
-        if valid:
-            verifier = ReVerify(loggin_logger)
-            if verifier.verify_string(form.username.data) and verifier.verify_string(
-                    form.password.data) and verifier.verify_string(form.group.data) and verifier.verify_string(
-                form.email.data):
-                new_user = User(username=form.username.data, password=generate_password_hash(str(form.password.data),
-                method="pbkdf2:sha256",salt_length=14), group=form.group.data, date = (datetime.date.today()), email=form.email.data, verified = 0, legacy = 0)
-                db.session.add(new_user)
-                db.session.commit()
-                login_user(new_user)
-                loggin_logger.info(f"user {form.username.data} from group {form.group.data} registered correctly")
-                return redirect(url_for("indexEs"))
-    return render_template("registro.html", form=form, errors=errors)
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
@@ -414,43 +269,16 @@ def login():
                 if werkzeug.security.check_password_hash(user_db.password,form.password.data):  # check if correct password
                     login_user(user_db)
                     loggin_logger.info(f"user {form.username.data} logged in correctly")
-                    return redirect(url_for("indexEng"))
+                    return redirect(url_for("index"))
             else:
                 error_no_user = "No such user exists"
     return render_template("login.html", form=form, error_no_user = error_no_user)
-
-@app.route('/acceso', methods=['POST', 'GET'])
-def acceso():
-    """
-    Page that allows user to log in to the account and get redirectod to main page in spanish
-    """
-    form = LoginForm()
-    verifier = ReVerify(loggin_logger)
-    error_no_user = None
-    if form.validate_on_submit():
-        if verifier.verify_string(form.password.data) and verifier.verify_string(form.username.data):
-            user_db = User.query.filter_by(username=form.username.data).first()
-            if user_db:  # check if user in database
-                if werkzeug.security.check_password_hash(user_db.password,
-                                                         form.password.data):  # check if correct password
-                    login_user(user_db)
-                    loggin_logger.info(f"user {form.username.data} logged in correctly")
-                    return redirect(url_for("indexEs"))
-            else:
-                error_no_user = "No existe ese usuario"
-    return render_template("loginES.html", form=form, error_no_user= error_no_user)
 
 @app.route('/logout')
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('indexEng'))
-
-@app.route('/desconectar')
-@login_required
-def desconectar():
-    logout_user()
-    return redirect(url_for('indexEs'))
+    return redirect(url_for('index'))
 
 @app.route('/delete')
 @login_required
@@ -465,22 +293,7 @@ def delete():
     stmt = text('''DELETE FROM "orders" WHERE user_id IN ('''+str(user_id)+");")
     db.session.execute(stmt)
     db.session.commit()
-    return redirect(url_for('indexEng'))
-
-@app.route('/eliminar')
-@user_required
-def eliminar():
-    """
-    Deletes the user from database when directed from user page in spanish
-    """
-    user_id = current_user.id
-    logout_user()
-    stmt = text('''DELETE FROM users WHERE id IN ('''+str(user_id)+");")
-    db.session.execute(stmt)
-    stmt = text('''DELETE FROM orders WHERE user_id IN ('''+str(user_id)+");")
-    db.session.execute(stmt)
-    db.session.commit()
-    return redirect(url_for('indexEs'))
+    return redirect(url_for('index'))
 
 @app.route('/orders', methods=['POST', 'GET'])
 @user_required
@@ -504,30 +317,6 @@ def orders():
         db.session.commit()
         return redirect(url_for("orders"))
     return render_template("orders.html", form=form, delivered_orders=delivered_orders,undelivered_orders=undelivered_orders)
-
-@app.route('/pedidos', methods=['POST', 'GET'])
-@user_required
-def pedidos():
-    """
-    Page thath shows all orders the user has  done in spaninsh
-    """
-    user_id = current_user.id
-    undelivered_orders = OrderViewer(db.session.query(Order).filter(
-        and_(Order.user_id == user_id, Order.date > (datetime.date.today() - datetime.timedelta(days=1)))).all(), "es")
-    delivered_orders = OrderViewer(db.session.query(Order).filter(
-        and_(Order.user_id == user_id, Order.date < (datetime.date.today() - datetime.timedelta(days=1)))).order_by(desc(Order.id)).all(), "es")
-    form = generate_basic_form(message="Delete",num_entries = 10)
-    form =form()
-    undelivered_orders.add_form(form)
-    form.validate_on_submit()
-    if form.validate_on_submit():
-        for i in undelivered_orders:
-            if undelivered_orders.form_data.data:
-                db.session.delete(undelivered_orders.order_instance)
-        db.session.commit()
-        return redirect(url_for("pedidos"))
-    return render_template("pedidos.html", form=form, delivered_orders=delivered_orders,
-                           undelivered_orders=undelivered_orders)
 
 @app.route('/account', methods=['POST', 'GET'])
 @user_required
@@ -561,38 +350,6 @@ def account():
                 db.session.commit()
                 return redirect(url_for("account"))
     return render_template("user.html", form=form, errors = errors, user_data=user_data)
-
-@app.route('/usuario', methods=['POST', 'GET'])
-@user_required
-def usuario():
-    """
-    Presents user with a way to change the inforamationif the user has their password and username in spanish
-    """
-    form = ModifyUser()
-    form.validate_on_submit()
-    errors = [None, None]
-    user_data = {"user": current_user.username, "email": current_user.email, "group": current_user.group}
-    if form.validate_on_submit():
-        valid = True
-        user = User.query.filter_by(username=current_user.username).first()
-        if User.query.filter_by(username=form.username.data).first():
-            if user.username != form.username.data:
-                errors[0] = 'Usuario ya cogido'
-                valid = False
-        if User.query.filter_by(username=form.email.data).first():
-            if user.email != form.email.data:
-                errors[1] = "Correo ya escogido"
-                valid = False
-        if valid:
-            if werkzeug.security.check_password_hash(current_user.password, form.old_password.data):
-                user.username = form.username.data
-                user.email = form.email.data
-                user.group = form.group.data
-                if form.new_password.data:
-                    user.password = generate_password_hash(str(form.new_password.data), method="pbkdf2:sha256", salt_length=14)
-                db.session.commit()
-                return redirect(url_for("usuario"))
-    return render_template("usuario.html", form=form, errors = errors, user_data=user_data)
 
 @app.route('/info', methods=['POST', 'GET'])
 def info():
@@ -765,5 +522,31 @@ def legacymanager():
 
 # Run Stuff
 if __name__ == "__main__":
+    # Initialize app, create DB tables if needed, then run
+    app = create_app()
+    with app.app_context():
+        db_uri = app.config.get('SQLALCHEMY_DATABASE_URI', '')
+        created = False
+        # If using SQLite, check whether file exists before creating
+        if db_uri.startswith('sqlite:///'):
+            sqlite_path = Path(app.config.get('SQLITE_DB_PATH'))
+            if not sqlite_path.exists():
+                logging.info(f"SQLite DB not found at {sqlite_path}, creating new database and tables.")
+                db.create_all()
+                created = True
+            else:
+                logging.info(f"SQLite DB found at {sqlite_path}, ensuring tables exist (create_all).")
+                db.create_all()
+        else:
+            # For other DB backends, attempt to create missing tables (idempotent)
+            try:
+                db.create_all()
+                created = True
+            except Exception as e:
+                logging.error(f"Could not create tables: {e}")
+        if created:
+            print("Database/tables created or updated.")
+        else:
+            print("Database already existed or no changes required.")
     app.debug = True
     app.run(host='0.0.0.0', port=5000)

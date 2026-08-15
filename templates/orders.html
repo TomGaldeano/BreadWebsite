@@ -2,7 +2,7 @@
 <!-- main content -->
 <div class="container-fluid" style = "margin-top:100px">
   <div class="row justify-content-md-center container d-flex mx-auto">
-    <h1>Current Orders</h1>
+    <h1 data-translator-en="Current Orders" data-translator-es="Pedidos Actuales">Current Orders</h1>
   </div>
   <div class="row justify-content-md-center">
       <form method="POST" action="{{ url_for('orders') }}">
@@ -11,11 +11,11 @@
       <table class="table table-hover d-md-block d-none">
         <thead>
           <tr>
-            <th>Date</th>
-            <th>Order</th>
-            <th>Price</th>
-            <th>Time of day</th>
-            <th>Delete?</th>
+            <th data-translator-en="Date" data-translator-es="Fecha">Date</th>
+            <th data-translator-en="Order" data-translator-es="Pedido">Order</th>
+            <th data-translator-en="Price" data-translator-es="Precio">Price</th>
+            <th data-translator-en="Time of day" data-translator-es="Hora del día">Time of day</th>
+            <th data-translator-en="Delete?" data-translator-es="Eliminar?">Delete?</th>
           </tr>
         </thead>
         <tbody>
@@ -36,23 +36,23 @@
         <tbody>
           {% for i in undelivered_orders%}
             <tr>
-                <td style="font-weight: bold;">Date</td>
+                <td style="font-weight: bold;" data-translator-en="Date" data-translator-es="Fecha">Date</td>
                 <td>{{ undelivered_orders.date }}</td>
             </tr>
             <tr>
-                <td style="font-weight: bold;">Order</td>
+                <td style="font-weight: bold;" data-translator-en="Order" data-translator-es="Pedido">Order</td>
                 <td>{{ undelivered_orders.message }}</td>
             </tr>
             <tr>
-                <td style="font-weight: bold;">Price</td>
+                <td style="font-weight: bold;" data-translator-en="Price" data-translator-es="Precio">Price</td>
                 <td>{{ undelivered_orders.price }}€</td>
             </tr>
             <tr>
-                <td style="font-weight: bold;">Delivery</td>
+                <td style="font-weight: bold;" data-translator-en="Delivery" data-translator-es="Entrega">Delivery</td>
                 <td>{{ undelivered_orders.time_day }}</td>
             </tr>
             <tr>
-                <td style="font-weight: bold;">Delete?</td>
+                <td style="font-weight: bold;" data-translator-en="Delete?" data-translator-es="Eliminar?">Delete?</td>
                 <td>{{ undelivered_orders.form_data }}</td>
             </tr>
             {% endfor %}
@@ -62,7 +62,7 @@
       </div>
     <div class="row justify-content-md-center container d-flex mx-auto">
        <ul class="list-group list-group-flush">
-            <li class="list-group-item "><input type="submit" value="Delete" class="btn btn-dark"></li>
+             <li class="list-group-item "><input type="submit" value="Delete" class="btn btn-dark" data-translator-en="Delete" data-translator-es="Eliminar"></li>
         </ul>
     </div>
       </form>

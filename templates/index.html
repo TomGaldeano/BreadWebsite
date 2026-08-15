@@ -1,0 +1,60 @@
+{% include "header.html" %}
+<!-- main content -->
+<div class="container-fluid " style = "margin-top:100px">
+  <div class="row justify-content-md-center container d-flex mx-auto">
+    <div class="table-responsive">
+         <form method="POST" action="{{ url_for('index') }}">
+          <table class="table table-hover">
+        {{ order_form.csrf_token() }}
+            <h1 id="heading-loaves" data-translator-en="Loaves" data-translator-es="Panes">Loaves</h1>
+            <tbody>
+            <tr>
+              <td class="align-middle" data-translator-en="Wheat" data-translator-es="Trigo">Wheat</td>
+              <td class="align-middle">3€</td>
+              <td class="align-middle" style="flex-wrap: wrap">{{order_form.White_loaf(style="width:50px")}}</td>
+              <td class = "d-none d-md-block"><img src="static/img/White loaf.jpg" alt="Image of a White loaf" class="img-thumbnail  bg-dark text-white" style="width:200px;height:123.6067px"></td>
+            </tr>
+            <!-- other products keep original English names but can be translated via data attributes as needed -->
+          </tbody>
+        </table>
+        <table class="table table-hover">
+          <h1 id="heading-sticks" data-translator-en="Sticks" data-translator-es="Barras">Sticks</h1>
+        <tbody>
+          <tr>
+            <td class="align-middle" data-translator-en="Wheat" data-translator-es="Trigo">Wheat</td>
+            <td class="align-middle">2€</td>
+            <td class="align-middle" style="flex-wrap: wrap">{{order_form.White_stick(style="width:50px")}}</td>
+            <td class = "d-none d-md-block"><img src="static/img/White stick.jpg" alt="Image of a White stick" class="img-thumbnail bg-dark text-white" style="width:200px;height:123.6067px"> </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  <div class="mx-auto d-md-none d-block" style="width:100%;height: 10px;"></div>
+  {% if not current_user.is_authenticated: %}<div class="mx-auto d-none d-md-block"><h4 id="must-login" data-translator-en="Must use your account to log in" data-translator-es="Debe usar su cuenta para iniciar sesión">Must use your account to log in</h4></div>
+  <div class="mx-auto d-md-none d-block"><h6 id="must-login-mobile" data-translator-en="Must use your account to log in" data-translator-es="Debe usar su cuenta para iniciar sesión">Must use your account to log in</h6></div>
+  {% endif %}
+  {% if current_user.is_authenticated: %}
+    <div class="container-fluid position-absoulte">
+      <div class="container align-self-center" style="margin-top:100px">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto" style="bottom:0">
+          <ul class="list-group list-group-flush">
+            {% if errors[3] %}<li class="list-group-item align-self-center"><span style="color:red">{{errors[3]}}</span></li>{% endif %}
+            {% if errors[2] %}<li class="list-group-item align-self-center"><span style="color:red">{{errors[2]}}</span></li>{% endif %}
+           <li class="list-group-item align-self-center">{{order_form.date}}<span style="color:red">{% if errors[0] %}{{errors[0]}}{% endif %}</span></li>
+           <li class="list-group-item align-self-center">{{order_form.day_time(style="width:120px")}}<span style="color:red">{% if errors[1] %}{{errors[1]}}{% endif %}</span></li>
+           <li class="list-group-item align-self-center">{{order_form.recurring(style="width:120px")}}</li>
+             <li id="consecutive-weeks" class="list-group-item align-self-center" data-translator-en="Number of consecutive weeks to order" data-translator-es="Número de semanas consecutivas para pedir">Number of consecutive weeks to order</li>
+
+           <li class="list-group-item align-self-center"><input id="order-submit" type="submit" value="order" class="btn btn-dark" data-translator-en="order" data-translator-es="pedir"></li>
+              </ul>
+           </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+    </form>
+  </div>
+</div>
+<!-- footer -->
+{% include "footer.html" %}

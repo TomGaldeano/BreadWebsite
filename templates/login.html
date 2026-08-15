@@ -4,7 +4,27 @@
   <div class="container align-self-center" style="margin-top:100px">
     <div class="row">
       <div class="col-lg-8 col-md-10 mx-auto" style="bottom:0">
-        {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "dark"}) }}
+        <h1 data-translator-en="Login" data-translator-es="Acceso">Login</h1>
+        <form method="POST" action="{{ url_for('login') }}">
+          {{ form.csrf_token() }}
+          <div class="form-group">
+            <label for="username" data-translator-en="Username" data-translator-es="Usuario">Username</label>
+            {{ form.username(class_="form-control", id="username") }}
+            {% for err in form.username.errors %}
+            <div class="text-danger">{{ err }}</div>
+            {% endfor %}
+          </div>
+          <div class="form-group">
+            <label for="password" data-translator-en="Password" data-translator-es="Contraseña">Password</label>
+            {{ form.password(class_="form-control", id="password") }}
+            {% for err in form.password.errors %}
+            <div class="text-danger">{{ err }}</div>
+            {% endfor %}
+          </div>
+          <div class="form-group mt-3">
+            <input type="submit" value="Log in" class="btn btn-dark" data-translator-en="Log in" data-translator-es="Acceder">
+          </div>
+        </form>
         <span style="color:red">{% if error_no_user %}{{error_no_user}}{% endif %}</span>
       </div>
     </div>

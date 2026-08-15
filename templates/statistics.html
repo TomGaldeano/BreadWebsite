@@ -1,11 +1,11 @@
 {% include "header.html" %}
 <!-- main content -->
 <div class="row justify-content-md-center container d-flex mx-auto">
-    <h1>Monthly report</h1>
+      <h1 data-translator-en="Monthly report" data-translator-es="Informe Mensual">Monthly report</h1>
 </div>
 <div class="container-fluid " style = "margin-top:100px">
     <div class="row justify-content-md-center container d-flex mx-auto">
-      <h2>Accounting Info</h2>
+        <h2 data-translator-en="Accounting Info" data-translator-es="Información Contable">Accounting Info</h2>
     </div>
     <div class="row justify-content-md-center">
       <div class="table-responsive" style="padding-left: 10%;padding-right: 10%;">
@@ -13,14 +13,14 @@
           <tbody>
               <tr>
                 <td></td>
-                <td>Gross Income</td>
-                <td>Production costs</td>
-                <td>Benefits</td>
-                <td>Sold Loaves</td>
-                <td>Sold Sticks</td>
+                   <td data-translator-en="Gross Income" data-translator-es="Ingresos Brutos">Gross Income</td>
+                   <td data-translator-en="Production costs" data-translator-es="Costes de Producción">Production costs</td>
+                   <td data-translator-en="Benefits" data-translator-es="Beneficios">Benefits</td>
+                   <td data-translator-en="Sold Loaves" data-translator-es="Pan Vendido">Sold Loaves</td>
+                   <td data-translator-en="Sold Sticks" data-translator-es="Palitos Vendidos">Sold Sticks</td>
               </tr>
               <tr>
-                <td>Previous month</td>
+                   <td data-translator-en="Previous month" data-translator-es="Mes Anterior">Previous month</td>
                 <td>{{ data.past_month["gross"] }}</td>
                 <td>{{ data.past_month["costs"] }}</td>
                 <td>{{ data.past_month["benefit"] }}</td>
@@ -28,7 +28,7 @@
                 <td>{{ data.past_month["sticks"] }}</td>
               </tr>
               <tr>
-                <td>Current month</td>
+                   <td data-translator-en="Current month" data-translator-es="Mes Actual">Current month</td>
                 <td>{{ data.present_month["gross"] }}</td>
                 <td>{{ data.present_month["costs"] }}</td>
                 <td>{{ data.present_month["benefit"] }}</td>
@@ -42,7 +42,7 @@
 </div>
 <div class="container-fluid " style = "margin-top:100px">
   <div class="row justify-content-md-center container d-flex mx-auto">
-    <h2>Bread ordered last month</h2>
+        <h2 data-translator-en="Bread ordered last month" data-translator-es="Pan pedido el mes pasado">Bread ordered last month</h2>
   </div>
 </div>   
 <div class="row justify-content-md-center">

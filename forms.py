@@ -58,6 +58,9 @@ class Form(FlaskForm):
                                        NoneOf(data.invalid_characters, message="invalid symbol used")])
     submit = SubmitField("Delete")
 
+# Backwards-compatibility alias expected by existing views
+DeleteUserForm = Form
+
 class DeleteAccountForm(FlaskForm):
     submit = SubmitField("Delete")
 

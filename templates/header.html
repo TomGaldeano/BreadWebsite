@@ -20,8 +20,7 @@
     <div class="container-fluid ">
       <ul class="nav justify-content-start ms-auto d-flex">
         <li class="nav-item ">
-          <a class="nav-link " href="{{ url_for('indexEng') }}"><img src="static/icons/bread.png" alt="home" class=""
-              style="height:30px"></a>
+          <a class="nav-link " href="{{ url_for('index') }}"><img src="static/icons/bread.png" alt="home" class="" style="height:30px"></a>
         </li>
         {% if current_user.is_authenticated and current_user.id != 1: %}
         <li class="nav-item  ">
@@ -99,10 +98,10 @@
         </li>
         {% endif %}
         <li class="nav-item  ">
-          <a class="nav-link " style="padding: .5rem" href="{{ url_for('indexEs') }}"><img src="static/icons/spain.png"
-              alt="español" class="" style="height:30px"> </a>
+          <button id="lang-toggle" class="btn btn-link" style="padding:.5rem"><img src="static/icons/spain.png" alt="toggle-language" style="height:30px"></button>
         </li>
       </ul>
     </div>
   </nav>
   <main class="container">
+    <script src="{{ url_for('static', filename='js/translator.js') }}"></script>

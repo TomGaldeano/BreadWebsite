@@ -19,7 +19,7 @@
                 <li class="list-group-item">New Password</li>
                 <li class="list-group-item ">{{form.new_password(style="width:200px")}}</li>
                 <li class="list-group-item "><input type="submit" value="Save Changes" class="btn btn-dark"></li>
-                <li class="list-group-item "></li><button class ="btn btn-dark"><a class="nav-link text-white" href="{{ url_for('eliminar') }}">Delete Account</a>
+                <li class="list-group-item "></li><button class ="btn btn-dark"><a id="delete-account-link" class="nav-link text-white" href="{{ url_for('delete') }}" data-translator-en="Delete Account" data-translator-es="Eliminar Cuenta">Delete Account</a>
               </ul>
             </div>
           </div>
