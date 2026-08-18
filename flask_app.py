@@ -88,6 +88,39 @@ class Order(db.Model):
     client = db.Column(db.String(255), nullable=False)
     num_breads = db.Column(db.Integer)
 
+
+class Product(db.Model):
+    __tablename__ = 'products'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), nullable=False, unique=True)
+    display_name = db.Column(db.String(255))
+    display_name_es = db.Column(db.String(255))
+    price = db.Column(db.Float)
+    cost = db.Column(db.Float)
+    benefits = db.Column(db.Float)
+    category = db.Column(db.String(50))
+    recipe_items = relationship("ProductIngredient", back_populates="product", cascade="all, delete-orphan")
+
+
+class ProductIngredient(db.Model):
+    __tablename__ = 'product_ingredients'
+    id = db.Column(db.Integer, primary_key=True)
+    product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
+    ingredient_id = db.Column(db.Integer, db.ForeignKey('ingredients.id'), nullable=False)
+    quantity = db.Column(db.Float)
+    product = relationship("Product", back_populates="recipe_items")
+    ingredient = relationship("Ingredient", back_populates="product_items")
+
+
+class Ingredient(db.Model):
+    __tablename__ = 'ingredients'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), nullable=False, unique=True)
+    display_name = db.Column(db.String(255))
+    display_name_es = db.Column(db.String(255))
+    cost = db.Column(db.Float)
+    product_items = relationship("ProductIngredient", back_populates="ingredient", cascade="all, delete-orphan")
+
 def admin_required(f):
     """
     Makes sure only admin (user.id == 1) can acces when decorating page function and redirects to home if not
@@ -144,9 +177,21 @@ def render_index(lang):
         if (errors[0]  or errors[3]):
             valid_order = False
         order_logger.info(f"valid order:{valid_order}")
-        for bread in data.prices.keys():
-            if verifier.verify_int(eval(f'order_form.{bread}.data'), 0, 6):
-                order[bread] = eval(f'order_form.{bread}.data')
+        # build order from products present in the form (use DB-driven product list when available)
+        product_names = []
+        try:
+            db_products = Product.query.filter(Product.category.in_(['loaf','stick'])).all()
+            product_names = [p.name for p in db_products]
+        except Exception:
+            product_names = list(data.prices.keys())
+
+        for name in product_names:
+            try:
+                field = getattr(order_form, name, None)
+                if field and verifier.verify_int(field.data, 0, 6):
+                    order[name] = field.data
+            except Exception:
+                continue
         if errors[1]:
             order_logger.info(f"{errors[1]}")
         if not verifier.verify_int(order_form.recurring.data, 0, 7):
@@ -192,11 +237,28 @@ def render_index(lang):
                 order_logger.info("order received")
             if not errors[2]:
                 return redirect(url_for("orders"))
+    # fetch products for display (only include fields present in the order form)
+    try:
+        all_loaves = Product.query.filter_by(category='loaf').all()
+        all_sticks = Product.query.filter_by(category='stick').all()
+    except Exception:
+        all_loaves = []
+        all_sticks = []
+
+    def _has_field(form, name):
+        try:
+            return hasattr(form, name)
+        except Exception:
+            return False
+
+    loaves = [p for p in all_loaves if _has_field(order_form, p.name)]
+    sticks = [p for p in all_sticks if _has_field(order_form, p.name)]
+
     if lang == "es":
         # Spanish translations are available client-side; default server render is English
-        return render_template("index.html", order_form=order_form, errors=errors)
+        return render_template("index.html", order_form=order_form, errors=errors, loaves=loaves, sticks=sticks)
     elif lang == "en":
-        return render_template("index.html", order_form=order_form, errors=errors)
+        return render_template("index.html", order_form=order_form, errors=errors, loaves=loaves, sticks=sticks)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -354,10 +416,6 @@ def account():
 @app.route('/info', methods=['POST', 'GET'])
 def info():
     return(render_template("info.html"))
-
-@app.route('/infoEng', methods=['POST', 'GET'])
-def infoEng():
-    return(render_template("info_Eng.html"))
 
 # ADMIN PAGES
 @app.route('/baker', methods=['POST', 'GET'])

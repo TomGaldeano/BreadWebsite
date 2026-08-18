@@ -5,27 +5,30 @@
     <div class="table-responsive">
          <form method="POST" action="{{ url_for('index') }}">
           <table class="table table-hover">
-        {{ order_form.csrf_token() }}
-            <h1 id="heading-loaves" data-translator-en="Loaves" data-translator-es="Panes">Loaves</h1>
-            <tbody>
-            <tr>
-              <td class="align-middle" data-translator-en="Wheat" data-translator-es="Trigo">Wheat</td>
-              <td class="align-middle">3€</td>
-              <td class="align-middle" style="flex-wrap: wrap">{{order_form.White_loaf(style="width:50px")}}</td>
-              <td class = "d-none d-md-block"><img src="static/img/White loaf.jpg" alt="Image of a White loaf" class="img-thumbnail  bg-dark text-white" style="width:200px;height:123.6067px"></td>
-            </tr>
-            <!-- other products keep original English names but can be translated via data attributes as needed -->
-          </tbody>
-        </table>
+          {{ order_form.csrf_token() }}
+              <h1 id="heading-loaves" data-translator-en="Loaves" data-translator-es="Panes">Loaves</h1>
+              <tbody>
+              {% for p in loaves %}
+              <tr>
+                <td class="align-middle">{{ p.display_name or p.name }}</td>
+                <td class="align-middle">{{ '%.2g'|format(p.price) }}€</td>
+                <td class="align-middle" style="flex-wrap: wrap">{% if attribute(order_form, p.name) %}{{ attribute(order_form, p.name)(style="width:50px") }}{% endif %}</td>
+                <td class = "d-none d-md-block"><img src="static/img/{{ p.name|replace('_',' ') }}.jpg" alt="Image of {{ p.display_name or p.name }}" class="img-thumbnail  bg-dark text-white" style="width:200px;height:123.6067px"></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
         <table class="table table-hover">
           <h1 id="heading-sticks" data-translator-en="Sticks" data-translator-es="Barras">Sticks</h1>
         <tbody>
+          {% for p in sticks %}
           <tr>
-            <td class="align-middle" data-translator-en="Wheat" data-translator-es="Trigo">Wheat</td>
-            <td class="align-middle">2€</td>
-            <td class="align-middle" style="flex-wrap: wrap">{{order_form.White_stick(style="width:50px")}}</td>
-            <td class = "d-none d-md-block"><img src="static/img/White stick.jpg" alt="Image of a White stick" class="img-thumbnail bg-dark text-white" style="width:200px;height:123.6067px"> </td>
+            <td class="align-middle">{{ p.display_name or p.name }}</td>
+            <td class="align-middle">{{ '%.2g'|format(p.price) }}€</td>
+            <td class="align-middle" style="flex-wrap: wrap">{% if attribute(order_form, p.name) %}{{ attribute(order_form, p.name)(style="width:50px") }}{% endif %}</td>
+            <td class = "d-none d-md-block"><img src="static/img/{{ p.name|replace('_',' ') }}.jpg" alt="Image of {{ p.display_name or p.name }}" class="img-thumbnail bg-dark text-white" style="width:200px;height:123.6067px"> </td>
           </tr>
+          {% endfor %}
         </tbody>
       </table>
     </div>

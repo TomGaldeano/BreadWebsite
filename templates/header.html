@@ -22,13 +22,17 @@
         <li class="nav-item ">
           <a class="nav-link " href="{{ url_for('index') }}"><img src="static/icons/bread.png" alt="home" class="" style="height:30px"></a>
         </li>
+          <li class="link-item  ">
+            <a class="nav-link " style="padding: .5rem" href="{{ url_for('info') }}"><img
+                  src="static/icons/info.png" alt="info" class="" style="height:30px"></a>
+          </li>
         {% if current_user.is_authenticated and current_user.id != 1: %}
         <li class="nav-item  ">
           <a class="nav-link " style="padding: .5rem" href="{{ url_for('orders') }}"><img src="static/icons/cart.png"
               alt="order menu" class="" style="height:30px"></a>
         </li>
         {% endif %}
-        {% if current_user.id == 1: %}
+        {% if current_user.is_authenticated and current_user.id == 1: %}
         <li class="nav-item dropdown">
           <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
             data-bs-toggle="dropdown" aria-expanded="false">
@@ -66,16 +70,18 @@
           </ul>
         </li>
         {% endif %}
-        {% if current_user.id != 1: %}
+        {% if current_user.is_authenticated and current_user.id != 1: %}
         <li class="nav-item  ">
-          <a class="nav-link " style="padding: .5rem" href="{{url_for('infoEng')}}"><img src="static/icons/info.png"
+          <a class="nav-link " style="padding: .5rem" href="{{url_for('info')}}"><img src="static/icons/info.png"
               alt="info" class="" style="height:30px"> </a>
         </li>
         {% endif %}
       </ul>
       <ul class="nav justify-content-end">
+        <li class="nav-item">
+          <button id="color_changer" type="button" aria-label="Toggle theme" title="Toggle theme" class="btn"><img src="static/icons/ColorChanger.png" alt="ColorChanger" style="height:30px"></button>
+        </li>
         {% if not current_user.is_authenticated: %}
-        <li class="nav-item" style="width:auto;"><button style="padding: .5rem;" id="color_changer"></button></li>
         <li class="nav-item  ">
           <a class="nav-link " style="padding: .5rem" href="{{ url_for('login') }}">Login</a>
         </li>
@@ -97,11 +103,10 @@
               alt="account" class="" style="height:30px"></a>
         </li>
         {% endif %}
-        <li class="nav-item  ">
+        <li class="nav-item">
           <button id="lang-toggle" class="btn btn-link" style="padding:.5rem"><img src="static/icons/spain.png" alt="toggle-language" style="height:30px"></button>
         </li>
       </ul>
     </div>
   </nav>
   <main class="container">
-    <script src="{{ url_for('static', filename='js/translator.js') }}"></script>

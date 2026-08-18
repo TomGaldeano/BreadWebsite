@@ -15,14 +15,6 @@
   --blue_tom: aqua;
 }
 
-#color_changer {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background-color: var(--black_tom);
-  border: 3px solid var(--white_tom);
-  outline: 3px solid var(--black_tom);
-}
 
 img,
 nav {
@@ -32,6 +24,10 @@ nav {
 li {
   color: var(--white_tom);
   background-color: var(--gray_tom);
+}
+
+.register-label {
+  color: var(--black_tom);
 }
 
 a{
@@ -50,10 +46,6 @@ a:hover {
 body {
   background-color: var(--white_tom);
   color: var(--black_tom);
-}
-
-li:has(#color_changer) {
-  min-width: 40px;
 }
 
 td {

@@ -1,31 +1,52 @@
 {% include "header.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
-
 <div class="container-fluid position-absoulte">
   <div class="container align-self-center" style="margin-top:100px">
-    <form method="POST" action="{{ url_for('register') }}">
-    {{ form.csrf_token() }}
-      <div class="row">
-        <div class="col-lg-8 col-md-10 mx-auto" style="bottom:0">
-            <div class="row">
-              <div class="col-lg-8 col-md-10 mx-auto" style="bottom:0">
-                <ul class="list-group list-group-flush">
-                  <li class="list-group-item " data-translator-en="Username" data-translator-es="Usuario">Username</li>
-                  <li class="list-group-item ">{{form.username(style="width:200px")}} <span style="color:red">{% if errors[0] %}{{errors[0]}}{% endif %}</span></li>
-                  <li class="list-group-item " data-translator-en="Group" data-translator-es="Grupo">Group</li>
-                  <li class="list-group-item ">{{form.group(style="width:200px")}}</li>
-                  <li class="list-group-item " data-translator-en="Email" data-translator-es="Correo">Email</li>
-                  <li class="list-group-item ">{{form.email(style="width:200px")}}<span style="color:red">{% if errors[0] %}{{errors[1]}}{% endif %}</span></li>
-                  <li class="list-group-item" data-translator-en="Password" data-translator-es="Contraseña">Password</li>
-                  <li class="list-group-item ">{{form.password(style="width:200px")}}</li>
-                  <li class="list-group-item "><input type="submit" value="Register" class="btn btn-dark" data-translator-en="Register" data-translator-es="Registro"></li>
-                </ul>
-              </div>
-            </div>
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto" style="bottom:0">
+        <h1 data-translator-en="Register" data-translator-es="Registro">Register</h1>
+        <form method="POST" action="{{ url_for('register') }}">
+          {{ form.csrf_token() }}
+          <div class="form-group">
+            <label for="username" data-translator-en="Username" data-translator-es="Usuario">Username</label>
+            {{ form.username(class_="form-control", id="username") }}
+            {% for err in form.username.errors %}
+            <div class="text-danger">{{ err }}</div>
+            {% endfor %}
+            {% if errors and errors[0] %}
+            <div class="text-danger">{{ errors[0] }}</div>
+            {% endif %}
           </div>
-        </div>
-      </form>
+          <div class="form-group">
+            <label for="group" data-translator-en="Group" data-translator-es="Grupo">Group</label>
+            {{ form.group(class_="form-control", id="group") }}
+            {% for err in form.group.errors %}
+            <div class="text-danger">{{ err }}</div>
+            {% endfor %}
+          </div>
+          <div class="form-group">
+            <label for="email" data-translator-en="Email" data-translator-es="Correo">Email</label>
+            {{ form.email(class_="form-control", id="email") }}
+            {% for err in form.email.errors %}
+            <div class="text-danger">{{ err }}</div>
+            {% endfor %}
+            {% if errors and errors[1] %}
+            <div class="text-danger">{{ errors[1] }}</div>
+            {% endif %}
+          </div>
+          <div class="form-group">
+            <label for="password" data-translator-en="Password" data-translator-es="Contraseña">Password</label>
+            {{ form.password(class_="form-control", id="password") }}
+            {% for err in form.password.errors %}
+            <div class="text-danger">{{ err }}</div>
+            {% endfor %}
+          </div>
+          <div class="form-group mt-3">
+            <input type="submit" value="Register" class="btn btn-dark" data-translator-en="Register" data-translator-es="Registro">
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </div>
-</body>
-</html>
+{% include "footer.html" %}
