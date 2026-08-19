@@ -28,36 +28,36 @@ ON DUPLICATE KEY UPDATE cost=VALUES(cost);
 
 -- Products (precios)
 INSERT INTO products (`name`,`display_name`,`price`,`cost`,`benefits`,`category`) VALUES
-('Olive_stick','Olive stick',2.5,0.985,1.515,'stick'),
-('Olive_loaf','Olive loaf',4,1.335,2.665,'loaf'),
-('White_stick','White stick',2,0.435,1.565,'stick'),
-('White_loaf','White loaf',3,0.76,2.24,'loaf'),
-('Onion_stick','Onion stick',2.5,0.70375,1.79625,'stick'),
-('Onion_loaf','Onion loaf',4,1.31,2.69,'loaf'),
-('Wholemeal_Rye_stick','Wholemeal Rye stick',2.5,0.50375,1.99625,'stick'),
-('Wholemeal_Rye_loaf','Wholemeal Rye loaf',4,0.91,3.09,'loaf'),
-('Wholemeal_Spelt_stick','Wholemeal Spelt stick',2.5,0.60375,1.89625,'stick'),
-('Wholemeal_Spelt_loaf','Wholemeal Spelt loaf',4,1.11,2.89,'loaf'),
-('Wholemeal_White_stick','Wholemeal White stick',2.5,0.48775,2.01225,'stick'),
-('Wholemeal_White_loaf','Wholemeal White loaf',4,0.878,3.122,'loaf'),
-('Wholemeal_Seeds_stick','Wholemeal Seeds stick',2.5,0.58575,1.91425,'stick'),
-('Wholemeal_Seeds_loaf','Wholemeal Seeds loaf',4,1.258,2.742,'loaf'),
-('Walnut_stick','Walnut stick',2.5,1.05375,1.44625,'stick'),
-('Walnut_loaf','Walnut loaf',4,1.9975,2.0025,'loaf'),
-('Wholemeal_Walnut_stick','Wholemeal Walnut stick',2.5,1.07075,1.42925,'stick'),
-('Wholemeal_Walnut_loaf','Wholemeal Walnut loaf',4,2.044,1.956,'loaf'),
-('Walnut_and_Sultanas_stick','Walnut and Sultanas stick',2.5,0.924,1.576,'stick'),
-('Walnut_and_Sultanas_loaf','Walnut and Sultanas loaf',4,1.738,2.262,'loaf'),
-('Wholemeal_Walnut_and_Sultanas_stick','Wholemeal Walnut and Sultanas stick',2.5,1.33575,1.16425,'stick'),
-('Wholemeal_Walnut_and_Sultanas_loaf','Wholemeal Walnut and Sultanas loaf',4,1.634,2.366,'loaf'),
-('Potato_stick','Potato stick',2,0.45375,1.54625,'stick'),
-('Potato_loaf','Potato loaf',3,0.81,2.19,'loaf'),
-('Pistacho_stick','Pistacho stick',3,1.6375,1.3625,'stick'),
-('Pistacho_loaf','Pistacho loaf',4.5,2.6275,1.8725,'loaf'),
-('Wholemeal_Pistacho_stick','Wholemeal Pistacho stick',3,1.39825,1.60175,'stick'),
-('Wholemeal_Pistacho_loaf','Wholemeal Pistacho loaf',5,2.5615,2.4385,'loaf'),
-('Seeds_stick','Seeds stick',2,0.7525,1.2475,'stick'),
-('Seeds_loaf','Seeds loaf',3,1.015,1.985,'loaf')
+('Olive_stick','Olive stick',2.5,0.985,1.515,'bread'),
+('Olive_loaf','Olive loaf',4,1.335,2.665,'bread'),
+('White_stick','White stick',2,0.435,1.565,'bread'),
+('White_loaf','White loaf',3,0.76,2.24,'bread'),
+('Onion_stick','Onion stick',2.5,0.70375,1.79625,'bread'),
+('Onion_loaf','Onion loaf',4,1.31,2.69,'bread'),
+('Wholemeal_Rye_stick','Wholemeal Rye stick',2.5,0.50375,1.99625,'bread'),
+('Wholemeal_Rye_loaf','Wholemeal Rye loaf',4,0.91,3.09,'bread'),
+('Wholemeal_Spelt_stick','Wholemeal Spelt stick',2.5,0.60375,1.89625,'bread'),
+('Wholemeal_Spelt_loaf','Wholemeal Spelt loaf',4,1.11,2.89,'bread'),
+('Wholemeal_White_stick','Wholemeal White stick',2.5,0.48775,2.01225,'bread'),
+('Wholemeal_White_loaf','Wholemeal White loaf',4,0.878,3.122,'bread'),
+('Wholemeal_Seeds_stick','Wholemeal Seeds stick',2.5,0.58575,1.91425,'bread'),
+('Wholemeal_Seeds_loaf','Wholemeal Seeds loaf',4,1.258,2.742,'bread'),
+('Walnut_stick','Walnut stick',2.5,1.05375,1.44625,'bread'),
+('Walnut_loaf','Walnut loaf',4,1.9975,2.0025,'bread'),
+('Wholemeal_Walnut_stick','Wholemeal Walnut stick',2.5,1.07075,1.42925,'bread'),
+('Wholemeal_Walnut_loaf','Wholemeal Walnut loaf',4,2.044,1.956,'bread'),
+('Walnut_and_Sultanas_stick','Walnut and Sultanas stick',2.5,0.924,1.576,'bread'),
+('Walnut_and_Sultanas_loaf','Walnut and Sultanas loaf',4,1.738,2.262,'bread'),
+('Wholemeal_Walnut_and_Sultanas_stick','Wholemeal Walnut and Sultanas stick',2.5,1.33575,1.16425,'bread'),
+('Wholemeal_Walnut_and_Sultanas_loaf','Wholemeal Walnut and Sultanas loaf',4,1.634,2.366,'bread'),
+('Potato_stick','Potato stick',2,0.45375,1.54625,'bread'),
+('Potato_loaf','Potato loaf',3,0.81,2.19,'bread'),
+('Pistacho_stick','Pistacho stick',3,1.6375,1.3625,'bread'),
+('Pistacho_loaf','Pistacho loaf',4.5,2.6275,1.8725,'bread'),
+('Wholemeal_Pistacho_stick','Wholemeal Pistacho stick',3,1.39825,1.60175,'bread'),
+('Wholemeal_Pistacho_loaf','Wholemeal Pistacho loaf',5,2.5615,2.4385,'bread'),
+('Seeds_stick','Seeds stick',2,0.7525,1.2475,'bread'),
+('Seeds_loaf','Seeds loaf',3,1.015,1.985,'bread')
 ON DUPLICATE KEY UPDATE price=VALUES(price), cost=VALUES(cost), benefits=VALUES(benefits), display_name=VALUES(display_name), category=VALUES(category);
 
 -- Recipes (map ingredient -> quantity/cost as JSON string). Uses a subselect to find product_id by name.
@@ -66,10 +66,10 @@ ON DUPLICATE KEY UPDATE price=VALUES(price), cost=VALUES(cost), benefits=VALUES(
 -- Remove existing associations for these products then insert fresh rows (idempotent)
 DELETE pi FROM product_ingredients pi JOIN products p ON pi.product_id = p.id WHERE p.name IN (
 	'White_loaf','Seeds_loaf','Walnut_loaf','Wholemeal_White_loaf','Wholemeal_Spelt_loaf','Pistacho_loaf',
-	'Nueces y pasas hogaza','Wholemeal_Seeds_loaf =','Wholemeal_Walnut_loaf','Wholemeal_Walnut_and_Sultanas_loaf',
+	'Nueces y pasas hogaza','Wholemeal_Seeds_loaf','Wholemeal_Walnut_loaf','Wholemeal_Walnut_and_Sultanas_loaf',
 	'Wholemeal_Pistacho_loaf','White_stick','Seeds_stick','Walnut_stick','Wholemeal_White_stick','Wholemeal_Spelt_stick',
 	'Wholemeal_Rye_stick','Pistacho_stick','Walnut_and_Sultanas_stick','Wholemeal_Seeds_stick','Wholemeal_Walnut_stick',
-	'Wholemeal_Walnut_and_Sultanas_stick','Wholemeal_Pistacho_stick'
+	'Wholemeal_Walnut_and_Sultanas_stick','Wholemeal_Pistacho_stick', 'Olive_stick', 'Olive_loaf', 'Onion_stick', 'Onion_loaf', 'Wholemeal_Rye_loaf', 'Potato_stick', 'Potato_loaf'
 );
 
 -- Replace big VALUES block with INSERT ... SELECT so NULL ids are not inserted.
@@ -166,19 +166,19 @@ INSERT INTO product_ingredients (product_id, ingredient_id, quantity)
 SELECT p.id, i.id, 1 FROM products p JOIN ingredients i ON i.name='Levadura(1g)' WHERE p.name='Nueces y pasas hogaza';
 
 INSERT INTO product_ingredients (product_id, ingredient_id, quantity)
-SELECT p.id, i.id, 3.2 FROM products p JOIN ingredients i ON i.name='Harina fuerza(100g)' WHERE p.name='Wholemeal_Seeds_loaf =';
+SELECT p.id, i.id, 3.2 FROM products p JOIN ingredients i ON i.name='Harina fuerza(100g)' WHERE p.name='Wholemeal_Seeds_loaf';
 INSERT INTO product_ingredients (product_id, ingredient_id, quantity)
-SELECT p.id, i.id, 2 FROM products p JOIN ingredients i ON i.name='Harina integral(100g)' WHERE p.name='Wholemeal_Seeds_loaf =';
+SELECT p.id, i.id, 2 FROM products p JOIN ingredients i ON i.name='Harina integral(100g)' WHERE p.name='Wholemeal_Seeds_loaf';
 INSERT INTO product_ingredients (product_id, ingredient_id, quantity)
-SELECT p.id, i.id, 1 FROM products p JOIN ingredients i ON i.name='Semillas(100g)' WHERE p.name='Wholemeal_Seeds_loaf =';
+SELECT p.id, i.id, 1 FROM products p JOIN ingredients i ON i.name='Semillas(100g)' WHERE p.name='Wholemeal_Seeds_loaf';
 INSERT INTO product_ingredients (product_id, ingredient_id, quantity)
-SELECT p.id, i.id, 3.1 FROM products p JOIN ingredients i ON i.name='Agua(100g)' WHERE p.name='Wholemeal_Seeds_loaf =';
+SELECT p.id, i.id, 3.1 FROM products p JOIN ingredients i ON i.name='Agua(100g)' WHERE p.name='Wholemeal_Seeds_loaf';
 INSERT INTO product_ingredients (product_id, ingredient_id, quantity)
-SELECT p.id, i.id, 0.2 FROM products p JOIN ingredients i ON i.name='Electricidad' WHERE p.name='Wholemeal_Seeds_loaf =';
+SELECT p.id, i.id, 0.2 FROM products p JOIN ingredients i ON i.name='Electricidad' WHERE p.name='Wholemeal_Seeds_loaf';
 INSERT INTO product_ingredients (product_id, ingredient_id, quantity)
-SELECT p.id, i.id, 1 FROM products p JOIN ingredients i ON i.name='Bolsa papel' WHERE p.name='Wholemeal_Seeds_loaf =';
+SELECT p.id, i.id, 1 FROM products p JOIN ingredients i ON i.name='Bolsa papel' WHERE p.name='Wholemeal_Seeds_loaf';
 INSERT INTO product_ingredients (product_id, ingredient_id, quantity)
-SELECT p.id, i.id, 1 FROM products p JOIN ingredients i ON i.name='Levadura(1g)' WHERE p.name='Wholemeal_Seeds_loaf =';
+SELECT p.id, i.id, 1 FROM products p JOIN ingredients i ON i.name='Levadura(1g)' WHERE p.name='Wholemeal_Seeds_loaf';
 
 INSERT INTO product_ingredients (product_id, ingredient_id, quantity)
 SELECT p.id, i.id, 3.2 FROM products p JOIN ingredients i ON i.name='Harina fuerza(100g)' WHERE p.name='Wholemeal_Walnut_loaf';
@@ -392,6 +392,4 @@ INSERT INTO product_ingredients (product_id, ingredient_id, quantity)
 SELECT p.id, i.id, 1 FROM products p JOIN ingredients i ON i.name='Bolsa papel' WHERE p.name='Wholemeal_Pistacho_stick';
 INSERT INTO product_ingredients (product_id, ingredient_id, quantity)
 SELECT p.id, i.id, 1 FROM products p JOIN ingredients i ON i.name='Levadura(1g)' WHERE p.name='Wholemeal_Pistacho_stick';
-;
-drop table recipes;
 COMMIT;

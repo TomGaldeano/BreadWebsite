@@ -1,0 +1,149 @@
+{% include "header.html" %}
+
+<div class="container-fluid" style="margin-top: 100px">
+  <div class="row justify-content-md-center container d-flex mx-auto">
+    <div style="width: 100%; max-width: 1000px;">
+      
+      <!-- Page Title -->
+      <div class="mb-4">
+        <h1 id="ingredients-title" data-translator-en="Ingredients" data-translator-es="Ingredientes">Ingredients</h1>
+      </div>
+
+      <!-- Search Box -->
+      <div class="mb-4">
+        <form method="GET" action="{{ url_for('ingredients') }}" class="form-inline">
+          <div class="input-group w-100">
+            <input 
+              type="text" 
+              class="form-control" 
+              id="search-input" 
+              name="search" 
+              placeholder="Search by name..."
+              value="{{ search_query }}"
+              data-translator-placeholder-en="Search by name..."
+              data-translator-placeholder-es="Buscar por nombre..."
+              style="flex: 1;">
+            <button class="btn btn-primary" type="submit" id="search-btn" data-translator-en="Search" data-translator-es="Buscar">Search</button>
+          </div>
+        </form>
+        <small class="text-muted" id="search-help" data-translator-en="Search in both English and Spanish names" data-translator-es="Buscar en nombres en inglés y español">Search in both English and Spanish names</small>
+      </div>
+
+      <!-- Results Count -->
+      <div class="mb-3">
+        <p id="results-info">
+          <span id="result-count">{{ ingredients|length }}</span>
+          <span id="results-label" data-translator-en="results" data-translator-es="resultados">results</span>
+          {% if search_query %}
+          <span id="for-label" data-translator-en="for" data-translator-es="para">"for"</span>
+          <strong>"{{ search_query }}"</strong>
+          {% endif %}
+        </p>
+      </div>
+
+      <!-- Ingredients Table -->
+      {% if ingredients %}
+      <div class="table-responsive">
+        <table class="table table-hover table-striped">
+          <thead class="table-light">
+            <tr>
+              <th id="col-name" data-translator-en="Name" data-translator-es="Nombre">Name</th>
+              <th id="col-english" data-translator-en="English Name" data-translator-es="Nombre en Inglés">English Name</th>
+              <th id="col-spanish" data-translator-en="Spanish Name" data-translator-es="Nombre en Español">Spanish Name</th>
+              <th id="col-cost" data-translator-en="Cost (€)" data-translator-es="Costo (€)">Cost (€)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for ingredient in ingredients %}
+            <tr>
+              <td class="align-middle">
+                {% if lang == 'es' and ingredient.display_name_es %}
+                  {{ ingredient.display_name_es }}
+                {% elif ingredient.display_name %}
+                  {{ ingredient.display_name }}
+                {% else %}
+                  {{ ingredient.name }}
+                {% endif %}
+              </td>
+              <td class="align-middle">
+                {% if ingredient.display_name %}
+                  {{ ingredient.display_name }}
+                {% else %}
+                  {{ ingredient.name }}
+                {% endif %}
+              </td>
+              <td class="align-middle">
+                {% if ingredient.display_name_es %}
+                  {{ ingredient.display_name_es }}
+                {% else %}
+                  <span class="text-muted" id="no-translation" data-translator-en="N/A" data-translator-es="N/D">N/A</span>
+                {% endif %}
+              </td>
+              <td class="align-middle">
+                {% if ingredient.cost %}
+                  {{ '%.2f'|format(ingredient.cost) }}
+                {% else %}
+                  <span class="text-muted">—</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <!-- No Results Message -->
+      <div class="alert alert-info" role="alert">
+        {% if search_query %}
+        <p id="no-results-msg" data-translator-en="No ingredients found matching your search." data-translator-es="No se encontraron ingredientes que coincidan con tu búsqueda.">No ingredients found matching your search.</p>
+        <p id="try-again-msg" data-translator-en="Try using different search terms." data-translator-es="Intenta usar términos de búsqueda diferentes.">Try using different search terms.</p>
+        {% else %}
+        <p id="no-ingredients-msg" data-translator-en="No ingredients available." data-translator-es="No hay ingredientes disponibles.">No ingredients available.</p>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      <!-- Clear Search Link -->
+      {% if search_query %}
+      <div class="mt-4">
+        <a href="{{ url_for('ingredients') }}" class="btn btn-outline-secondary" id="clear-search-btn" data-translator-en="Clear Search" data-translator-es="Limpiar Búsqueda">Clear Search</a>
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+
+<!-- JavaScript for dynamic search (optional, for better UX) -->
+<script>
+  // Optional: Add real-time search filtering on the client side
+  document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('search-input');
+    const table = document.querySelector('table tbody');
+    
+    if (searchInput && table) {
+      searchInput.addEventListener('input', function() {
+        const query = this.value.toLowerCase();
+        const rows = table.querySelectorAll('tbody tr');
+        
+        rows.forEach(row => {
+          const text = row.textContent.toLowerCase();
+          if (text.includes(query)) {
+            row.style.display = '';
+          } else {
+            row.style.display = 'none';
+          }
+        });
+        
+        // Update result count
+        const visibleRows = Array.from(rows).filter(row => row.style.display !== 'none').length;
+        document.getElementById('result-count').textContent = visibleRows;
+      });
+    }
+  });
+</script>
+
+<!-- Include translator script for language toggle -->
+<script src="{{ url_for('static', filename='js/translator.js') }}"></script>
+
+{% include "footer.html" %}

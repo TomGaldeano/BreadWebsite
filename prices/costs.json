@@ -13,4 +13,6 @@
 "Bolsa papel":0.06,
 "Agua(100g)":0,
 "Electricidad":0,
-"Levadura(1g)":0.05}
+"Levadura(1g)":0.05,
+"Trabajo(1h)":10,
+"Desgaste(herramienta)":1}

@@ -6,31 +6,52 @@
          <form method="POST" action="{{ url_for('index') }}">
           <table class="table table-hover">
           {{ order_form.csrf_token() }}
-              <h1 id="heading-loaves" data-translator-en="Loaves" data-translator-es="Panes">Loaves</h1>
+              <h1 id="heading-bread" data-translator-en="Bread" data-translator-es="Pan">Bread</h1>
               <tbody>
-              {% for p in loaves %}
+              {% for p in bread %}
               <tr>
-                <td class="align-middle">{{ p.display_name or p.name }}</td>
+                <td class="align-middle">{% if lang == 'es' %}{{ p.display_name_es or p.display_name or (p.name|replace('_',' ')) }}{% else %}{{ p.display_name or (p.name|replace('_',' ')) }}{% endif %}</td>
                 <td class="align-middle">{{ '%.2g'|format(p.price) }}€</td>
-                <td class="align-middle" style="flex-wrap: wrap">{% if attribute(order_form, p.name) %}{{ attribute(order_form, p.name)(style="width:50px") }}{% endif %}</td>
-                <td class = "d-none d-md-block"><img src="static/img/{{ p.name|replace('_',' ') }}.jpg" alt="Image of {{ p.display_name or p.name }}" class="img-thumbnail  bg-dark text-white" style="width:200px;height:123.6067px"></td>
+                <td class="align-middle" style="flex-wrap: wrap">{% if p.name in order_form %}{{ order_form[p.name](style="width:50px") }}{% endif %}</td>
+                <td class = "d-none d-md-block"><img src="static/img/{{ p.name|replace('_',' ') }}.jpg" alt="Image of {% if lang == 'es' %}{{ p.display_name_es or p.display_name or p.name }}{% else %}{{ p.display_name or p.name }}{% endif %}" class="img-thumbnail  bg-dark text-white" style="width:200px;height:123.6067px"></td>
               </tr>
               {% endfor %}
             </tbody>
           </table>
+
+        <!-- Sweet section (future products) -->
         <table class="table table-hover">
-          <h1 id="heading-sticks" data-translator-en="Sticks" data-translator-es="Barras">Sticks</h1>
+          <h1 id="heading-sweet" data-translator-en="Sweet" data-translator-es="Dulces">Sweet</h1>
         <tbody>
-          {% for p in sticks %}
+          {% for p in sweet %}
           <tr>
-            <td class="align-middle">{{ p.display_name or p.name }}</td>
+            <td class="align-middle">{% if lang == 'es' %}{{ p.display_name_es or p.display_name or (p.name|replace('_',' ')) }}{% else %}{{ p.display_name or (p.name|replace('_',' ')) }}{% endif %}</td>
             <td class="align-middle">{{ '%.2g'|format(p.price) }}€</td>
-            <td class="align-middle" style="flex-wrap: wrap">{% if attribute(order_form, p.name) %}{{ attribute(order_form, p.name)(style="width:50px") }}{% endif %}</td>
-            <td class = "d-none d-md-block"><img src="static/img/{{ p.name|replace('_',' ') }}.jpg" alt="Image of {{ p.display_name or p.name }}" class="img-thumbnail bg-dark text-white" style="width:200px;height:123.6067px"> </td>
+            <td class="align-middle" style="flex-wrap: wrap">{% if p.name in order_form %}{{ order_form[p.name](style="width:50px") }}{% endif %}</td>
+            <td class = "d-none d-md-block"><img src="static/img/{{ p.name|replace('_',' ') }}.jpg" alt="Image of {% if lang == 'es' %}{{ p.display_name_es or p.display_name or p.name }}{% else %}{{ p.display_name or p.name }}{% endif %}" class="img-thumbnail bg-dark text-white" style="width:200px;height:123.6067px"> </td>
           </tr>
+          {% else %}
+          <tr><td class="align-middle text-muted">No sweet products yet</td></tr>
           {% endfor %}
         </tbody>
       </table>
+
+      <!-- Savory section (future products) -->
+      <table class="table table-hover">
+        <h1 id="heading-savory" data-translator-en="Savory" data-translator-es="Salados">Savory</h1>
+      <tbody>
+        {% for p in savory %}
+        <tr>
+          <td class="align-middle">{% if lang == 'es' %}{{ p.display_name_es or p.display_name or (p.name|replace('_',' ')) }}{% else %}{{ p.display_name or (p.name|replace('_',' ')) }}{% endif %}</td>
+          <td class="align-middle">{{ '%.2g'|format(p.price) }}€</td>
+          <td class="align-middle" style="flex-wrap: wrap">{% if p.name in order_form %}{{ order_form[p.name](style="width:50px") }}{% endif %}</td>
+          <td class = "d-none d-md-block"><img src="static/img/{{ p.name|replace('_',' ') }}.jpg" alt="Image of {% if lang == 'es' %}{{ p.display_name_es or p.display_name or p.name }}{% else %}{{ p.display_name or p.name }}{% endif %}" class="img-thumbnail bg-dark text-white" style="width:200px;height:123.6067px"> </td>
+        </tr>
+        {% else %}
+        <tr><td class="align-middle text-muted">No savory products yet</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
     </div>
   <div class="mx-auto d-md-none d-block" style="width:100%;height: 10px;"></div>
   {% if not current_user.is_authenticated: %}<div class="mx-auto d-none d-md-block"><h4 id="must-login" data-translator-en="Must use your account to log in" data-translator-es="Debe usar su cuenta para iniciar sesión">Must use your account to log in</h4></div>

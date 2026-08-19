@@ -180,7 +180,7 @@ def render_index(lang):
         # build order from products present in the form (use DB-driven product list when available)
         product_names = []
         try:
-            db_products = Product.query.filter(Product.category.in_(['loaf','stick'])).all()
+            db_products = Product.query.filter_by(category='bread').all()
             product_names = [p.name for p in db_products]
         except Exception:
             product_names = list(data.prices.keys())
@@ -239,11 +239,13 @@ def render_index(lang):
                 return redirect(url_for("orders"))
     # fetch products for display (only include fields present in the order form)
     try:
-        all_loaves = Product.query.filter_by(category='loaf').all()
-        all_sticks = Product.query.filter_by(category='stick').all()
+        all_bread = Product.query.filter_by(category='bread').all()
+        all_sweet = Product.query.filter_by(category='sweet').all()
+        all_savory = Product.query.filter_by(category='savory').all()
     except Exception:
-        all_loaves = []
-        all_sticks = []
+        all_bread = []
+        all_sweet = []
+        all_savory = []
 
     def _has_field(form, name):
         try:
@@ -251,14 +253,25 @@ def render_index(lang):
         except Exception:
             return False
 
-    loaves = [p for p in all_loaves if _has_field(order_form, p.name)]
-    sticks = [p for p in all_sticks if _has_field(order_form, p.name)]
+    # For display purposes, show all products in each category.
+    # Keep filtering by form fields only for ordering logic elsewhere.
+    bread = all_bread
+    sweet = all_sweet
+    savory = all_savory
+
+    # Backwards compatibility: some code paths expect `loaves` and `sticks` variables.
+    try:
+        loaves = [p for p in bread if getattr(p, 'category', None) == 'loaf']
+        sticks = [p for p in bread if getattr(p, 'category', None) == 'stick']
+    except Exception:
+        loaves = []
+        sticks = []
 
     if lang == "es":
         # Spanish translations are available client-side; default server render is English
-        return render_template("index.html", order_form=order_form, errors=errors, loaves=loaves, sticks=sticks)
+        return render_template("index.html", order_form=order_form, errors=errors, bread=bread, sweet=sweet, savory=savory, loaves=loaves, sticks=sticks, lang=lang)
     elif lang == "en":
-        return render_template("index.html", order_form=order_form, errors=errors, loaves=loaves, sticks=sticks)
+        return render_template("index.html", order_form=order_form, errors=errors, bread=bread, sweet=sweet, savory=savory, loaves=loaves, sticks=sticks, lang=lang)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -416,6 +429,46 @@ def account():
 @app.route('/info', methods=['POST', 'GET'])
 def info():
     return(render_template("info.html"))
+
+@app.route('/ingredients', methods=['POST', 'GET'])
+def ingredients():
+    """
+    Displays all ingredients with search functionality by name in English or Spanish
+    depending on the currently selected language.
+    """
+    search_query = request.args.get('search', '').strip()
+    lang = request.args.get('lang', 'en')
+    
+    # Validate language parameter
+    if lang not in ['en', 'es']:
+        lang = 'en'
+    
+    try:
+        all_ingredients = Ingredient.query.all()
+    except Exception:
+        all_ingredients = []
+    
+    # Filter ingredients based on search query
+    filtered_ingredients = []
+    if search_query:
+        search_lower = search_query.lower()
+        for ingredient in all_ingredients:
+            # Search in both English and Spanish names
+            name_en = (ingredient.display_name or ingredient.name or '').lower()
+            name_es = (ingredient.display_name_es or ingredient.name or '').lower()
+            
+            if search_lower in name_en or search_lower in name_es:
+                filtered_ingredients.append(ingredient)
+    else:
+        filtered_ingredients = all_ingredients
+    
+    # Sort ingredients by display name
+    filtered_ingredients.sort(key=lambda x: (x.display_name_es if lang == 'es' and x.display_name_es else x.display_name or x.name))
+    
+    return render_template("ingredients.html", 
+                         ingredients=filtered_ingredients, 
+                         search_query=search_query,
+                         lang=lang)
 
 # ADMIN PAGES
 @app.route('/baker', methods=['POST', 'GET'])

@@ -21,6 +21,19 @@
         }
       }
     });
+
+    // Handle placeholder translations
+    var placeholderNodes = document.querySelectorAll('[data-translator-placeholder-en]');
+    placeholderNodes.forEach(function(n){
+      var en = n.getAttribute('data-translator-placeholder-en');
+      var es = n.getAttribute('data-translator-placeholder-es');
+      if(!en) return;
+      if(lang === 'es' && es !== null){
+        n.placeholder = es;
+      } else {
+        n.placeholder = en;
+      }
+    });
   }
 
   function toggle(){
