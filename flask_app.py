@@ -198,21 +198,25 @@ def render_index(lang):
         if (errors[0]  or errors[3]):
             valid_order = False
         order_logger.info(f"valid order:{valid_order}")
-        # build order from products present in the form (use DB-driven product list when available)
+        # Build the order from every product currently available in the database.
         product_names = []
         try:
-            db_products = Product.query.filter_by(category='bread').all()
+            db_products = Product.query.all()
             product_names = [p.name for p in db_products]
         except Exception:
             product_names = list(data.prices.keys())
 
         for name in product_names:
             try:
-                field = getattr(order_form, name, None)
-                if field and verifier.verify_int(field.data, 0, 6):
-                    order[name] = field.data
+                raw_quantity = request.form.get(name, "0")
+                if not verifier.verify_int(raw_quantity, 0, 6):
+                    valid_order = False
+                    continue
+                quantity = int(raw_quantity)
+                if quantity:
+                    order[name] = quantity
             except Exception:
-                continue
+                valid_order = False
         if errors[1]:
             order_logger.info(f"{errors[1]}")
         if not verifier.verify_int(order_form.recurring.data, 0, 7):

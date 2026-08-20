@@ -24,10 +24,10 @@
               <tbody>
               {% for p in bread %}
               <tr>
-                <td class="align-middle">{% if lang == 'es' %}{{ p.display_name_es or p.display_name or (p.name|replace('_',' ')) }}{% else %}{{ p.display_name or (p.name|replace('_',' ')) }}{% endif %}</td>
+                <td class="align-middle" data-translator-en="{{ p.display_name or (p.name|replace('_',' ')) }}" data-translator-es="{{ p.display_name_es or p.display_name or (p.name|replace('_',' ')) }}">{% if lang == 'es' %}{{ p.display_name_es or p.display_name or (p.name|replace('_',' ')) }}{% else %}{{ p.display_name or (p.name|replace('_',' ')) }}{% endif %}</td>
                 <td class="align-middle">{{ '%.2g'|format(p.price) }}€</td>
-                <td class="align-middle" style="flex-wrap: wrap">{% if p.name in order_form %}{{ order_form[p.name](style="width:50px") }}{% endif %}</td>
-                <td class = "d-none d-md-block"><img src="static/img/{{ p.name|replace('_',' ') }}.jpg" alt="Image of {% if lang == 'es' %}{{ p.display_name_es or p.display_name or p.name }}{% else %}{{ p.display_name or p.name }}{% endif %}" class="img-thumbnail  bg-dark text-white" style="width:200px;height:123.6067px"></td>
+                <td class="align-middle" style="flex-wrap: wrap"><input type="number" name="{{ p.name }}" min="0" max="6" value="0" style="width:50px"></td>
+                <td class = "d-none d-md-block"><img src="static/img/{{ p.name|replace('_',' ') }}.jpg" alt="Image of {% if lang == 'es' %}{{ p.display_name_es or p.display_name or p.name }}{% else %}{{ p.display_name or p.name }}{% endif %}" class="img-thumbnail  bg-dark text-white" style="width:200px;height:123.6067px" onerror="this.style.display='none'"></td>
               </tr>
               {% endfor %}
             </tbody>
@@ -39,10 +39,10 @@
         <tbody>
           {% for p in sweet %}
           <tr>
-            <td class="align-middle">{% if lang == 'es' %}{{ p.display_name_es or p.display_name or (p.name|replace('_',' ')) }}{% else %}{{ p.display_name or (p.name|replace('_',' ')) }}{% endif %}</td>
+            <td class="align-middle" data-translator-en="{{ p.display_name or (p.name|replace('_',' ')) }}" data-translator-es="{{ p.display_name_es or p.display_name or (p.name|replace('_',' ')) }}">{% if lang == 'es' %}{{ p.display_name_es or p.display_name or (p.name|replace('_',' ')) }}{% else %}{{ p.display_name or (p.name|replace('_',' ')) }}{% endif %}</td>
             <td class="align-middle">{{ '%.2g'|format(p.price) }}€</td>
-            <td class="align-middle" style="flex-wrap: wrap">{% if p.name in order_form %}{{ order_form[p.name](style="width:50px") }}{% endif %}</td>
-            <td class = "d-none d-md-block"><img src="static/img/{{ p.name|replace('_',' ') }}.jpg" alt="Image of {% if lang == 'es' %}{{ p.display_name_es or p.display_name or p.name }}{% else %}{{ p.display_name or p.name }}{% endif %}" class="img-thumbnail bg-dark text-white" style="width:200px;height:123.6067px"> </td>
+            <td class="align-middle" style="flex-wrap: wrap"><input type="number" name="{{ p.name }}" min="0" max="6" value="0" style="width:50px"></td>
+            <td class = "d-none d-md-block"><img src="static/img/{{ p.name|replace('_',' ') }}.jpg" alt="Image of {% if lang == 'es' %}{{ p.display_name_es or p.display_name or p.name }}{% else %}{{ p.display_name or p.name }}{% endif %}" class="img-thumbnail bg-dark text-white" style="width:200px;height:123.6067px" onerror="this.style.display='none'"> </td>
           </tr>
           {% else %}
           <tr><td class="align-middle text-muted">No sweet products yet</td></tr>
@@ -56,10 +56,10 @@
       <tbody>
         {% for p in savory %}
         <tr>
-          <td class="align-middle">{% if lang == 'es' %}{{ p.display_name_es or p.display_name or (p.name|replace('_',' ')) }}{% else %}{{ p.display_name or (p.name|replace('_',' ')) }}{% endif %}</td>
+          <td class="align-middle" data-translator-en="{{ p.display_name or (p.name|replace('_',' ')) }}" data-translator-es="{{ p.display_name_es or p.display_name or (p.name|replace('_',' ')) }}">{% if lang == 'es' %}{{ p.display_name_es or p.display_name or (p.name|replace('_',' ')) }}{% else %}{{ p.display_name or (p.name|replace('_',' ')) }}{% endif %}</td>
           <td class="align-middle">{{ '%.2g'|format(p.price) }}€</td>
-          <td class="align-middle" style="flex-wrap: wrap">{% if p.name in order_form %}{{ order_form[p.name](style="width:50px") }}{% endif %}</td>
-          <td class = "d-none d-md-block"><img src="static/img/{{ p.name|replace('_',' ') }}.jpg" alt="Image of {% if lang == 'es' %}{{ p.display_name_es or p.display_name or p.name }}{% else %}{{ p.display_name or p.name }}{% endif %}" class="img-thumbnail bg-dark text-white" style="width:200px;height:123.6067px"> </td>
+          <td class="align-middle" style="flex-wrap: wrap"><input type="number" name="{{ p.name }}" min="0" max="6" value="0" style="width:50px"></td>
+          <td class = "d-none d-md-block"><img src="static/img/{{ p.name|replace('_',' ') }}.jpg" alt="Image of {% if lang == 'es' %}{{ p.display_name_es or p.display_name or p.name }}{% else %}{{ p.display_name or p.name }}{% endif %}" class="img-thumbnail bg-dark text-white" style="width:200px;height:123.6067px" onerror="this.style.display='none'"> </td>
         </tr>
         {% else %}
         <tr><td class="align-middle text-muted">No savory products yet</td></tr>

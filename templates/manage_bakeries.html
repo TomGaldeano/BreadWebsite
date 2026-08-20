@@ -1,9 +1,9 @@
 {% include "header.html" %}
-
+{% import "bootstrap/wtf.html" as wtf %}
 <div class="container-fluid" style="margin-top: 100px">
   <div class="row justify-content-md-center">
     <div class="col-12" style="max-width: 1100px">
-      <h1 class="mb-4">Manage bakeries</h1>
+      <h1 class="mb-4" data-translator-en="Manage bakeries" data-translator-es="Gestionar panaderías">Manage bakeries</h1>
 
       {% if message %}
       <div class="alert alert-success" role="status">{{ message }}</div>
@@ -14,68 +14,69 @@
 
       <div class="card mb-4">
         <div class="card-body">
-          <h2 class="h4">{{ 'Edit bakery' if edit_id else 'Add bakery' }}</h2>
+          <h2 class="h4" data-translator-en="{{ 'Edit bakery' if edit_id else 'Add bakery' }}" data-translator-es="{{ 'Editar panadería' if edit_id else 'Añadir panadería' }}">{{ 'Edit bakery' if edit_id else 'Add bakery' }}</h2>
           <form method="POST" action="{{ url_for('manage_bakeries', edit=edit_id) if edit_id else url_for('manage_bakeries') }}">
             {{ form.hidden_tag() }}
             <div class="form-row">
               <div class="form-group col-md-6">
-                {{ form.name.label(class="font-weight-bold") }}
-                {{ form.name(class="form-control") }}
+                <label for="{{ form.name.id }}" class="font-weight-bold" data-translator-en="Name" data-translator-es="Nombre">Name</label>
+                {{ form.name(class="form-control", data_translator_placeholder_en="Bakery name", data_translator_placeholder_es="Nombre de la panadería") }}
                 {% for error in form.name.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
               </div>
               <div class="form-group col-md-6">
-                {{ form.address.label(class="font-weight-bold") }}
-                {{ form.address(class="form-control") }}
+                <label for="{{ form.address.id }}" class="font-weight-bold" data-translator-en="Address" data-translator-es="Dirección">Address</label>
+                {{ form.address(class="form-control", data_translator_placeholder_en="Bakery address", data_translator_placeholder_es="Dirección de la panadería") }}
                 {% for error in form.address.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
               </div>
             </div>
             <div class="form-row">
               <div class="form-group col-md-3">
-                {{ form.latitude.label(class="font-weight-bold") }}
+                <label for="{{ form.latitude.id }}" class="font-weight-bold" data-translator-en="Latitude" data-translator-es="Latitud">Latitude</label>
                 {{ form.latitude(class="form-control", step="any") }}
                 {% for error in form.latitude.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
               </div>
               <div class="form-group col-md-3">
-                {{ form.longitude.label(class="font-weight-bold") }}
+                <label for="{{ form.longitude.id }}" class="font-weight-bold" data-translator-en="Longitude" data-translator-es="Longitud">Longitude</label>
                 {{ form.longitude(class="form-control", step="any") }}
                 {% for error in form.longitude.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
               </div>
               <div class="form-group col-md-3">
-                {{ form.base_delivery_cost.label(class="font-weight-bold") }}
+                <label for="{{ form.base_delivery_cost.id }}" class="font-weight-bold" data-translator-en="Base delivery cost" data-translator-es="Coste base de entrega">Base delivery cost</label>
                 {{ form.base_delivery_cost(class="form-control", step="0.01", min="0") }}
                 {% for error in form.base_delivery_cost.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
               </div>
               <div class="form-group col-md-3">
-                {{ form.cost_per_km.label(class="font-weight-bold") }}
+                <label for="{{ form.cost_per_km.id }}" class="font-weight-bold" data-translator-en="Cost per kilometre" data-translator-es="Coste por kilómetro">Cost per kilometre</label>
                 {{ form.cost_per_km(class="form-control", step="0.01", min="0") }}
                 {% for error in form.cost_per_km.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
               </div>
             </div>
-            {{ form.submit(class="btn btn-primary") }}
+            {{ form.submit(class="btn btn-primary", data_translator_en="Save bakery", data_translator_es="Guardar panadería") }}
             {% if edit_id %}
-            <a class="btn btn-outline-secondary ml-2" href="{{ url_for('manage_bakeries') }}">Cancel</a>
+            <a class="btn btn-outline-secondary ml-2" href="{{ url_for('manage_bakeries') }}" data-translator-en="Cancel" data-translator-es="Cancelar">Cancel</a>
             {% endif %}
           </form>
         </div>
       </div>
 
       <form method="GET" action="{{ url_for('manage_bakeries') }}" class="form-inline mb-3">
-        <label class="sr-only" for="bakery-search">Search bakeries</label>
-        <input id="bakery-search" class="form-control mr-2 flex-grow-1" type="search" name="search"
-               value="{{ search_query }}" placeholder="Search by name or address">
-        <button class="btn btn-outline-primary" type="submit">Search</button>
-        {% if search_query %}<a class="btn btn-link" href="{{ url_for('manage_bakeries') }}">Clear</a>{% endif %}
+        <label class="sr-only" for="bakery-search" data-translator-en="Search bakeries" data-translator-es="Buscar panaderías">Search bakeries</label>
+         <input id="bakery-search" class="form-control mr-2 flex-grow-1" type="search" name="search"
+           value="{{ search_query }}" placeholder="Search by name or address"
+           data-translator-placeholder-en="Search by name or address" data-translator-placeholder-es="Buscar por nombre o dirección">
+         <button class="btn btn-outline-primary" type="submit" data-translator-en="Search" data-translator-es="Buscar">Search</button>
+         {% if search_query %}<a class="btn btn-link" href="{{ url_for('manage_bakeries') }}" data-translator-en="Clear" data-translator-es="Limpiar">Clear</a>{% endif %}
       </form>
 
       <div class="table-responsive">
         <table class="table table-hover table-striped">
           <thead class="table-light">
             <tr>
-              <th>Name</th>
-              <th>Address</th>
-              <th>Coordinates</th>
-              <th>Delivery pricing</th>
-              <th class="text-right">Actions</th>
+              <th data-translator-en="Name" data-translator-es="Nombre">Name</th>
+              <th data-translator-en="Address" data-translator-es="Dirección">Address</th>
+              <th data-translator-en="Coordinates" data-translator-es="Coordenadas">Coordinates</th>
+              <th data-translator-en="Delivery pricing" data-translator-es="Precios de entrega">Delivery pricing</th>
+              <th class="text-right" data-translator-en="Actions" data-translator-es="Acciones">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -86,16 +87,16 @@
               <td>{{ '%.4f'|format(bakery.latitude) }}, {{ '%.4f'|format(bakery.longitude) }}</td>
               <td>{{ '%.2f'|format(bakery.base_delivery_cost) }}€ + {{ '%.2f'|format(bakery.cost_per_km) }}€/km</td>
               <td class="text-right text-nowrap">
-                <a class="btn btn-sm btn-outline-primary" href="{{ url_for('manage_bakeries', edit=bakery.id, search=search_query) }}">Edit</a>
+                <a class="btn btn-sm btn-outline-primary" href="{{ url_for('manage_bakeries', edit=bakery.id, search=search_query) }}" data-translator-en="Edit" data-translator-es="Editar">Edit</a>
                 <form method="POST" action="{{ url_for('manage_bakeries', search=search_query) }}" class="d-inline">
                   {{ form.csrf_token() }}
                   <input type="hidden" name="delete_id" value="{{ bakery.id }}">
-                  <button class="btn btn-sm btn-outline-danger" type="submit" onclick="return confirm('Delete this bakery?');">Delete</button>
+                  <button class="btn btn-sm btn-outline-danger" type="submit" onclick="return confirm(document.documentElement.lang === 'es' ? '¿Eliminar esta panadería?' : 'Delete this bakery?');" data-translator-en="Delete" data-translator-es="Eliminar">Delete</button>
                 </form>
               </td>
             </tr>
             {% else %}
-            <tr><td colspan="5" class="text-muted">No bakeries found.</td></tr>
+            <tr><td colspan="5" class="text-muted" data-translator-en="No bakeries found." data-translator-es="No se encontraron panaderías.">No bakeries found.</td></tr>
             {% endfor %}
           </tbody>
         </table>

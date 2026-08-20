@@ -20,15 +20,15 @@
     <div class="container-fluid ">
       <ul class="nav justify-content-start ms-auto d-flex">
         <li class="nav-item ">
-          <a class="nav-link " href="{{ url_for('index') }}"><img src="static/icons/bread.png" alt="home" class="" style="height:30px"></a>
+          <a class="nav-link " href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='icons/bread.png') }}" alt="home" class="" style="height:30px"></a>
         </li>
           <li class="link-item  ">
             <a class="nav-link " style="padding: .5rem" href="{{ url_for('info') }}"><img
-                  src="static/icons/info.png" alt="info" class="" style="height:30px"></a>
+              src="{{ url_for('static', filename='icons/info.png') }}" alt="info" class="" style="height:30px"></a>
           </li>
           <li class="link-item  ">
             <a class="nav-link " style="padding: .5rem" href="{{ url_for('ingredients') }}" title="Ingredients"><img
-                  src="static/icons/ingredients.png" alt="ingredients" class="" style="height:30px"></a>
+              src="{{ url_for('static', filename='icons/ingredients.png') }}" alt="ingredients" class="" style="height:30px"></a>
           </li>
           <li class="link-item">
             <a class="nav-link" style="padding: .5rem" href="{{ url_for('products') }}" title="Products">
@@ -42,7 +42,7 @@
           </li>
         {% if current_user.is_authenticated and current_user.id != 1: %}
         <li class="nav-item  ">
-          <a class="nav-link " style="padding: .5rem" href="{{ url_for('orders') }}"><img src="static/icons/cart.png"
+          <a class="nav-link " style="padding: .5rem" href="{{ url_for('orders') }}"><img src="{{ url_for('static', filename='icons/cart.png') }}"
               alt="order menu" class="" style="height:30px"></a>
         </li>
         {% endif %}
@@ -50,27 +50,27 @@
         <li class="nav-item dropdown">
           <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
             data-bs-toggle="dropdown" aria-expanded="false">
-            <img src="static/icons/menu.png" alt="account" class="" style="height:30px"></a>
+            <img src="{{ url_for('static', filename='icons/menu.png') }}" alt="account" class="" style="height:30px"></a>
           <ul class="dropdown-menu " aria-labelledby="dropdownMenuLink">
             <li class="link-item  ">
               <a class="nav-link " style="padding: .5rem" href="{{ url_for('baker') }}"><img
-                  src="static/icons/bread.png" alt="baker" class="" style="height:30px"></a>
+                  src="{{ url_for('static', filename='icons/bread.png') }}" alt="baker" class="" style="height:30px"></a>
             </li>
             <li class="link-item  ">
               <a class="nav-link " style="padding: .5rem" href="{{ url_for('baker_users') }}"><img
-                  src="static/icons/user.png" alt="users" class="" style="height:30px"></a>
+                  src="{{ url_for('static', filename='icons/user.png') }}" alt="users" class="" style="height:30px"></a>
             </li>
             <li class="link-item   gap-0 me-0">
               <a class="nav-link " style="padding: .5rem" href="{{ url_for('statistics') }}"><img
-                  src="static/icons/graph.png" alt="statistics" class="" style="height:30px"></a>
+                  src="{{ url_for('static', filename='icons/graph.png') }}" alt="statistics" class="" style="height:30px"></a>
             </li>
             <li class="link-item  ">
               <a class="nav-link " style="padding: .5rem" href="{{ url_for('payments') }}"><img
-                  src="static/icons/profit.png" alt="payments" class="" style="height:30px"></a>
+                  src="{{ url_for('static', filename='icons/profit.png') }}" alt="payments" class="" style="height:30px"></a>
             </li>
             <li class="nav-item  ">
               <a class="nav-link " style="padding: .5rem" href="{{ url_for('orders') }}"><img
-                  src="static/icons/cart.png" alt="orders" class="" style="height:30px"></a>
+              src="{{ url_for('static', filename='icons/cart.png') }}" alt="orders" class="" style="height:30px"></a>
             </li>
             <li class="nav-item  ">
               <a class="nav-link " style="padding: .5rem" href="{{ url_for('legacymanager') }}">leacies</a>
@@ -92,14 +92,14 @@
         {% endif %}
         {% if current_user.is_authenticated and current_user.id != 1: %}
         <li class="nav-item  ">
-          <a class="nav-link " style="padding: .5rem" href="{{url_for('info')}}"><img src="static/icons/info.png"
+          <a class="nav-link " style="padding: .5rem" href="{{url_for('info')}}"><img src="{{ url_for('static', filename='icons/info.png') }}"
               alt="info" class="" style="height:30px"> </a>
         </li>
         {% endif %}
       </ul>
       <ul class="nav justify-content-end">
         <li class="nav-item">
-          <button id="color_changer" type="button" aria-label="Toggle theme" title="Toggle theme" class="btn"><img src="static/icons/ColorChanger.png" alt="ColorChanger" style="height:30px"></button>
+          <button id="color_changer" type="button" aria-label="Toggle theme" title="Toggle theme" class="btn"><img src="{{ url_for('static', filename='icons/ColorChanger.png') }}" alt="ColorChanger" style="height:30px"></button>
         </li>
         {% if not current_user.is_authenticated: %}
         <li class="nav-item  ">
@@ -113,19 +113,19 @@
         {% endif %}
         {% if current_user.is_authenticated: %}
         <li class="nav-item  ">
-          <a class="nav-link " style="padding: .5rem" href="{{ url_for('logout') }}"><img
-              src="static/icons/power-switch.png" alt="logout" class="" style="height:30px"></a>
+            <a class="nav-link " style="padding: .5rem" href="{{ url_for('logout') }}"><img
+              src="{{ url_for('static', filename='icons/power-switch.png') }}" alt="logout" class="" style="height:30px"></a>
         </li>
         {% endif %}
         {% if current_user.is_authenticated: %}
         <li class="nav-item  ">
-          <a class="nav-link " style="padding: .5rem" href="{{ url_for('account') }}"><img src="static/icons/user.png"
+          <a class="nav-link " style="padding: .5rem" href="{{ url_for('account') }}"><img src="{{ url_for('static', filename='icons/user.png') }}"
               alt="account" class="" style="height:30px"></a>
         </li>
         {% endif %}
         <li class="nav-item">
           <button id="lang-toggle" class="btn btn-link" style="padding:.5rem" aria-label="Change language" title="Change language">
-            <img id="lang-icon" src="static/icons/spain.png" alt="Change language" style="height:30px">
+            <img id="lang-icon" src="{{ url_for('static', filename='icons/spain.png') }}" alt="Change language" style="height:30px">
           </button>
         </li>
       </ul>

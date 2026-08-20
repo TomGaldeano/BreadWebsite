@@ -5,7 +5,7 @@
     var langIcon = document.getElementById('lang-icon');
     var langToggle = document.getElementById('lang-toggle');
     if(langIcon){
-      langIcon.src = lang === 'es' ? 'static/icons/united-kingdom.png' : 'static/icons/spain.png';
+      langIcon.src = lang === 'es' ? '/static/icons/united-kingdom.png' : '/static/icons/spain.png';
       langIcon.alt = lang === 'es' ? 'Cambiar idioma' : 'Change language';
     }
     if(langToggle){
