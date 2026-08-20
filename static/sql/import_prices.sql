@@ -4,61 +4,77 @@
 USE breadshop;
 START TRANSACTION;
 
+-- Bakeries used by the delivery-cost calculator
+CREATE TABLE IF NOT EXISTS bakeries (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+	name VARCHAR(255) NOT NULL UNIQUE,
+	address VARCHAR(500) NOT NULL,
+	latitude DOUBLE NOT NULL,
+	longitude DOUBLE NOT NULL,
+	base_delivery_cost DOUBLE NOT NULL DEFAULT 2.0,
+	cost_per_km DOUBLE NOT NULL DEFAULT 0.5
+);
+
+INSERT INTO bakeries (`name`, `address`, `latitude`, `longitude`, `base_delivery_cost`, `cost_per_km`) VALUES
+('Sunrise Bread Lab', '12 Fictional Avenue, Madrid', 40.4168, -3.7038, 2.00, 0.50),
+('The Golden Crust', '7 Imaginary Street, Madrid', 40.4230, -3.6900, 2.50, 0.45)
+ON DUPLICATE KEY UPDATE address=VALUES(address), latitude=VALUES(latitude), longitude=VALUES(longitude), base_delivery_cost=VALUES(base_delivery_cost), cost_per_km=VALUES(cost_per_km);
+
 -- Ingredients (costs)
-INSERT INTO ingredients (`name`, `cost`) VALUES
-('Harina fuerza(100g)', 0.125),
-('Harina espelta(100g)', 0.3),
-('Harina centeno(100g)', 0.2),
-('Harina integral(100g)', 0.184),
-('Semillas(100g)', 0.38),
-('Nueces(100g)', 1.5),
-('Pasas(100g)', 0.38),
-('Pistachos(100g)', 2.2),
-('Aceitunas(100g)', 0.7),
-('Patata(100g)', 0.15),
-('Cebolla(100g)', 0.1),
-('Leche(100g)', 0.3),
-('Bolsa papel', 0.06),
-('Agua(100g)', 0),
-('Electricidad', 0),
-('Levadura(1g)', 0.05),
-('Trabajo(1h)', 10),
-('Desgaste(herramienta)', 1)
-ON DUPLICATE KEY UPDATE cost=VALUES(cost);
+INSERT INTO ingredients (`name`, `display_name`, `display_name_es`, `cost`) VALUES
+('Harina fuerza(100g)', 'Strong flour (100g)', 'Harina de fuerza (100g)', 0.125),
+('Harina espelta(100g)', 'Spelt flour (100g)', 'Harina de espelta (100g)', 0.3),
+('Harina centeno(100g)', 'Rye flour (100g)', 'Harina de centeno (100g)', 0.2),
+('Harina integral(100g)', 'Wholemeal flour (100g)', 'Harina integral (100g)', 0.184),
+('Semillas(100g)', 'Seeds (100g)', 'Semillas (100g)', 0.38),
+('Nueces(100g)', 'Walnuts (100g)', 'Nueces (100g)', 1.5),
+('Pasas(100g)', 'Sultanas (100g)', 'Pasas (100g)', 0.38),
+('Pistachos(100g)', 'Pistachios (100g)', 'Pistachos (100g)', 2.2),
+('Aceitunas(100g)', 'Olives (100g)', 'Aceitunas (100g)', 0.7),
+('Patata(100g)', 'Potato (100g)', 'Patata (100g)', 0.15),
+('Cebolla(100g)', 'Onion (100g)', 'Cebolla (100g)', 0.1),
+('Leche(100g)', 'Milk (100g)', 'Leche (100g)', 0.3),
+('Bolsa papel', 'Paper bag', 'Bolsa de papel', 0.06),
+('Agua(100g)', 'Water (100g)', 'Agua (100g)', 0),
+('Electricidad', 'Electricity', 'Electricidad', 0),
+('Levadura(1g)', 'Yeast (1g)', 'Levadura (1g)', 0.05),
+('Trabajo(1h)', 'Work (1h)', 'Trabajo (1h)', 10),
+('Desgaste(herramienta)', 'Wear and tear (tools)', 'Desgaste (herramienta)', 1)
+ON DUPLICATE KEY UPDATE display_name=VALUES(display_name), display_name_es=VALUES(display_name_es), cost=VALUES(cost);
 
 -- Products (precios)
-INSERT INTO products (`name`,`display_name`,`price`,`cost`,`benefits`,`category`) VALUES
-('Olive_stick','Olive stick',2.5,0.985,1.515,'bread'),
-('Olive_loaf','Olive loaf',4,1.335,2.665,'bread'),
-('White_stick','White stick',2,0.435,1.565,'bread'),
-('White_loaf','White loaf',3,0.76,2.24,'bread'),
-('Onion_stick','Onion stick',2.5,0.70375,1.79625,'bread'),
-('Onion_loaf','Onion loaf',4,1.31,2.69,'bread'),
-('Wholemeal_Rye_stick','Wholemeal Rye stick',2.5,0.50375,1.99625,'bread'),
-('Wholemeal_Rye_loaf','Wholemeal Rye loaf',4,0.91,3.09,'bread'),
-('Wholemeal_Spelt_stick','Wholemeal Spelt stick',2.5,0.60375,1.89625,'bread'),
-('Wholemeal_Spelt_loaf','Wholemeal Spelt loaf',4,1.11,2.89,'bread'),
-('Wholemeal_White_stick','Wholemeal White stick',2.5,0.48775,2.01225,'bread'),
-('Wholemeal_White_loaf','Wholemeal White loaf',4,0.878,3.122,'bread'),
-('Wholemeal_Seeds_stick','Wholemeal Seeds stick',2.5,0.58575,1.91425,'bread'),
-('Wholemeal_Seeds_loaf','Wholemeal Seeds loaf',4,1.258,2.742,'bread'),
-('Walnut_stick','Walnut stick',2.5,1.05375,1.44625,'bread'),
-('Walnut_loaf','Walnut loaf',4,1.9975,2.0025,'bread'),
-('Wholemeal_Walnut_stick','Wholemeal Walnut stick',2.5,1.07075,1.42925,'bread'),
-('Wholemeal_Walnut_loaf','Wholemeal Walnut loaf',4,2.044,1.956,'bread'),
-('Walnut_and_Sultanas_stick','Walnut and Sultanas stick',2.5,0.924,1.576,'bread'),
-('Walnut_and_Sultanas_loaf','Walnut and Sultanas loaf',4,1.738,2.262,'bread'),
-('Wholemeal_Walnut_and_Sultanas_stick','Wholemeal Walnut and Sultanas stick',2.5,1.33575,1.16425,'bread'),
-('Wholemeal_Walnut_and_Sultanas_loaf','Wholemeal Walnut and Sultanas loaf',4,1.634,2.366,'bread'),
-('Potato_stick','Potato stick',2,0.45375,1.54625,'bread'),
-('Potato_loaf','Potato loaf',3,0.81,2.19,'bread'),
-('Pistacho_stick','Pistacho stick',3,1.6375,1.3625,'bread'),
-('Pistacho_loaf','Pistacho loaf',4.5,2.6275,1.8725,'bread'),
-('Wholemeal_Pistacho_stick','Wholemeal Pistacho stick',3,1.39825,1.60175,'bread'),
-('Wholemeal_Pistacho_loaf','Wholemeal Pistacho loaf',5,2.5615,2.4385,'bread'),
-('Seeds_stick','Seeds stick',2,0.7525,1.2475,'bread'),
-('Seeds_loaf','Seeds loaf',3,1.015,1.985,'bread')
-ON DUPLICATE KEY UPDATE price=VALUES(price), cost=VALUES(cost), benefits=VALUES(benefits), display_name=VALUES(display_name), category=VALUES(category);
+INSERT INTO products (`name`,`display_name`,`display_name_es`,`price`,`cost`,`benefits`,`category`) VALUES
+('Olive_stick','Olive stick','Palito de aceituna',2.5,0.985,1.515,'bread'),
+('Olive_loaf','Olive loaf','Hogaza de aceituna',4,1.335,2.665,'bread'),
+('White_stick','White stick','Pan blanco',2,0.435,1.565,'bread'),
+('White_loaf','White loaf','Hogaza blanca',3,0.76,2.24,'bread'),
+('Onion_stick','Onion stick','Pan de cebolla',2.5,0.70375,1.79625,'bread'),
+('Onion_loaf','Onion loaf','Hogaza de cebolla',4,1.31,2.69,'bread'),
+('Wholemeal_Rye_stick','Wholemeal Rye stick','Centeno integral',2.5,0.50375,1.99625,'bread'),
+('Wholemeal_Rye_loaf','Wholemeal Rye loaf','Hogaza de centeno integral',4,0.91,3.09,'bread'),
+('Wholemeal_Spelt_stick','Wholemeal Spelt stick','Espelta integral',2.5,0.60375,1.89625,'bread'),
+('Wholemeal_Spelt_loaf','Wholemeal Spelt loaf','Hogaza de espelta integral',4,1.11,2.89,'bread'),
+('Wholemeal_White_stick','Wholemeal White stick','Blanco integral',2.5,0.48775,2.01225,'bread'),
+('Wholemeal_White_loaf','Wholemeal White loaf','Hogaza de trigo integral',4,0.878,3.122,'bread'),
+('Wholemeal_Seeds_stick','Wholemeal Seeds stick','Semillas integrales',2.5,0.58575,1.91425,'bread'),
+('Wholemeal_Seeds_loaf','Wholemeal Seeds loaf','Hogaza integral con semillas',4,1.258,2.742,'bread'),
+('Walnut_stick','Walnut stick','Nuez',2.5,1.05375,1.44625,'bread'),
+('Walnut_loaf','Walnut loaf','Hogaza de nuez',4,1.9975,2.0025,'bread'),
+('Wholemeal_Walnut_stick','Wholemeal Walnut stick','Nuez integral',2.5,1.07075,1.42925,'bread'),
+('Wholemeal_Walnut_loaf','Wholemeal Walnut loaf','Hogaza de nuez integral',4,2.044,1.956,'bread'),
+('Walnut_and_Sultanas_stick','Walnut and Sultanas stick','Nuez y pasas',2.5,0.924,1.576,'bread'),
+('Walnut_and_Sultanas_loaf','Walnut and Sultanas loaf','Hogaza de nuez y pasas',4,1.738,2.262,'bread'),
+('Wholemeal_Walnut_and_Sultanas_stick','Wholemeal Walnut and Sultanas stick','Nuez y pasas integral',2.5,1.33575,1.16425,'bread'),
+('Wholemeal_Walnut_and_Sultanas_loaf','Wholemeal Walnut and Sultanas loaf','Hogaza integral de nuez y pasas',4,1.634,2.366,'bread'),
+('Potato_stick','Potato stick','Pan de patata',2,0.45375,1.54625,'bread'),
+('Potato_loaf','Potato loaf','Hogaza de patata',3,0.81,2.19,'bread'),
+('Pistacho_stick','Pistacho stick','Pistacho',3,1.6375,1.3625,'bread'),
+('Pistacho_loaf','Pistacho loaf','Hogaza de pistacho',4.5,2.6275,1.8725,'bread'),
+('Wholemeal_Pistacho_stick','Wholemeal Pistacho stick','Pistacho integral',3,1.39825,1.60175,'bread'),
+('Wholemeal_Pistacho_loaf','Wholemeal Pistacho loaf','Hogaza de pistacho integral',5,2.5615,2.4385,'bread'),
+('Seeds_stick','Seeds stick','Semillas',2,0.7525,1.2475,'bread'),
+('Seeds_loaf','Seeds loaf','Hogaza con semillas',3,1.015,1.985,'bread')
+ON DUPLICATE KEY UPDATE price=VALUES(price), cost=VALUES(cost), benefits=VALUES(benefits), display_name=VALUES(display_name), display_name_es=VALUES(display_name_es), category=VALUES(category);
 
 -- Recipes (map ingredient -> quantity/cost as JSON string). Uses a subselect to find product_id by name.
 -- JSON strings are stored in the `ingredients_json` TEXT column.

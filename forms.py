@@ -1,8 +1,8 @@
 import datetime
 from datetime import date, timedelta
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField, IntegerField, DateField, SelectField, BooleanField
-from wtforms.validators import DataRequired, NumberRange, NoneOf, ValidationError, Length
+from wtforms import StringField, SubmitField, PasswordField, IntegerField, DateField, SelectField, BooleanField, FloatField, HiddenField
+from wtforms.validators import DataRequired, InputRequired, NumberRange, NoneOf, ValidationError, Length
 
 from config import Data
 
@@ -63,6 +63,29 @@ DeleteUserForm = Form
 
 class DeleteAccountForm(FlaskForm):
     submit = SubmitField("Delete")
+
+class AddIngredientForm(FlaskForm):
+    name = StringField("Internal name", validators=[DataRequired(), Length(max=255)])
+    display_name = StringField("Display name", validators=[DataRequired(), Length(max=255)])
+    display_name_es = StringField("Spanish display name", validators=[DataRequired(), Length(max=255)])
+    cost = FloatField("Cost", validators=[NumberRange(min=0)])
+    submit = SubmitField("Add ingredient")
+
+class DeliveryCostForm(FlaskForm):
+    bakery_id = SelectField("Bakery", coerce=int, validators=[DataRequired()])
+    destination_latitude = FloatField("Destination latitude", validators=[InputRequired(), NumberRange(min=-90, max=90)])
+    destination_longitude = FloatField("Destination longitude", validators=[InputRequired(), NumberRange(min=-180, max=180)])
+    submit = SubmitField("Calculate delivery cost")
+
+class BakeryForm(FlaskForm):
+    id = HiddenField()
+    name = StringField("Name", validators=[DataRequired(), Length(max=255)])
+    address = StringField("Address", validators=[DataRequired(), Length(max=500)])
+    latitude = FloatField("Latitude", validators=[InputRequired(), NumberRange(min=-90, max=90)])
+    longitude = FloatField("Longitude", validators=[InputRequired(), NumberRange(min=-180, max=180)])
+    base_delivery_cost = FloatField("Base delivery cost", validators=[InputRequired(), NumberRange(min=0)])
+    cost_per_km = FloatField("Cost per kilometre", validators=[InputRequired(), NumberRange(min=0)])
+    submit = SubmitField("Save bakery")
 
 class LoginForm(FlaskForm):
     username = StringField(validators=[DataRequired(message="required field"),

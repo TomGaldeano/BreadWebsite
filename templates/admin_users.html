@@ -4,9 +4,24 @@
   <div class="row justify-content-md-center container d-flex mx-auto">
     <h1 data-translator-en="Users" data-translator-es="Usuarios">Users</h1>
   </div>
+  <!-- Search Box -->
+  <div class="row justify-content-md-center" style="margin-bottom: 20px;">
+    <div style="width: 90%; max-width: 600px;">
+      <div class="input-group">
+        <input 
+          type="text" 
+          class="form-control" 
+          id="users-search" 
+          placeholder="Search users..."
+          data-translator-placeholder-en="Search users by name or group..."
+          data-translator-placeholder-es="Buscar usuarios por nombre o grupo...">
+        <button class="btn btn-outline-secondary" type="button" id="clear-users-search" data-translator-en="Clear" data-translator-es="Limpiar">Clear</button>
+      </div>
+    </div>
+  </div>
   <div class="row justify-content-md-center">
     <div class="table-responsive" style="padding-left: 10%;padding-right: 10%;">
-      <table class="table table-hover">
+      <table class="table table-hover" id="users-table">
         <thead>
           <tr>
             <th data-translator-en="User id" data-translator-es="ID de usuario">User id</th>
@@ -45,4 +60,45 @@
   </form>
 </div>
 </div>
+
+<!-- Search and Filter Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const searchInput = document.getElementById('users-search');
+  const clearBtn = document.getElementById('clear-users-search');
+  const table = document.getElementById('users-table');
+  
+  if (searchInput && table) {
+    searchInput.addEventListener('input', function() {
+      const query = this.value.toLowerCase();
+      const rows = table.querySelectorAll('tbody tr');
+      
+      rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        let match = false;
+        
+        // Search in username (index 1) and group (index 3)
+        if (cells.length >= 4) {
+          const username = cells[1].textContent.toLowerCase();
+          const group = cells[3].textContent.toLowerCase();
+          
+          if (username.includes(query) || group.includes(query)) {
+            match = true;
+          }
+        }
+        
+        row.style.display = match ? '' : 'none';
+      });
+    });
+  }
+  
+  if (clearBtn) {
+    clearBtn.addEventListener('click', function() {
+      searchInput.value = '';
+      searchInput.dispatchEvent(new Event('input'));
+    });
+  }
+});
+</script>
+
 {% include "footer.html" %}

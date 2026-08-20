@@ -2,6 +2,16 @@
   // Simple translator toggler: looks for elements with data-translator-en and data-translator-es
   function setLanguage(lang){
     document.documentElement.lang = (lang === 'es') ? 'es' : 'en';
+    var langIcon = document.getElementById('lang-icon');
+    var langToggle = document.getElementById('lang-toggle');
+    if(langIcon){
+      langIcon.src = lang === 'es' ? 'static/icons/united-kingdom.png' : 'static/icons/spain.png';
+      langIcon.alt = lang === 'es' ? 'Cambiar idioma' : 'Change language';
+    }
+    if(langToggle){
+      langToggle.setAttribute('aria-label', lang === 'es' ? 'Cambiar idioma' : 'Change language');
+      langToggle.title = lang === 'es' ? 'Cambiar idioma' : 'Change language';
+    }
     var nodes = document.querySelectorAll('[data-translator-en]');
     nodes.forEach(function(n){
       var en = n.getAttribute('data-translator-en');

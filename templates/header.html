@@ -30,6 +30,16 @@
             <a class="nav-link " style="padding: .5rem" href="{{ url_for('ingredients') }}" title="Ingredients"><img
                   src="static/icons/ingredients.png" alt="ingredients" class="" style="height:30px"></a>
           </li>
+          <li class="link-item">
+            <a class="nav-link" style="padding: .5rem" href="{{ url_for('products') }}" title="Products">
+              <span data-translator-en="Products" data-translator-es="Productos">Products</span>
+            </a>
+          </li>
+          <li class="link-item">
+            <a class="nav-link" style="padding: .5rem" href="{{ url_for('delivery_cost') }}" title="Delivery cost">
+              <span data-translator-en="Delivery" data-translator-es="Entrega">Delivery</span>
+            </a>
+          </li>
         {% if current_user.is_authenticated and current_user.id != 1: %}
         <li class="nav-item  ">
           <a class="nav-link " style="padding: .5rem" href="{{ url_for('orders') }}"><img src="static/icons/cart.png"
@@ -71,6 +81,12 @@
             <li class="nav-item  ">
               <a class="nav-link " style="padding: .5rem" href="{{ url_for('verify') }}">verify</a>
             </li>
+            <li class="nav-item  ">
+              <a class="nav-link " style="padding: .5rem" href="{{ url_for('manage_ingredients') }}">ingredients</a>
+            </li>
+            <li class="nav-item  ">
+              <a class="nav-link " style="padding: .5rem" href="{{ url_for('manage_bakeries') }}">bakeries</a>
+            </li>
           </ul>
         </li>
         {% endif %}
@@ -108,7 +124,9 @@
         </li>
         {% endif %}
         <li class="nav-item">
-          <button id="lang-toggle" class="btn btn-link" style="padding:.5rem"><img src="static/icons/spain.png" alt="toggle-language" style="height:30px"></button>
+          <button id="lang-toggle" class="btn btn-link" style="padding:.5rem" aria-label="Change language" title="Change language">
+            <img id="lang-icon" src="static/icons/spain.png" alt="Change language" style="height:30px">
+          </button>
         </li>
       </ul>
     </div>

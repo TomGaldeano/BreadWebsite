@@ -1,0 +1,87 @@
+{% include "header.html" %}
+
+<div class="container-fluid" style="margin-top: 100px">
+  <div class="row justify-content-md-center container d-flex mx-auto">
+    <div style="width: 100%; max-width: 1000px;">
+      <div class="mb-4">
+        <h1 id="products-title" data-translator-en="Products" data-translator-es="Productos">Products</h1>
+      </div>
+
+      <div class="mb-4">
+        <form method="GET" action="{{ url_for('products') }}" class="form-inline">
+          <div class="input-group w-100">
+            <input
+              type="text"
+              class="form-control"
+              id="search-input"
+              name="search"
+              placeholder="Search by name..."
+              value="{{ search_query }}"
+              data-translator-placeholder-en="Search by name..."
+              data-translator-placeholder-es="Buscar por nombre..."
+              style="flex: 1;">
+            <button class="btn btn-primary" type="submit" data-translator-en="Search" data-translator-es="Buscar">Search</button>
+          </div>
+        </form>
+        <small class="text-muted" data-translator-en="Search in both English and Spanish names" data-translator-es="Buscar en nombres en inglés y español">Search in both English and Spanish names</small>
+      </div>
+
+      <div class="mb-3">
+        <p>
+          <span id="result-count">{{ products|length }}</span>
+          <span data-translator-en="results" data-translator-es="resultados">results</span>
+          {% if search_query %}
+          <span data-translator-en="for" data-translator-es="para">for</span>
+          <strong>"{{ search_query }}"</strong>
+          {% endif %}
+        </p>
+      </div>
+
+      {% if products %}
+      <div class="table-responsive">
+        <table class="table table-hover table-striped">
+          <thead class="table-light">
+            <tr>
+              <th data-translator-en="Name" data-translator-es="Nombre">Name</th>
+              <th data-translator-en="Category" data-translator-es="Categoría">Category</th>
+              <th data-translator-en="Price (€)" data-translator-es="Precio (€)">Price (€)</th>
+              <th data-translator-en="Cost (€)" data-translator-es="Costo (€)">Cost (€)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for product in products %}
+            <tr>
+              <td class="align-middle product-name"
+                  data-translator-en="{{ product.display_name or product.name|replace('_', ' ') }}"
+                  data-translator-es="{{ product.display_name_es or product.display_name or product.name|replace('_', ' ') }}">
+                {{ product.display_name or product.name|replace('_', ' ') }}
+              </td>
+              <td class="align-middle">{{ product.category or '-' }}</td>
+              <td class="align-middle">{% if product.price is not none %}{{ '%.2f'|format(product.price) }}{% else %}-{% endif %}</td>
+              <td class="align-middle">{% if product.cost is not none %}{{ '%.2f'|format(product.cost) }}{% else %}-{% endif %}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="alert alert-info" role="alert">
+        {% if search_query %}
+        <p data-translator-en="No products found matching your search." data-translator-es="No se encontraron productos que coincidan con tu búsqueda.">No products found matching your search.</p>
+        <p data-translator-en="Try using different search terms." data-translator-es="Intenta usar términos de búsqueda diferentes.">Try using different search terms.</p>
+        {% else %}
+        <p data-translator-en="No products available." data-translator-es="No hay productos disponibles.">No products available.</p>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      {% if search_query %}
+      <div class="mt-4">
+        <a href="{{ url_for('products') }}" class="btn btn-outline-secondary" data-translator-en="Clear Search" data-translator-es="Limpiar Búsqueda">Clear Search</a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% include "footer.html" %}

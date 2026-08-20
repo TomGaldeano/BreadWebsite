@@ -2,6 +2,20 @@
 <!-- main content -->
 <div class="container-fluid " style = "margin-top:100px">
   <div class="row justify-content-md-center container d-flex mx-auto">
+    <!-- Search Box -->
+    <div style="width: 100%; max-width: 1200px; margin-bottom: 20px;">
+      <div class="input-group">
+        <input 
+          type="text" 
+          class="form-control" 
+          id="product-search" 
+          placeholder="Search products..."
+          data-translator-placeholder-en="Search products..."
+          data-translator-placeholder-es="Buscar productos...">
+        <button class="btn btn-outline-secondary" type="button" id="clear-search" data-translator-en="Clear" data-translator-es="Limpiar">Clear</button>
+      </div>
+      <small class="text-muted" id="search-help" data-translator-en="Search by product name" data-translator-es="Buscar por nombre de producto">Search by product name</small>
+    </div>
     <div class="table-responsive">
          <form method="POST" action="{{ url_for('index') }}">
           <table class="table table-hover">
@@ -81,4 +95,45 @@
   </div>
 </div>
 <!-- footer -->
+
+<!-- Search and Filter Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const searchInput = document.getElementById('product-search');
+  const clearBtn = document.getElementById('clear-search');
+  const tables = document.querySelectorAll('table tbody');
+  
+  if (searchInput) {
+    searchInput.addEventListener('input', function() {
+      const query = this.value.toLowerCase();
+      
+      tables.forEach(table => {
+        const rows = table.querySelectorAll('tr');
+        rows.forEach(row => {
+          const cells = row.querySelectorAll('td');
+          let match = false;
+          
+          // Check first cell (product name) and second cell (price)
+          if (cells.length >= 2) {
+            const productName = cells[0].textContent.toLowerCase();
+            if (productName.includes(query)) {
+              match = true;
+            }
+          }
+          
+          row.style.display = match ? '' : 'none';
+        });
+      });
+    });
+  }
+  
+  if (clearBtn) {
+    clearBtn.addEventListener('click', function() {
+      searchInput.value = '';
+      searchInput.dispatchEvent(new Event('input'));
+    });
+  }
+});
+</script>
+
 {% include "footer.html" %}

@@ -8,7 +8,7 @@ from flask_login import UserMixin, login_user, LoginManager, login_required, cur
 from forms import *
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
-from sqlalchemy import ForeignKey, Column, Integer, String, and_, text, desc
+from sqlalchemy import ForeignKey, Column, Integer, String, and_, text, desc, or_
 import json
 from extra import *
 from config import Data, SecretData
@@ -17,6 +17,7 @@ from flask_wtf.csrf import CSRFProtect
 import os
 import logging
 from pathlib import Path
+from math import asin, cos, radians, sin, sqrt
 
 MAX_BREADS = 20
 data = Data()
@@ -120,6 +121,26 @@ class Ingredient(db.Model):
     display_name_es = db.Column(db.String(255))
     cost = db.Column(db.Float)
     product_items = relationship("ProductIngredient", back_populates="ingredient", cascade="all, delete-orphan")
+
+class Bakery(db.Model):
+    __tablename__ = 'bakeries'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), nullable=False, unique=True)
+    address = db.Column(db.String(500), nullable=False)
+    latitude = db.Column(db.Float, nullable=False)
+    longitude = db.Column(db.Float, nullable=False)
+    base_delivery_cost = db.Column(db.Float, nullable=False, default=2.0)
+    cost_per_km = db.Column(db.Float, nullable=False, default=0.5)
+
+def calculate_distance_km(latitude_one, longitude_one, latitude_two, longitude_two):
+    """Returns the great-circle distance between two coordinate pairs."""
+    earth_radius_km = 6371.0
+    latitude_delta = radians(latitude_two - latitude_one)
+    longitude_delta = radians(longitude_two - longitude_one)
+    haversine = (sin(latitude_delta / 2) ** 2
+                 + cos(radians(latitude_one)) * cos(radians(latitude_two))
+                 * sin(longitude_delta / 2) ** 2)
+    return earth_radius_km * 2 * asin(sqrt(haversine))
 
 def admin_required(f):
     """
@@ -469,6 +490,160 @@ def ingredients():
                          ingredients=filtered_ingredients, 
                          search_query=search_query,
                          lang=lang)
+
+@app.route('/admin/ingredients', methods=['POST', 'GET'])
+@admin_required
+def manage_ingredients():
+    """Allows the administrator to add or remove ingredients."""
+    add_form = AddIngredientForm()
+    delete_id = request.form.get('delete_id', type=int)
+    message = None
+    error = None
+
+    if delete_id is not None:
+        ingredient = db.session.get(Ingredient, delete_id)
+        if ingredient is None:
+            error = "Ingredient not found."
+        elif ingredient.product_items:
+            error = "Remove this ingredient from all product recipes before deleting it."
+        else:
+            db.session.delete(ingredient)
+            db.session.commit()
+            message = "Ingredient deleted."
+    elif add_form.validate_on_submit():
+        name = add_form.name.data.strip()
+        if Ingredient.query.filter_by(name=name).first():
+            error = "An ingredient with that internal name already exists."
+        else:
+            ingredient = Ingredient(
+                name=name,
+                display_name=add_form.display_name.data.strip(),
+                display_name_es=add_form.display_name_es.data.strip(),
+                cost=add_form.cost.data,
+            )
+            db.session.add(ingredient)
+            db.session.commit()
+            message = "Ingredient added."
+            add_form = AddIngredientForm()
+
+    all_ingredients = Ingredient.query.order_by(Ingredient.name).all()
+    return render_template("manage_ingredients.html", add_form=add_form,
+                           ingredients=all_ingredients, message=message, error=error)
+
+@app.route('/delivery-cost', methods=['GET', 'POST'])
+def delivery_cost():
+    """Calculates a delivery estimate from a bakery to destination coordinates."""
+    bakeries = Bakery.query.order_by(Bakery.name).all()
+    form = DeliveryCostForm()
+    form.bakery_id.choices = [(bakery.id, bakery.name) for bakery in bakeries]
+    result = None
+
+    if form.validate_on_submit():
+        bakery = db.session.get(Bakery, form.bakery_id.data)
+        if bakery is not None:
+            distance_km = calculate_distance_km(
+                bakery.latitude,
+                bakery.longitude,
+                form.destination_latitude.data,
+                form.destination_longitude.data,
+            )
+            result = {
+                "bakery": bakery,
+                "distance_km": distance_km,
+                "delivery_cost": bakery.base_delivery_cost + distance_km * bakery.cost_per_km,
+            }
+
+    return render_template("delivery_cost.html", form=form, bakeries=bakeries, result=result)
+
+@app.route('/admin/bakeries', methods=['GET', 'POST'])
+@admin_required
+def manage_bakeries():
+    """Allows the administrator to list, search, add, edit, and remove bakeries."""
+    search_query = request.args.get('search', '').strip()
+    edit_id = request.args.get('edit', type=int)
+    form = BakeryForm()
+    message = None
+    error = None
+
+    delete_id = request.form.get('delete_id', type=int)
+    if delete_id is not None:
+        bakery = db.session.get(Bakery, delete_id)
+        if bakery is None:
+            error = "Bakery not found."
+        else:
+            db.session.delete(bakery)
+            db.session.commit()
+            message = "Bakery deleted."
+    elif form.validate_on_submit():
+        bakery_id = form.id.data and int(form.id.data)
+        bakery = db.session.get(Bakery, bakery_id) if bakery_id else None
+        duplicate = Bakery.query.filter(Bakery.name == form.name.data.strip())
+        if bakery is not None:
+            duplicate = duplicate.filter(Bakery.id != bakery.id)
+
+        if duplicate.first() is not None:
+            error = "A bakery with that name already exists."
+        else:
+            if bakery is None:
+                bakery = Bakery()
+                db.session.add(bakery)
+            bakery.name = form.name.data.strip()
+            bakery.address = form.address.data.strip()
+            bakery.latitude = form.latitude.data
+            bakery.longitude = form.longitude.data
+            bakery.base_delivery_cost = form.base_delivery_cost.data
+            bakery.cost_per_km = form.cost_per_km.data
+            db.session.commit()
+            message = "Bakery updated." if bakery_id else "Bakery added."
+            form = BakeryForm()
+            edit_id = None
+    elif edit_id:
+        bakery = db.session.get(Bakery, edit_id)
+        if bakery is None:
+            error = "Bakery not found."
+            edit_id = None
+        else:
+            form = BakeryForm(obj=bakery)
+
+    bakeries_query = Bakery.query.order_by(Bakery.name)
+    if search_query:
+        search_pattern = f"%{search_query}%"
+        bakeries_query = bakeries_query.filter(
+            or_(Bakery.name.ilike(search_pattern), Bakery.address.ilike(search_pattern))
+        )
+    bakeries = bakeries_query.all()
+    return render_template("manage_bakeries.html", form=form, bakeries=bakeries,
+                           search_query=search_query, edit_id=edit_id,
+                           message=message, error=error)
+
+@app.route('/products', methods=['POST', 'GET'])
+def products():
+    """Displays all products with search and client-side language switching."""
+    search_query = request.args.get('search', '').strip()
+    lang = request.args.get('lang', 'en')
+
+    if lang not in ['en', 'es']:
+        lang = 'en'
+
+    try:
+        all_products = Product.query.order_by(Product.name).all()
+    except Exception:
+        all_products = []
+
+    if search_query:
+        search_lower = search_query.lower()
+        filtered_products = [
+            product for product in all_products
+            if search_lower in (product.display_name or product.name or '').lower()
+            or search_lower in (product.display_name_es or product.name or '').lower()
+        ]
+    else:
+        filtered_products = all_products
+
+    return render_template("products.html",
+                           products=filtered_products,
+                           search_query=search_query,
+                           lang=lang)
 
 # ADMIN PAGES
 @app.route('/baker', methods=['POST', 'GET'])

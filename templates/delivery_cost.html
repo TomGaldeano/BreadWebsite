@@ -1,0 +1,79 @@
+{% include "header.html" %}
+
+<div class="container-fluid" style="margin-top: 100px">
+  <div class="row justify-content-md-center">
+    <div class="col-12" style="max-width: 900px;">
+      <h1 class="mb-3" data-translator-en="Delivery cost calculator" data-translator-es="Calculadora del coste de entrega">Delivery cost calculator</h1>
+      <p class="text-muted" data-translator-en="Choose a bakery and enter the destination coordinates to get an estimate." data-translator-es="Elige una panadería e introduce las coordenadas del destino para obtener una estimación.">Choose a bakery and enter the destination coordinates to get an estimate.</p>
+
+      {% if not bakeries %}
+      <div class="alert alert-warning" role="alert">No bakeries are available yet.</div>
+      {% else %}
+      <div class="card mb-4">
+        <div class="card-body">
+          <form method="POST" action="{{ url_for('delivery_cost') }}">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+              {{ form.bakery_id.label(class="font-weight-bold") }}
+              {{ form.bakery_id(class="form-control") }}
+              {% for error in form.bakery_id.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                {{ form.destination_latitude.label(class="font-weight-bold") }}
+                {{ form.destination_latitude(class="form-control", placeholder="40.4168", step="any") }}
+                <small class="form-text text-muted">Between -90 and 90.</small>
+                {% for error in form.destination_latitude.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
+              </div>
+              <div class="form-group col-md-6">
+                {{ form.destination_longitude.label(class="font-weight-bold") }}
+                {{ form.destination_longitude(class="form-control", placeholder="-3.7038", step="any") }}
+                <small class="form-text text-muted">Between -180 and 180.</small>
+                {% for error in form.destination_longitude.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
+              </div>
+            </div>
+            {{ form.submit(class="btn btn-primary") }}
+          </form>
+        </div>
+      </div>
+
+      {% if result %}
+      <div class="alert alert-success" role="status">
+        <h2 class="h4">Delivery estimate</h2>
+        <p class="mb-1"><strong>From:</strong> {{ result.bakery.name }}</p>
+        <p class="mb-1"><strong>Address:</strong> {{ result.bakery.address }}</p>
+        <p class="mb-1"><strong>Distance:</strong> {{ '%.2f'|format(result.distance_km) }} km</p>
+        <p class="mb-0"><strong>Estimated delivery cost:</strong> {{ '%.2f'|format(result.delivery_cost) }}€</p>
+      </div>
+      {% endif %}
+
+      <h2 class="h4 mt-4">Available bakeries</h2>
+      <div class="table-responsive">
+        <table class="table table-hover table-striped">
+          <thead class="table-light">
+            <tr>
+              <th>Name</th>
+              <th>Address</th>
+              <th>Base cost</th>
+              <th>Cost per km</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for bakery in bakeries %}
+            <tr>
+              <td>{{ bakery.name }}</td>
+              <td>{{ bakery.address }}</td>
+              <td>{{ '%.2f'|format(bakery.base_delivery_cost) }}€</td>
+              <td>{{ '%.2f'|format(bakery.cost_per_km) }}€/km</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <small class="text-muted">Estimate = base delivery cost + distance in kilometres × cost per kilometre. Distance is calculated as a straight-line estimate.</small>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% include "footer.html" %}

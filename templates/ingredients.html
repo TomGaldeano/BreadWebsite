@@ -48,36 +48,16 @@
           <thead class="table-light">
             <tr>
               <th id="col-name" data-translator-en="Name" data-translator-es="Nombre">Name</th>
-              <th id="col-english" data-translator-en="English Name" data-translator-es="Nombre en Inglés">English Name</th>
-              <th id="col-spanish" data-translator-en="Spanish Name" data-translator-es="Nombre en Español">Spanish Name</th>
               <th id="col-cost" data-translator-en="Cost (€)" data-translator-es="Costo (€)">Cost (€)</th>
             </tr>
           </thead>
           <tbody>
             {% for ingredient in ingredients %}
             <tr>
-              <td class="align-middle">
-                {% if lang == 'es' and ingredient.display_name_es %}
-                  {{ ingredient.display_name_es }}
-                {% elif ingredient.display_name %}
-                  {{ ingredient.display_name }}
-                {% else %}
-                  {{ ingredient.name }}
-                {% endif %}
-              </td>
-              <td class="align-middle">
-                {% if ingredient.display_name %}
-                  {{ ingredient.display_name }}
-                {% else %}
-                  {{ ingredient.name }}
-                {% endif %}
-              </td>
-              <td class="align-middle">
-                {% if ingredient.display_name_es %}
-                  {{ ingredient.display_name_es }}
-                {% else %}
-                  <span class="text-muted" id="no-translation" data-translator-en="N/A" data-translator-es="N/D">N/A</span>
-                {% endif %}
+              <td class="align-middle ingredient-name"
+                  data-translator-en="{{ ingredient.display_name or ingredient.name }}"
+                  data-translator-es="{{ ingredient.display_name_es or ingredient.display_name or ingredient.name }}">
+                {{ ingredient.display_name or ingredient.name }}
               </td>
               <td class="align-middle">
                 {% if ingredient.cost %}
@@ -142,8 +122,5 @@
     }
   });
 </script>
-
-<!-- Include translator script for language toggle -->
-<script src="{{ url_for('static', filename='js/translator.js') }}"></script>
 
 {% include "footer.html" %}

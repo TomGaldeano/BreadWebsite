@@ -4,9 +4,24 @@
   <div class="row justify-content-md-center container d-flex mx-auto">
     <h1 data-translator-en="Legacies" data-translator-es="Legados">Legacies</h1>
   </div>
+  <!-- Search Box for Legacies -->
+  <div class="row justify-content-md-center" style="margin-bottom: 20px;">
+    <div style="width: 90%; max-width: 600px;">
+      <div class="input-group">
+        <input 
+          type="text" 
+          class="form-control" 
+          id="legacy-search" 
+          placeholder="Search legacy users..."
+          data-translator-placeholder-en="Search legacy users by name or group..."
+          data-translator-placeholder-es="Buscar usuarios legados por nombre o grupo...">
+        <button class="btn btn-outline-secondary" type="button" id="clear-legacy-search" data-translator-en="Clear" data-translator-es="Limpiar">Clear</button>
+      </div>
+    </div>
+  </div>
   <div class="row justify-content-md-center">
     <div class="table-responsive" style="padding-left: 10%;padding-right: 10%;">
-      <table class="table table-hover">
+      <table class="table table-hover" id="legacy-table">
         <thead>
           <tr>
             <th data-translator-en="User id" data-translator-es="ID de usuario">User id</th>
@@ -46,9 +61,24 @@
   <div class="row justify-content-md-center container d-flex mx-auto">
     <h1 data-translator-en="Non Legacies" data-translator-es="No Legados">Non Legacies</h1>
   </div>
+  <!-- Search Box for Non-Legacies -->
+  <div class="row justify-content-md-center" style="margin-bottom: 20px;">
+    <div style="width: 90%; max-width: 600px;">
+      <div class="input-group">
+        <input 
+          type="text" 
+          class="form-control" 
+          id="nonlegacy-search" 
+          placeholder="Search non-legacy users..."
+          data-translator-placeholder-en="Search non-legacy users by name or group..."
+          data-translator-placeholder-es="Buscar usuarios no legados por nombre o grupo...">
+        <button class="btn btn-outline-secondary" type="button" id="clear-nonlegacy-search" data-translator-en="Clear" data-translator-es="Limpiar">Clear</button>
+      </div>
+    </div>
+  </div>
   <div class="row justify-content-md-center">
     <div class="table-responsive" style="padding-left: 10%;padding-right: 10%;">
-      <table class="table table-hover">
+      <table class="table table-hover" id="nonlegacy-table">
         <thead>
           <tr>
             <th>User id</th>
@@ -85,4 +115,82 @@
   </form>
 </div>
 </div>
+
+<!-- Search and Filter Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Legacy users search
+  const legacySearch = document.getElementById('legacy-search');
+  const clearLegacyBtn = document.getElementById('clear-legacy-search');
+  const legacyTable = document.getElementById('legacy-table');
+  
+  if (legacySearch && legacyTable) {
+    legacySearch.addEventListener('input', function() {
+      const query = this.value.toLowerCase();
+      const rows = legacyTable.querySelectorAll('tbody tr');
+      
+      rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        let match = false;
+        
+        // Search in username (index 1) and group (index 2)
+        if (cells.length >= 3) {
+          const username = cells[1].textContent.toLowerCase();
+          const group = cells[2].textContent.toLowerCase();
+          
+          if (username.includes(query) || group.includes(query)) {
+            match = true;
+          }
+        }
+        
+        row.style.display = match ? '' : 'none';
+      });
+    });
+  }
+  
+  if (clearLegacyBtn) {
+    clearLegacyBtn.addEventListener('click', function() {
+      legacySearch.value = '';
+      legacySearch.dispatchEvent(new Event('input'));
+    });
+  }
+  
+  // Non-legacy users search
+  const nonlegacySearch = document.getElementById('nonlegacy-search');
+  const clearNonlegacyBtn = document.getElementById('clear-nonlegacy-search');
+  const nonlegacyTable = document.getElementById('nonlegacy-table');
+  
+  if (nonlegacySearch && nonlegacyTable) {
+    nonlegacySearch.addEventListener('input', function() {
+      const query = this.value.toLowerCase();
+      const rows = nonlegacyTable.querySelectorAll('tbody tr');
+      
+      rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        let match = false;
+        
+        // Search in username (index 1) and group (index 2)
+        if (cells.length >= 3) {
+          const username = cells[1].textContent.toLowerCase();
+          const group = cells[2].textContent.toLowerCase();
+          
+          if (username.includes(query) || group.includes(query)) {
+            match = true;
+          }
+        }
+        
+        row.style.display = match ? '' : 'none';
+      });
+    });
+  }
+  
+  if (clearNonlegacyBtn) {
+    clearNonlegacyBtn.addEventListener('click', function() {
+      nonlegacySearch.value = '';
+      nonlegacySearch.dispatchEvent(new Event('input'));
+    });
+  }
+});
+</script>
+
 {% include "footer.html" %}
