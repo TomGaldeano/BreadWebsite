@@ -71,6 +71,25 @@ class AddIngredientForm(FlaskForm):
     cost = FloatField("Cost", validators=[NumberRange(min=0)])
     submit = SubmitField("Add ingredient")
 
+class EditIngredientForm(FlaskForm):
+    id = HiddenField()
+    name = StringField("Internal name", validators=[DataRequired(), Length(max=255)])
+    display_name = StringField("Display name", validators=[DataRequired(), Length(max=255)])
+    display_name_es = StringField("Spanish display name", validators=[DataRequired(), Length(max=255)])
+    cost = FloatField("Cost", validators=[NumberRange(min=0)])
+    submit = SubmitField("Save ingredient")
+
+class AdminEditUserForm(FlaskForm):
+    id = HiddenField()
+    username = StringField("Username", validators=[DataRequired(), NoneOf(data.invalid_characters, message="invalid symbol used")])
+    email = StringField("Email", validators=[DataRequired(), NoneOf(data.invalid_characters, message="invalid symbol used")])
+    group = StringField("Group", validators=[DataRequired(), NoneOf(data.invalid_characters, message="invalid symbol used")])
+    verified = BooleanField("Verified")
+    legacy = BooleanField("Legacy")
+    new_password = PasswordField("New Password (optional)", validators=[NoneOf(data.invalid_characters, message="invalid symbol used")])
+    submit = SubmitField("Save user")
+
+
 class DeliveryCostForm(FlaskForm):
     bakery_id = SelectField("Bakery", coerce=int, validators=[DataRequired()])
     destination_latitude = FloatField("Destination latitude", validators=[InputRequired(), NumberRange(min=-90, max=90)])

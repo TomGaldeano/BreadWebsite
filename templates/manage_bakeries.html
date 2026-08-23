@@ -1,98 +1,138 @@
 {% include "header.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
+
 <div class="container-fluid" style="margin-top: 100px">
   <div class="row justify-content-md-center">
     <div class="col-12" style="max-width: 1100px">
-      <h1 class="mb-4" data-translator-en="Manage bakeries" data-translator-es="Gestionar panaderías">Manage bakeries</h1>
+      <h1 class="mb-4" data-translator-en="Manage Bakeries" data-translator-es="Gestionar Panaderías">Manage Bakeries</h1>
 
       {% if message %}
-      <div class="alert alert-success" role="status">{{ message }}</div>
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="close" data-dismiss="alert" data-bs-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
       {% endif %}
       {% if error %}
-      <div class="alert alert-danger" role="alert">{{ error }}</div>
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ error }}
+        <button type="button" class="close" data-dismiss="alert" data-bs-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
       {% endif %}
 
+      <!-- Search Box -->
       <div class="card mb-4">
         <div class="card-body">
-          <h2 class="h4" data-translator-en="{{ 'Edit bakery' if edit_id else 'Add bakery' }}" data-translator-es="{{ 'Editar panadería' if edit_id else 'Añadir panadería' }}">{{ 'Edit bakery' if edit_id else 'Add bakery' }}</h2>
-          <form method="POST" action="{{ url_for('manage_bakeries', edit=edit_id) if edit_id else url_for('manage_bakeries') }}">
+          <div class="input-group">
+            <input 
+              type="text" 
+              class="form-control" 
+              id="bakeries-search" 
+              placeholder="Search bakeries by name or address..."
+              value="{{ search_query }}"
+              data-translator-placeholder-en="Search bakeries by name or address..."
+              data-translator-placeholder-es="Buscar panaderías por nombre o dirección...">
+            <button class="btn btn-outline-secondary" type="button" id="clear-bakeries-search" data-translator-en="Clear" data-translator-es="Limpiar">Clear</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add Bakery Form Card -->
+      <div class="card mb-4">
+        <div class="card-header text-white" style="background-color: var(--gray_tom);">
+          <h2 class="h5 mb-0" data-translator-en="Add New Bakery" data-translator-es="Añadir Nueva Panadería">Add New Bakery</h2>
+        </div>
+        <div class="card-body">
+          <form method="POST" action="{{ url_for('manage_bakeries') }}">
             {{ form.hidden_tag() }}
-            <div class="form-row">
-              <div class="form-group col-md-6">
-                <label for="{{ form.name.id }}" class="font-weight-bold" data-translator-en="Name" data-translator-es="Nombre">Name</label>
-                {{ form.name(class="form-control", data_translator_placeholder_en="Bakery name", data_translator_placeholder_es="Nombre de la panadería") }}
+            <input type="hidden" name="id" value="">
+            <div class="form-row row">
+              <div class="form-group col-md-6 mb-3">
+                <label class="font-weight-bold fw-bold" data-translator-en="Name" data-translator-es="Nombre">Name</label>
+                {{ form.name(class="form-control", placeholder="Bakery name", **{'data-translator-placeholder-en': 'Bakery name', 'data-translator-placeholder-es': 'Nombre de la panadería'}) }}
                 {% for error in form.name.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
               </div>
-              <div class="form-group col-md-6">
-                <label for="{{ form.address.id }}" class="font-weight-bold" data-translator-en="Address" data-translator-es="Dirección">Address</label>
-                {{ form.address(class="form-control", data_translator_placeholder_en="Bakery address", data_translator_placeholder_es="Dirección de la panadería") }}
+              <div class="form-group col-md-6 mb-3">
+                <label class="font-weight-bold fw-bold" data-translator-en="Address" data-translator-es="Dirección">Address</label>
+                {{ form.address(class="form-control", placeholder="Bakery address", **{'data-translator-placeholder-en': 'Bakery address', 'data-translator-placeholder-es': 'Dirección de la panadería'}) }}
                 {% for error in form.address.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
               </div>
             </div>
-            <div class="form-row">
-              <div class="form-group col-md-3">
-                <label for="{{ form.latitude.id }}" class="font-weight-bold" data-translator-en="Latitude" data-translator-es="Latitud">Latitude</label>
-                {{ form.latitude(class="form-control", step="any") }}
+            <div class="form-row row">
+              <div class="form-group col-md-3 mb-3">
+                <label class="font-weight-bold fw-bold" data-translator-en="Latitude" data-translator-es="Latitud">Latitude</label>
+                {{ form.latitude(class="form-control", step="any", placeholder="40.4168") }}
                 {% for error in form.latitude.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
               </div>
-              <div class="form-group col-md-3">
-                <label for="{{ form.longitude.id }}" class="font-weight-bold" data-translator-en="Longitude" data-translator-es="Longitud">Longitude</label>
-                {{ form.longitude(class="form-control", step="any") }}
+              <div class="form-group col-md-3 mb-3">
+                <label class="font-weight-bold fw-bold" data-translator-en="Longitude" data-translator-es="Longitud">Longitude</label>
+                {{ form.longitude(class="form-control", step="any", placeholder="-3.7038") }}
                 {% for error in form.longitude.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
               </div>
-              <div class="form-group col-md-3">
-                <label for="{{ form.base_delivery_cost.id }}" class="font-weight-bold" data-translator-en="Base delivery cost" data-translator-es="Coste base de entrega">Base delivery cost</label>
-                {{ form.base_delivery_cost(class="form-control", step="0.01", min="0") }}
+              <div class="form-group col-md-3 mb-3">
+                <label class="font-weight-bold fw-bold" data-translator-en="Base Delivery (€)" data-translator-es="Coste Base Entrega (€)">Base Delivery (€)</label>
+                {{ form.base_delivery_cost(class="form-control", step="0.01", min="0", placeholder="2.00") }}
                 {% for error in form.base_delivery_cost.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
               </div>
-              <div class="form-group col-md-3">
-                <label for="{{ form.cost_per_km.id }}" class="font-weight-bold" data-translator-en="Cost per kilometre" data-translator-es="Coste por kilómetro">Cost per kilometre</label>
-                {{ form.cost_per_km(class="form-control", step="0.01", min="0") }}
+              <div class="form-group col-md-3 mb-3">
+                <label class="font-weight-bold fw-bold" data-translator-en="Cost per km (€)" data-translator-es="Coste por km (€)">Cost per km (€)</label>
+                {{ form.cost_per_km(class="form-control", step="0.01", min="0", placeholder="0.50") }}
                 {% for error in form.cost_per_km.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
               </div>
             </div>
-            {{ form.submit(class="btn btn-primary", data_translator_en="Save bakery", data_translator_es="Guardar panadería") }}
-            {% if edit_id %}
-            <a class="btn btn-outline-secondary ml-2" href="{{ url_for('manage_bakeries') }}" data-translator-en="Cancel" data-translator-es="Cancelar">Cancel</a>
-            {% endif %}
+            <button type="submit" class="btn btn-secondary" style="background-color: var(--gray_tom); border-color: var(--gray_tom);" data-translator-en="Save Bakery" data-translator-es="Guardar Panadería">Save Bakery</button>
           </form>
         </div>
       </div>
 
-      <form method="GET" action="{{ url_for('manage_bakeries') }}" class="form-inline mb-3">
-        <label class="sr-only" for="bakery-search" data-translator-en="Search bakeries" data-translator-es="Buscar panaderías">Search bakeries</label>
-         <input id="bakery-search" class="form-control mr-2 flex-grow-1" type="search" name="search"
-           value="{{ search_query }}" placeholder="Search by name or address"
-           data-translator-placeholder-en="Search by name or address" data-translator-placeholder-es="Buscar por nombre o dirección">
-         <button class="btn btn-outline-primary" type="submit" data-translator-en="Search" data-translator-es="Buscar">Search</button>
-         {% if search_query %}<a class="btn btn-link" href="{{ url_for('manage_bakeries') }}" data-translator-en="Clear" data-translator-es="Limpiar">Clear</a>{% endif %}
-      </form>
-
+      <!-- Bakeries List -->
+      <h2 class="h4 mb-3" data-translator-en="Existing Bakeries" data-translator-es="Panaderías Existentes">Existing Bakeries</h2>
       <div class="table-responsive">
-        <table class="table table-hover table-striped">
+        <table class="table table-hover table-striped align-middle" id="bakeries-table">
           <thead class="table-light">
             <tr>
               <th data-translator-en="Name" data-translator-es="Nombre">Name</th>
               <th data-translator-en="Address" data-translator-es="Dirección">Address</th>
               <th data-translator-en="Coordinates" data-translator-es="Coordenadas">Coordinates</th>
-              <th data-translator-en="Delivery pricing" data-translator-es="Precios de entrega">Delivery pricing</th>
-              <th class="text-right" data-translator-en="Actions" data-translator-es="Acciones">Actions</th>
+              <th data-translator-en="Delivery Pricing" data-translator-es="Precios de Entrega">Delivery Pricing</th>
+              <th class="text-end text-right" data-translator-en="Actions" data-translator-es="Acciones">Actions</th>
             </tr>
           </thead>
           <tbody>
             {% for bakery in bakeries %}
             <tr>
-              <td>{{ bakery.name }}</td>
+              <td><strong>{{ bakery.name }}</strong></td>
               <td>{{ bakery.address }}</td>
-              <td>{{ '%.4f'|format(bakery.latitude) }}, {{ '%.4f'|format(bakery.longitude) }}</td>
-              <td>{{ '%.2f'|format(bakery.base_delivery_cost) }}€ + {{ '%.2f'|format(bakery.cost_per_km) }}€/km</td>
-              <td class="text-right text-nowrap">
-                <a class="btn btn-sm btn-outline-primary" href="{{ url_for('manage_bakeries', edit=bakery.id, search=search_query) }}" data-translator-en="Edit" data-translator-es="Editar">Edit</a>
-                <form method="POST" action="{{ url_for('manage_bakeries', search=search_query) }}" class="d-inline">
-                  {{ form.csrf_token() }}
-                  <input type="hidden" name="delete_id" value="{{ bakery.id }}">
-                  <button class="btn btn-sm btn-outline-danger" type="submit" onclick="return confirm(document.documentElement.lang === 'es' ? '¿Eliminar esta panadería?' : 'Delete this bakery?');" data-translator-en="Delete" data-translator-es="Eliminar">Delete</button>
-                </form>
+              <td><small class="text-muted">{{ '%.4f'|format(bakery.latitude) }}, {{ '%.4f'|format(bakery.longitude) }}</small></td>
+              <td>€{{ '%.2f'|format(bakery.base_delivery_cost) }} + €{{ '%.2f'|format(bakery.cost_per_km) }}/km</td>
+              <td class="text-end text-right">
+                <div class="btn-group btn-group-sm" role="group">
+                  <button type="button" class="btn btn-outline-secondary btn-sm view-bakery-btn"
+                          data-id="{{ bakery.id }}"
+                          data-name="{{ bakery.name }}"
+                          data-address="{{ bakery.address }}"
+                          data-lat="{{ bakery.latitude }}"
+                          data-lng="{{ bakery.longitude }}"
+                          data-base="{{ '%.2f'|format(bakery.base_delivery_cost) }}"
+                          data-km="{{ '%.2f'|format(bakery.cost_per_km) }}"
+                          data-translator-en="View" data-translator-es="Ver">
+                    View
+                  </button>
+                  <button type="button" class="btn btn-outline-secondary btn-sm edit-bakery-btn"
+                          data-id="{{ bakery.id }}"
+                          data-name="{{ bakery.name }}"
+                          data-address="{{ bakery.address }}"
+                          data-lat="{{ bakery.latitude }}"
+                          data-lng="{{ bakery.longitude }}"
+                          data-base="{{ bakery.base_delivery_cost }}"
+                          data-km="{{ bakery.cost_per_km }}"
+                          data-translator-en="Edit" data-translator-es="Editar">
+                    Edit
+                  </button>
+                  <form method="POST" action="{{ url_for('manage_bakeries') }}" class="d-inline" onsubmit="return confirm('Delete this bakery? / ¿Eliminar esta panadería?');">
+                    {{ form.csrf_token() }}
+                    <input type="hidden" name="delete_id" value="{{ bakery.id }}">
+                    <button type="submit" class="btn btn-outline-danger btn-sm" data-translator-en="Delete" data-translator-es="Eliminar">Delete</button>
+                  </form>
+                </div>
               </td>
             </tr>
             {% else %}
@@ -101,8 +141,162 @@
           </tbody>
         </table>
       </div>
+
     </div>
   </div>
 </div>
+
+<!-- View Bakery Modal -->
+<div class="modal fade" id="viewBakeryModal" tabindex="-1" aria-labelledby="viewBakeryModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header text-white" style="background-color: var(--gray_tom);">
+        <h5 class="modal-title" id="viewBakeryModalLabel" data-translator-en="Bakery Details" data-translator-es="Detalles de la Panadería">Bakery Details</h5>
+        <button type="button" class="close text-white border-0 bg-transparent ms-auto" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close" style="font-size: 1.75rem; font-weight: bold; color: white; opacity: 0.9;"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body">
+        <div class="row mb-2">
+          <div class="col-5 fw-bold font-weight-bold" data-translator-en="Bakery ID:" data-translator-es="ID de Panadería:">Bakery ID:</div>
+          <div class="col-7" id="view-bakery-id"></div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-5 fw-bold font-weight-bold" data-translator-en="Bakery Name:" data-translator-es="Nombre de la Panadería:">Bakery Name:</div>
+          <div class="col-7" id="view-bakery-name"></div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-5 fw-bold font-weight-bold" data-translator-en="Address:" data-translator-es="Dirección:">Address:</div>
+          <div class="col-7" id="view-bakery-address"></div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-5 fw-bold font-weight-bold" data-translator-en="Coordinates:" data-translator-es="Coordenadas:">Coordinates:</div>
+          <div class="col-7" id="view-bakery-coords"></div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-5 fw-bold font-weight-bold" data-translator-en="Base Delivery Cost:" data-translator-es="Coste Base Entrega:">Base Delivery Cost:</div>
+          <div class="col-7" id="view-bakery-base"></div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-5 fw-bold font-weight-bold" data-translator-en="Cost Per Km:" data-translator-es="Coste Por Km:">Cost Per Km:</div>
+          <div class="col-7" id="view-bakery-km"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-dismiss="modal" data-translator-en="Close" data-translator-es="Cerrar">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Bakery Modal -->
+<div class="modal fade" id="editBakeryModal" tabindex="-1" aria-labelledby="editBakeryModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <form method="POST" action="{{ url_for('manage_bakeries') }}">
+        {{ form.csrf_token() }}
+        <input type="hidden" name="id" id="edit-bakery-id">
+        <div class="modal-header text-white" style="background-color: var(--gray_tom);">
+          <h5 class="modal-title" id="editBakeryModalLabel" data-translator-en="Edit Bakery" data-translator-es="Editar Panadería">Edit Bakery</h5>
+          <button type="button" class="close text-white border-0 bg-transparent ms-auto" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close" style="font-size: 1.75rem; font-weight: bold; color: white; opacity: 0.9;"><span aria-hidden="true">&times;</span></button>
+        </div>
+        <div class="modal-body">
+          <div class="form-row row">
+            <div class="form-group col-md-6 mb-3">
+              <label class="form-label fw-bold font-weight-bold" data-translator-en="Bakery Name" data-translator-es="Nombre de la Panadería">Bakery Name</label>
+              <input type="text" name="name" id="edit-bakery-name" class="form-control" required>
+            </div>
+            <div class="form-group col-md-6 mb-3">
+              <label class="form-label fw-bold font-weight-bold" data-translator-en="Address" data-translator-es="Dirección">Address</label>
+              <input type="text" name="address" id="edit-bakery-address" class="form-control" required>
+            </div>
+          </div>
+          <div class="form-row row">
+            <div class="form-group col-md-3 mb-3">
+              <label class="form-label fw-bold font-weight-bold" data-translator-en="Latitude" data-translator-es="Latitud">Latitude</label>
+              <input type="number" step="any" name="latitude" id="edit-bakery-lat" class="form-control" required>
+            </div>
+            <div class="form-group col-md-3 mb-3">
+              <label class="form-label fw-bold font-weight-bold" data-translator-en="Longitude" data-translator-es="Longitud">Longitude</label>
+              <input type="number" step="any" name="longitude" id="edit-bakery-lng" class="form-control" required>
+            </div>
+            <div class="form-group col-md-3 mb-3">
+              <label class="form-label fw-bold font-weight-bold" data-translator-en="Base Delivery (€)" data-translator-es="Coste Base Entrega (€)">Base Delivery (€)</label>
+              <input type="number" step="0.01" min="0" name="base_delivery_cost" id="edit-bakery-base" class="form-control" required>
+            </div>
+            <div class="form-group col-md-3 mb-3">
+              <label class="form-label fw-bold font-weight-bold" data-translator-en="Cost per km (€)" data-translator-es="Coste por km (€)">Cost per km (€)</label>
+              <input type="number" step="0.01" min="0" name="cost_per_km" id="edit-bakery-km" class="form-control" required>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-dismiss="modal" data-translator-en="Cancel" data-translator-es="Cancelar">Cancel</button>
+          <button type="submit" class="btn btn-secondary" style="background-color: var(--gray_tom); border-color: var(--gray_tom);" data-translator-en="Save Changes" data-translator-es="Guardar Cambios">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Search filtering
+  const searchInput = document.getElementById('bakeries-search');
+  const clearBtn = document.getElementById('clear-bakeries-search');
+  const table = document.getElementById('bakeries-table');
+
+  if (searchInput && table) {
+    searchInput.addEventListener('input', function() {
+      const query = this.value.toLowerCase();
+      const rows = table.querySelectorAll('tbody tr');
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(query) ? '' : 'none';
+      });
+    });
+  }
+
+  if (clearBtn && searchInput) {
+    clearBtn.addEventListener('click', function() {
+      searchInput.value = '';
+      searchInput.dispatchEvent(new Event('input'));
+    });
+  }
+
+  // View modal populate
+  const viewBtns = document.querySelectorAll('.view-bakery-btn');
+  viewBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.getElementById('view-bakery-id').textContent = this.dataset.id || '';
+      document.getElementById('view-bakery-name').textContent = this.dataset.name || '';
+      document.getElementById('view-bakery-address').textContent = this.dataset.address || '';
+      document.getElementById('view-bakery-coords').textContent = (this.dataset.lat || '') + ', ' + (this.dataset.lng || '');
+      document.getElementById('view-bakery-base').textContent = '€' + (this.dataset.base || '0.00');
+      document.getElementById('view-bakery-km').textContent = '€' + (this.dataset.km || '0.00') + '/km';
+
+      const modalEl = document.getElementById('viewBakeryModal');
+      const bsModal = new bootstrap.Modal(modalEl);
+      bsModal.show();
+    });
+  });
+
+  // Edit modal populate
+  const editBtns = document.querySelectorAll('.edit-bakery-btn');
+  editBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.getElementById('edit-bakery-id').value = this.dataset.id || '';
+      document.getElementById('edit-bakery-name').value = this.dataset.name || '';
+      document.getElementById('edit-bakery-address').value = this.dataset.address || '';
+      document.getElementById('edit-bakery-lat').value = this.dataset.lat || '';
+      document.getElementById('edit-bakery-lng').value = this.dataset.lng || '';
+      document.getElementById('edit-bakery-base').value = this.dataset.base || '';
+      document.getElementById('edit-bakery-km').value = this.dataset.km || '';
+
+      const modalEl = document.getElementById('editBakeryModal');
+      const bsModal = new bootstrap.Modal(modalEl);
+      bsModal.show();
+    });
+  });
+});
+</script>
 
 {% include "footer.html" %}

@@ -1,103 +1,342 @@
 {% include "header.html" %}
-<!-- main content -->
-<div class="container-fluid " style = "margin-top:100px">
+
+<div class="container-fluid" style="margin-top:100px">
   <div class="row justify-content-md-center container d-flex mx-auto">
-    <h1 data-translator-en="Users" data-translator-es="Usuarios">Users</h1>
+    <div style="width: 100%; max-width: 1100px;">
+      <h1 class="mb-4" data-translator-en="User Management" data-translator-es="Gestión de Usuarios">User Management</h1>
+
+      {% if message %}
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="close" data-dismiss="alert" data-bs-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      {% endif %}
+      {% if error %}
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ error }}
+        <button type="button" class="close" data-dismiss="alert" data-bs-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      {% endif %}
+
+      <!-- Search Box -->
+      <div class="card mb-4">
+        <div class="card-body">
+          <div class="input-group">
+            <input 
+              type="text" 
+              class="form-control" 
+              id="users-search" 
+              placeholder="Search users by name, email, or group..."
+              data-translator-placeholder-en="Search users by name, email, or group..."
+              data-translator-placeholder-es="Buscar usuarios por nombre, correo o grupo...">
+            <button class="btn btn-outline-secondary" type="button" id="clear-users-search" data-translator-en="Clear" data-translator-es="Limpiar">Clear</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add User Form Card -->
+      <div class="card mb-4">
+        <div class="card-header text-white" style="background-color: var(--gray_tom);">
+          <h2 class="h5 mb-0" data-translator-en="Add New User" data-translator-es="Añadir Nuevo Usuario">Add New User</h2>
+        </div>
+        <div class="card-body">
+          <form method="POST" action="{{ url_for('baker_users') }}">
+            {{ add_form.csrf_token() }}
+            <input type="hidden" name="form_type" value="add">
+            <div class="form-row row">
+              <div class="form-group col-md-6 mb-3">
+                <label class="font-weight-bold fw-bold" data-translator-en="Username" data-translator-es="Nombre de Usuario">Username</label>
+                <input type="text" name="username" class="form-control" placeholder="e.g. john_doe" data-translator-placeholder-en="e.g. john_doe" data-translator-placeholder-es="p. ej. juan_perez" required>
+              </div>
+              <div class="form-group col-md-6 mb-3">
+                <label class="font-weight-bold fw-bold" data-translator-en="Email" data-translator-es="Correo Electrónico">Email</label>
+                <input type="email" name="email" class="form-control" placeholder="john@example.com" data-translator-placeholder-en="john@example.com" data-translator-placeholder-es="juan@ejemplo.com" required>
+              </div>
+            </div>
+            <div class="form-row row">
+              <div class="form-group col-md-6 mb-3">
+                <label class="font-weight-bold fw-bold" data-translator-en="Group" data-translator-es="Grupo">Group</label>
+                <input type="text" name="group" class="form-control" placeholder="e.g. Baker" data-translator-placeholder-en="e.g. Baker" data-translator-placeholder-es="p. ej. Panadero" required>
+              </div>
+              <div class="form-group col-md-6 mb-3">
+                <label class="font-weight-bold fw-bold" data-translator-en="Password" data-translator-es="Contraseña">Password</label>
+                <input type="password" name="password" class="form-control" placeholder="Password (min 8 chars)" data-translator-placeholder-en="Password (min 8 chars)" data-translator-placeholder-es="Contraseña (mín 8 caract.)" required>
+              </div>
+            </div>
+            <div class="form-row row mb-3">
+              <div class="form-group col-md-6">
+                <div class="form-check">
+                  <input type="checkbox" name="verified" id="add-user-verified" class="form-check-input" value="1" checked>
+                  <label class="form-check-label fw-bold font-weight-bold" for="add-user-verified" data-translator-en="Verified User" data-translator-es="Usuario Verificado">Verified User</label>
+                </div>
+              </div>
+              <div class="form-group col-md-6">
+                <div class="form-check">
+                  <input type="checkbox" name="legacy" id="add-user-legacy" class="form-check-input" value="1">
+                  <label class="form-check-label fw-bold font-weight-bold" for="add-user-legacy" data-translator-en="Legacy User" data-translator-es="Usuario Legado">Legacy User</label>
+                </div>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-secondary" style="background-color: var(--gray_tom); border-color: var(--gray_tom);" data-translator-en="Add User" data-translator-es="Añadir Usuario">Add User</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Users Table -->
+      <h2 class="h4 mb-3" data-translator-en="Existing Users" data-translator-es="Usuarios Existentes">Existing Users</h2>
+      <div class="table-responsive">
+        <table class="table table-hover table-striped align-middle" id="users-table">
+          <thead class="table-light">
+            <tr>
+              <th data-translator-en="ID" data-translator-es="ID">ID</th>
+              <th data-translator-en="Username" data-translator-es="Nombre de Usuario">Username</th>
+              <th data-translator-en="Email" data-translator-es="Correo Electrónico">Email</th>
+              <th data-translator-en="Group" data-translator-es="Grupo">Group</th>
+              <th data-translator-en="Verified" data-translator-es="Verificado">Verified</th>
+              <th data-translator-en="Legacy" data-translator-es="Legado">Legacy</th>
+              <th data-translator-en="Date" data-translator-es="Fecha">Date</th>
+              <th class="text-end text-right" data-translator-en="Actions" data-translator-es="Acciones">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for u in users %}
+            <tr>
+              <td>{{ u.id }}</td>
+              <td><strong>{{ u.username }}</strong></td>
+              <td>{{ u.email }}</td>
+              <td><span class="badge bg-secondary badge-secondary">{{ u.group }}</span></td>
+              <td>
+                {% if u.verified %}
+                  <span class="badge bg-success badge-success" data-translator-en="Yes" data-translator-es="Sí">Yes</span>
+                {% else %}
+                  <span class="badge bg-warning text-dark badge-warning" data-translator-en="No" data-translator-es="No">No</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if u.legacy %}
+                  <span class="badge bg-secondary badge-secondary" data-translator-en="Yes" data-translator-es="Sí">Yes</span>
+                {% else %}
+                  <span class="badge bg-light text-dark border badge-light" data-translator-en="No" data-translator-es="No">No</span>
+                {% endif %}
+              </td>
+              <td><small class="text-muted">{{ u.date }}</small></td>
+              <td class="text-end text-right">
+                <div class="btn-group btn-group-sm" role="group">
+                  <button type="button" class="btn btn-outline-secondary btn-sm view-user-btn"
+                          data-id="{{ u.id }}"
+                          data-username="{{ u.username }}"
+                          data-email="{{ u.email }}"
+                          data-group="{{ u.group }}"
+                          data-verified="{{ 'Yes / Sí' if u.verified else 'No' }}"
+                          data-legacy="{{ 'Yes / Sí' if u.legacy else 'No' }}"
+                          data-date="{{ u.date }}"
+                          data-orders="{{ u.orders|length }}"
+                          data-translator-en="View" data-translator-es="Ver">
+                    View
+                  </button>
+                  <button type="button" class="btn btn-outline-secondary btn-sm edit-user-btn"
+                          data-id="{{ u.id }}"
+                          data-username="{{ u.username }}"
+                          data-email="{{ u.email }}"
+                          data-group="{{ u.group }}"
+                          data-verified="{{ '1' if u.verified else '0' }}"
+                          data-legacy="{{ '1' if u.legacy else '0' }}"
+                          data-translator-en="Edit" data-translator-es="Editar">
+                    Edit
+                  </button>
+                  {% if u.id != 1 %}
+                  <form method="POST" action="{{ url_for('baker_users') }}" class="d-inline" onsubmit="return confirm('Delete user {{ u.username }}? / ¿Eliminar usuario {{ u.username }}?');">
+                    {{ form.csrf_token() }}
+                    <input type="hidden" name="delete_id" value="{{ u.id }}">
+                    <button type="submit" class="btn btn-outline-danger btn-sm" data-translator-en="Delete" data-translator-es="Eliminar">Delete</button>
+                  </form>
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Bulk Delete Section -->
+      <div class="card mt-4 mb-4">
+        <div class="card-body">
+          <h5 class="card-title" data-translator-en="Bulk User Delete" data-translator-es="Eliminación Masiva de Usuarios">Bulk User Delete</h5>
+          <form method="POST" action="{{ url_for('baker_users') }}" class="row align-items-center">
+            {{ form.csrf_token() }}
+            <div class="col-md-8 mb-2 mb-md-0">
+              {{ form.users_to_delete(class="form-control", placeholder="Enter comma-separated User IDs (e.g. 2, 3)", **{'data-translator-placeholder-en': 'Enter comma-separated User IDs (e.g. 2, 3)', 'data-translator-placeholder-es': 'Ingrese IDs de usuario separados por coma (p. ej. 2, 3)'}) }}
+            </div>
+            <div class="col-md-4">
+              <input type="submit" value="Delete Selected" class="btn btn-dark w-100" data-translator-en="Delete Selected" data-translator-es="Eliminar Seleccionados">
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </div>
   </div>
-  <!-- Search Box -->
-  <div class="row justify-content-md-center" style="margin-bottom: 20px;">
-    <div style="width: 90%; max-width: 600px;">
-      <div class="input-group">
-        <input 
-          type="text" 
-          class="form-control" 
-          id="users-search" 
-          placeholder="Search users..."
-          data-translator-placeholder-en="Search users by name or group..."
-          data-translator-placeholder-es="Buscar usuarios por nombre o grupo...">
-        <button class="btn btn-outline-secondary" type="button" id="clear-users-search" data-translator-en="Clear" data-translator-es="Limpiar">Clear</button>
+</div>
+
+<!-- View User Modal -->
+<div class="modal fade" id="viewUserModal" tabindex="-1" aria-labelledby="viewUserModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header text-white" style="background-color: var(--gray_tom);">
+        <h5 class="modal-title" id="viewUserModalLabel" data-translator-en="User Details" data-translator-es="Detalles del Usuario">User Details</h5>
+        <button type="button" class="close text-white border-0 bg-transparent ms-auto" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close" style="font-size: 1.75rem; font-weight: bold; color: white; opacity: 0.9;"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body">
+        <div class="row mb-2">
+          <div class="col-5 fw-bold font-weight-bold" data-translator-en="User ID:" data-translator-es="ID de Usuario:">User ID:</div>
+          <div class="col-7" id="view-user-id"></div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-5 fw-bold font-weight-bold" data-translator-en="Username:" data-translator-es="Nombre de Usuario:">Username:</div>
+          <div class="col-7" id="view-user-username"></div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-5 fw-bold font-weight-bold" data-translator-en="Email:" data-translator-es="Correo Electrónico:">Email:</div>
+          <div class="col-7" id="view-user-email"></div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-5 fw-bold font-weight-bold" data-translator-en="Group:" data-translator-es="Grupo:">Group:</div>
+          <div class="col-7" id="view-user-group"></div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-5 fw-bold font-weight-bold" data-translator-en="Verified:" data-translator-es="Verificado:">Verified:</div>
+          <div class="col-7" id="view-user-verified"></div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-5 fw-bold font-weight-bold" data-translator-en="Legacy Status:" data-translator-es="Estado de Legado:">Legacy Status:</div>
+          <div class="col-7" id="view-user-legacy"></div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-5 fw-bold font-weight-bold" data-translator-en="Registration Date:" data-translator-es="Fecha de Registro:">Registration Date:</div>
+          <div class="col-7" id="view-user-date"></div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-5 fw-bold font-weight-bold" data-translator-en="Total Orders:" data-translator-es="Total Pedidos:">Total Orders:</div>
+          <div class="col-7" id="view-user-orders"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-dismiss="modal" data-translator-en="Close" data-translator-es="Cerrar">Close</button>
       </div>
     </div>
   </div>
-  <div class="row justify-content-md-center">
-    <div class="table-responsive" style="padding-left: 10%;padding-right: 10%;">
-      <table class="table table-hover" id="users-table">
-        <thead>
-          <tr>
-            <th data-translator-en="User id" data-translator-es="ID de usuario">User id</th>
-            <th data-translator-en="User Name" data-translator-es="Nombre de usuario">User Name</th>
-            <th data-translator-en="Verified" data-translator-es="Verificado">VErified</th>
-            <th data-translator-en="User Group" data-translator-es="Grupo">User Group</th>
-            <!--th>User Address</th-->
-            <th data-translator-en="User date" data-translator-es="Fecha">User date</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for i in users%}
-          <tr>
-            <td>{{ i.id }}</td>
-            <td>{{ i.username }}</td>
-            <td>{{ i.verified }}</td>
-            <td>{{ i.group }}</td>
-            <!--td>{{ i.address }}</td-->
-            <td>{{ i.date }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+</div>
+
+<!-- Edit User Modal -->
+<div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <form method="POST" action="{{ url_for('baker_users') }}">
+        {{ edit_form.csrf_token() }}
+        <input type="hidden" name="form_type" value="edit">
+        <input type="hidden" name="action" value="edit">
+        <input type="hidden" name="id" id="edit-user-id">
+        <div class="modal-header text-white" style="background-color: var(--gray_tom);">
+          <h5 class="modal-title" id="editUserModalLabel" data-translator-en="Edit User" data-translator-es="Editar Usuario">Edit User</h5>
+          <button type="button" class="close text-white border-0 bg-transparent ms-auto" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close" style="font-size: 1.75rem; font-weight: bold; color: white; opacity: 0.9;"><span aria-hidden="true">&times;</span></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label fw-bold font-weight-bold" data-translator-en="Username" data-translator-es="Nombre de Usuario">Username</label>
+            <input type="text" name="username" id="edit-user-username" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-bold font-weight-bold" data-translator-en="Email" data-translator-es="Correo Electrónico">Email</label>
+            <input type="email" name="email" id="edit-user-email" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-bold font-weight-bold" data-translator-en="Group" data-translator-es="Grupo">Group</label>
+            <input type="text" name="group" id="edit-user-group" class="form-control" required>
+          </div>
+          <div class="form-check mb-3">
+            <input type="checkbox" name="verified" id="edit-user-verified" class="form-check-input" value="1">
+            <label class="form-check-label fw-bold font-weight-bold" for="edit-user-verified" data-translator-en="Verified User" data-translator-es="Usuario Verificado">Verified User</label>
+          </div>
+          <div class="form-check mb-3">
+            <input type="checkbox" name="legacy" id="edit-user-legacy" class="form-check-input" value="1">
+            <label class="form-check-label fw-bold font-weight-bold" for="edit-user-legacy" data-translator-en="Legacy User" data-translator-es="Usuario Legado">Legacy User</label>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-bold font-weight-bold" data-translator-en="New Password (optional)" data-translator-es="Nueva Contraseña (opcional)">New Password (optional)</label>
+            <input type="password" name="new_password" id="edit-user-password" class="form-control" placeholder="Leave blank to keep current password" data-translator-placeholder-en="Leave blank to keep current password" data-translator-placeholder-es="Dejar en blanco para mantener la contraseña actual">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-dismiss="modal" data-translator-en="Cancel" data-translator-es="Cancelar">Cancel</button>
+          <button type="submit" class="btn btn-secondary" style="background-color: var(--gray_tom); border-color: var(--gray_tom);" data-translator-en="Save Changes" data-translator-es="Guardar Cambios">Save Changes</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
-<div class="container d-flex justify-content-center">
-  <form method="POST" action="{{ url_for('baker_users') }}">
-    {{ form.csrf_token() }}
-    <div class>{{ form.users_to_delete}}
-    </div>
-    <div class="mx-auto" style="height: 10px;">
-    </div>
-    <div class="justify-content-center container d-flex"><input type="submit" value="Delete" class="btn btn-dark" data-translator-en="Delete" data-translator-es="Eliminar">
-    </div>
-  </form>
-</div>
-</div>
 
-<!-- Search and Filter Script -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+  // Search filtering
   const searchInput = document.getElementById('users-search');
   const clearBtn = document.getElementById('clear-users-search');
   const table = document.getElementById('users-table');
-  
+
   if (searchInput && table) {
     searchInput.addEventListener('input', function() {
       const query = this.value.toLowerCase();
       const rows = table.querySelectorAll('tbody tr');
-      
       rows.forEach(row => {
-        const cells = row.querySelectorAll('td');
-        let match = false;
-        
-        // Search in username (index 1) and group (index 3)
-        if (cells.length >= 4) {
-          const username = cells[1].textContent.toLowerCase();
-          const group = cells[3].textContent.toLowerCase();
-          
-          if (username.includes(query) || group.includes(query)) {
-            match = true;
-          }
-        }
-        
-        row.style.display = match ? '' : 'none';
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(query) ? '' : 'none';
       });
     });
   }
-  
-  if (clearBtn) {
+
+  if (clearBtn && searchInput) {
     clearBtn.addEventListener('click', function() {
       searchInput.value = '';
       searchInput.dispatchEvent(new Event('input'));
     });
   }
+
+  // View user modal populate
+  const viewBtns = document.querySelectorAll('.view-user-btn');
+  viewBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.getElementById('view-user-id').textContent = this.dataset.id || '';
+      document.getElementById('view-user-username').textContent = this.dataset.username || '';
+      document.getElementById('view-user-email').textContent = this.dataset.email || '';
+      document.getElementById('view-user-group').textContent = this.dataset.group || '';
+      document.getElementById('view-user-verified').textContent = this.dataset.verified || '';
+      document.getElementById('view-user-legacy').textContent = this.dataset.legacy || '';
+      document.getElementById('view-user-date').textContent = this.dataset.date || '';
+      document.getElementById('view-user-orders').textContent = this.dataset.orders + ' order(s)';
+
+      const modalEl = document.getElementById('viewUserModal');
+      const bsModal = new bootstrap.Modal(modalEl);
+      bsModal.show();
+    });
+  });
+
+  // Edit user modal populate
+  const editBtns = document.querySelectorAll('.edit-user-btn');
+  editBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.getElementById('edit-user-id').value = this.dataset.id || '';
+      document.getElementById('edit-user-username').value = this.dataset.username || '';
+      document.getElementById('edit-user-email').value = this.dataset.email || '';
+      document.getElementById('edit-user-group').value = this.dataset.group || '';
+      document.getElementById('edit-user-verified').checked = (this.dataset.verified === '1');
+      document.getElementById('edit-user-legacy').checked = (this.dataset.legacy === '1');
+      document.getElementById('edit-user-password').value = '';
+
+      const modalEl = document.getElementById('editUserModal');
+      const bsModal = new bootstrap.Modal(modalEl);
+      bsModal.show();
+    });
+  });
 });
 </script>
 

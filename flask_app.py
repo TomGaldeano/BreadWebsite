@@ -29,7 +29,7 @@ app = Flask(__name__)
 db = SQLAlchemy()
 login_manager = LoginManager()
 
-def create_app():
+def create_app(config_overrides=None):
     """
     Creates framework for it website to run (blackbox)
     """
@@ -44,11 +44,16 @@ def create_app():
     dev_pass = os.getenv('DEV_DB_PASSWORD', '1234')
     dev_host = os.getenv('DEV_DB_HOST', '127.0.0.1')
     dev_port = os.getenv('DEV_DB_PORT', '3306')
-    app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://{dev_user}:{dev_pass}@{dev_host}:{dev_port}/breadshop"
+    db_uri = os.getenv('DATABASE_URL')
+    if not db_uri:
+        db_uri = f"mysql+pymysql://{dev_user}:{dev_pass}@{dev_host}:{dev_port}/breadshop"
+    app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
     # Optional: allow SQL logging in development
-    app.config['SQLALCHEMY_ECHO'] = True
+    app.config['SQLALCHEMY_ECHO'] = False
 
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    if config_overrides:
+        app.config.update(config_overrides)
     db.init_app(app)
     csrf = CSRFProtect(app)
     return app
@@ -457,55 +462,24 @@ def info():
 
 @app.route('/ingredients', methods=['POST', 'GET'])
 def ingredients():
-    """
-    Displays all ingredients with search functionality by name in English or Spanish
-    depending on the currently selected language.
-    """
-    search_query = request.args.get('search', '').strip()
-    lang = request.args.get('lang', 'en')
-    
-    # Validate language parameter
-    if lang not in ['en', 'es']:
-        lang = 'en'
-    
-    try:
-        all_ingredients = Ingredient.query.all()
-    except Exception:
-        all_ingredients = []
-    
-    # Filter ingredients based on search query
-    filtered_ingredients = []
-    if search_query:
-        search_lower = search_query.lower()
-        for ingredient in all_ingredients:
-            # Search in both English and Spanish names
-            name_en = (ingredient.display_name or ingredient.name or '').lower()
-            name_es = (ingredient.display_name_es or ingredient.name or '').lower()
-            
-            if search_lower in name_en or search_lower in name_es:
-                filtered_ingredients.append(ingredient)
-    else:
-        filtered_ingredients = all_ingredients
-    
-    # Sort ingredients by display name
-    filtered_ingredients.sort(key=lambda x: (x.display_name_es if lang == 'es' and x.display_name_es else x.display_name or x.name))
-    
-    return render_template("ingredients.html", 
-                         ingredients=filtered_ingredients, 
-                         search_query=search_query,
-                         lang=lang)
+    """Redirects to manage_ingredients route."""
+    return redirect(url_for('manage_ingredients'))
 
 @app.route('/admin/ingredients', methods=['POST', 'GET'])
 @admin_required
 def manage_ingredients():
-    """Allows the administrator to add or remove ingredients."""
+    """Allows the administrator to list, add, edit, and remove ingredients."""
     add_form = AddIngredientForm()
+    edit_form = EditIngredientForm()
+    edit_id = request.args.get('edit', type=int)
     delete_id = request.form.get('delete_id', type=int)
+    action = request.form.get('action', '')
     message = None
     error = None
 
-    if delete_id is not None:
-        ingredient = db.session.get(Ingredient, delete_id)
+    if delete_id is not None or action == 'delete':
+        target_id = delete_id or request.form.get('id', type=int)
+        ingredient = db.session.get(Ingredient, target_id) if target_id else None
         if ingredient is None:
             error = "Ingredient not found."
         elif ingredient.product_items:
@@ -514,7 +488,35 @@ def manage_ingredients():
             db.session.delete(ingredient)
             db.session.commit()
             message = "Ingredient deleted."
-    elif add_form.validate_on_submit():
+    elif action == 'edit' or (request.method == 'POST' and request.form.get('form_type') == 'edit'):
+        ing_id = request.form.get('id', type=int) or (edit_form.id.data and int(edit_form.id.data))
+        ingredient = db.session.get(Ingredient, ing_id) if ing_id else None
+        if not ingredient:
+            error = "Ingredient not found."
+        else:
+            name = request.form.get('name', '').strip()
+            display_name = request.form.get('display_name', '').strip()
+            display_name_es = request.form.get('display_name_es', '').strip()
+            raw_cost = request.form.get('cost', '')
+            try:
+                cost = float(raw_cost) if raw_cost != '' else None
+            except ValueError:
+                cost = ingredient.cost
+
+            existing = Ingredient.query.filter(Ingredient.name == name, Ingredient.id != ing_id).first()
+            if existing:
+                error = "An ingredient with that internal name already exists."
+            elif not name or not display_name or not display_name_es:
+                error = "Name fields cannot be empty."
+            else:
+                ingredient.name = name
+                ingredient.display_name = display_name
+                ingredient.display_name_es = display_name_es
+                ingredient.cost = cost
+                db.session.commit()
+                message = "Ingredient updated."
+                edit_id = None
+    elif add_form.validate_on_submit() and (request.form.get('form_type') == 'add' or 'submit' in request.form):
         name = add_form.name.data.strip()
         if Ingredient.query.filter_by(name=name).first():
             error = "An ingredient with that internal name already exists."
@@ -530,9 +532,18 @@ def manage_ingredients():
             message = "Ingredient added."
             add_form = AddIngredientForm()
 
+    if edit_id and not error and request.method == 'GET':
+        edit_ing = db.session.get(Ingredient, edit_id)
+        if edit_ing:
+            edit_form.id.data = edit_ing.id
+            edit_form.name.data = edit_ing.name
+            edit_form.display_name.data = edit_ing.display_name
+            edit_form.display_name_es.data = edit_ing.display_name_es
+            edit_form.cost.data = edit_ing.cost
+
     all_ingredients = Ingredient.query.order_by(Ingredient.name).all()
-    return render_template("manage_ingredients.html", add_form=add_form,
-                           ingredients=all_ingredients, message=message, error=error)
+    return render_template("manage_ingredients.html", add_form=add_form, edit_form=edit_form,
+                           ingredients=all_ingredients, edit_id=edit_id, message=message, error=error)
 
 @app.route('/delivery-cost', methods=['GET', 'POST'])
 def delivery_cost():
@@ -722,19 +733,103 @@ def future_payments():
 @admin_required
 def baker_users():
     """
-    Admin page to control and allow the deleting of users by admin
+    Admin page to control, view, add, edit, and delete users.
     """
-    users = db.session.query(User).all()
+    add_form = RegisterForm()
+    edit_form = AdminEditUserForm()
     form = DeleteUserForm()
-    form.validate_on_submit()
-    if form.validate_on_submit():
-        stmt = text('''DELETE FROM users WHERE id IN ('''+str(form.users_to_delete.data)+");")
-        db.session.execute(stmt)
-        stmt = text('''DELETE FROM orders WHERE user_id IN ('''+str(form.users_to_delete.data)+");")
-        db.session.execute(stmt)
-        db.session.commit()
-        return redirect(url_for("baker_users"))
-    return render_template("admin_users.html", users = users,form = form)
+    delete_id = request.form.get('delete_id', type=int)
+    action = request.form.get('action', '')
+    message = None
+    error = None
+
+    if delete_id is not None or action == 'delete':
+        target_id = delete_id or request.form.get('id', type=int)
+        if target_id == 1:
+            error = "Cannot delete the primary admin user."
+        else:
+            user = db.session.get(User, target_id) if target_id else None
+            if user:
+                stmt = text(f"DELETE FROM orders WHERE user_id = {target_id}")
+                db.session.execute(stmt)
+                db.session.delete(user)
+                db.session.commit()
+                message = "User deleted successfully."
+            else:
+                error = "User not found."
+    elif action == 'add' or (request.method == 'POST' and request.form.get('form_type') == 'add'):
+        username = request.form.get('username', '').strip()
+        email = request.form.get('email', '').strip()
+        group = request.form.get('group', '').strip()
+        password = request.form.get('password', '').strip()
+        verified = True if request.form.get('verified') in ['true', 'on', '1', 1, True] else False
+        legacy = True if request.form.get('legacy') in ['true', 'on', '1', 1, True] else False
+
+        if User.query.filter_by(username=username).first():
+            error = "Username is already taken by another user."
+        elif User.query.filter_by(email=email).first():
+            error = "Email is already taken by another user."
+        elif not username or not email or not group or not password:
+            error = "Username, Email, Group, and Password cannot be empty."
+        else:
+            new_user = User(
+                username=username,
+                email=email,
+                group=group,
+                password=generate_password_hash(password, method="pbkdf2:sha256", salt_length=14),
+                date=str(datetime.date.today()),
+                verified=verified,
+                legacy=legacy
+            )
+            db.session.add(new_user)
+            db.session.commit()
+            message = "User added successfully."
+    elif action == 'edit' or (request.method == 'POST' and request.form.get('form_type') == 'edit'):
+        user_id = request.form.get('id', type=int) or (edit_form.id.data and int(edit_form.id.data))
+        user = db.session.get(User, user_id) if user_id else None
+        if not user:
+            error = "User not found."
+        else:
+            username = request.form.get('username', '').strip()
+            email = request.form.get('email', '').strip()
+            group = request.form.get('group', '').strip()
+            verified = True if request.form.get('verified') in ['true', 'on', '1', 1, True] else False
+            legacy = True if request.form.get('legacy') in ['true', 'on', '1', 1, True] else False
+            new_password = request.form.get('new_password', '').strip()
+
+            existing_user = User.query.filter(User.username == username, User.id != user_id).first()
+            existing_email = User.query.filter(User.email == email, User.id != user_id).first()
+
+            if existing_user:
+                error = "Username is already taken by another user."
+            elif existing_email:
+                error = "Email is already in use by another user."
+            elif not username or not email or not group:
+                error = "Username, Email, and Group fields cannot be empty."
+            else:
+                user.username = username
+                user.email = email
+                user.group = group
+                user.verified = verified
+                user.legacy = legacy
+                if new_password:
+                    user.password = generate_password_hash(new_password, method="pbkdf2:sha256", salt_length=14)
+                db.session.commit()
+                message = "User updated successfully."
+    elif form.validate_on_submit() and form.users_to_delete.data:
+        try:
+            target_ids = [int(x.strip()) for x in form.users_to_delete.data.split(',') if x.strip().isdigit()]
+            for uid in target_ids:
+                if uid != 1:
+                    db.session.execute(text(f"DELETE FROM orders WHERE user_id = {uid}"))
+                    db.session.execute(text(f"DELETE FROM users WHERE id = {uid}"))
+            db.session.commit()
+            message = "Selected user(s) deleted."
+        except Exception as e:
+            error = f"Error deleting users: {e}"
+
+    users = db.session.query(User).order_by(User.id).all()
+    return render_template("admin_users.html", users=users, form=form, add_form=add_form, edit_form=edit_form, message=message, error=error)
 
 @app.route('/statistics')
 @admin_required

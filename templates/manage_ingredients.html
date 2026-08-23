@@ -3,73 +3,130 @@
 <div class="container-fluid" style="margin-top: 100px">
   <div class="row justify-content-md-center">
     <div class="col-12" style="max-width: 1000px;">
-      <h1 class="mb-4" data-translator-en="Manage ingredients" data-translator-es="Gestionar ingredientes">Manage ingredients</h1>
+      <h1 class="mb-4" data-translator-en="Manage Ingredients" data-translator-es="Gestionar Ingredientes">Manage Ingredients</h1>
 
       {% if message %}
-      <div class="alert alert-success" role="alert">{{ message }}</div>
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="close" data-dismiss="alert" data-bs-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
       {% endif %}
       {% if error %}
-      <div class="alert alert-danger" role="alert">{{ error }}</div>
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ error }}
+        <button type="button" class="close" data-dismiss="alert" data-bs-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
       {% endif %}
 
+      <!-- Search Box -->
       <div class="card mb-4">
         <div class="card-body">
-          <h2 class="h4" data-translator-en="Add ingredient" data-translator-es="Añadir ingrediente">Add ingredient</h2>
+          <div class="input-group">
+            <input 
+              type="text" 
+              class="form-control" 
+              id="ingredients-search" 
+              placeholder="Search ingredients by name or code..."
+              data-translator-placeholder-en="Search ingredients by name or code..."
+              data-translator-placeholder-es="Buscar ingredientes por nombre o código...">
+            <button class="btn btn-outline-secondary" type="button" id="clear-ingredients-search" data-translator-en="Clear" data-translator-es="Limpiar">Clear</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add Ingredient Form Card -->
+      <div class="card mb-4">
+        <div class="card-header text-white" style="background-color: var(--gray_tom);">
+          <h2 class="h5 mb-0" data-translator-en="Add New Ingredient" data-translator-es="Añadir Nuevo Ingrediente">Add New Ingredient</h2>
+        </div>
+        <div class="card-body">
           <form method="POST" action="{{ url_for('manage_ingredients') }}">
             {{ add_form.hidden_tag() }}
-            <div class="form-row">
-              <div class="form-group col-md-6">
-                {{ add_form.name.label(class="font-weight-bold") }}
-                {{ add_form.name(class="form-control", placeholder="e.g. rye_flour") }}
+            <input type="hidden" name="form_type" value="add">
+            <div class="form-row row">
+              <div class="form-group col-md-6 mb-3">
+                <label class="font-weight-bold fw-bold" data-translator-en="Internal Name / Code" data-translator-es="Nombre Interno / Código">Internal Name / Code</label>
+                {{ add_form.name(class="form-control", placeholder="e.g. rye_flour", **{'data-translator-placeholder-en': 'e.g. rye_flour', 'data-translator-placeholder-es': 'p. ej. harina_centeno'}) }}
                 {% for error in add_form.name.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
               </div>
-              <div class="form-group col-md-6">
-                {{ add_form.display_name.label(class="font-weight-bold") }}
-                {{ add_form.display_name(class="form-control", placeholder="e.g. Rye flour") }}
+              <div class="form-group col-md-6 mb-3">
+                <label class="font-weight-bold fw-bold" data-translator-en="English Name" data-translator-es="Nombre en Inglés">English Name</label>
+                {{ add_form.display_name(class="form-control", placeholder="e.g. Rye flour", **{'data-translator-placeholder-en': 'e.g. Rye flour', 'data-translator-placeholder-es': 'p. ej. Harina de centeno (en inglés)'}) }}
                 {% for error in add_form.display_name.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
               </div>
             </div>
-            <div class="form-row">
-              <div class="form-group col-md-6">
-                {{ add_form.display_name_es.label(class="font-weight-bold") }}
-                {{ add_form.display_name_es(class="form-control", placeholder="e.g. Harina de centeno") }}
+            <div class="form-row row">
+              <div class="form-group col-md-6 mb-3">
+                <label class="font-weight-bold fw-bold" data-translator-en="Spanish Name" data-translator-es="Nombre en Español">Spanish Name</label>
+                {{ add_form.display_name_es(class="form-control", placeholder="e.g. Harina de centeno", **{'data-translator-placeholder-en': 'e.g. Rye flour (Spanish)', 'data-translator-placeholder-es': 'p. ej. Harina de centeno'}) }}
                 {% for error in add_form.display_name_es.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
               </div>
-              <div class="form-group col-md-6">
-                {{ add_form.cost.label(class="font-weight-bold") }}
+              <div class="form-group col-md-6 mb-3">
+                <label class="font-weight-bold fw-bold" data-translator-en="Cost (€)" data-translator-es="Costo (€)">Cost (€)</label>
                 {{ add_form.cost(class="form-control", min="0", step="0.01", placeholder="0.00") }}
                 {% for error in add_form.cost.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
               </div>
             </div>
-            {{ add_form.submit(class="btn btn-primary") }}
+            <button type="submit" class="btn btn-secondary" style="background-color: var(--gray_tom); border-color: var(--gray_tom);" data-translator-en="Add Ingredient" data-translator-es="Añadir Ingrediente">Add Ingredient</button>
           </form>
         </div>
       </div>
 
-      <h2 class="h4 mb-3" data-translator-en="Existing ingredients" data-translator-es="Ingredientes existentes">Existing ingredients</h2>
+      <!-- Existing Ingredients Table -->
+      <h2 class="h4 mb-3" data-translator-en="Existing Ingredients" data-translator-es="Ingredientes Existentes">Existing Ingredients</h2>
       {% if ingredients %}
       <div class="table-responsive">
-        <table class="table table-hover table-striped">
+        <table class="table table-hover table-striped align-middle" id="ingredients-table">
           <thead class="table-light">
             <tr>
-              <th>Name</th>
-              <th>Spanish name</th>
-              <th>Cost (€)</th>
-              <th aria-label="Actions"></th>
+              <th data-translator-en="English Name / Internal Code" data-translator-es="Nombre en Inglés / Código Interno">English Name / Internal Code</th>
+              <th data-translator-en="Spanish Name" data-translator-es="Nombre en Español">Spanish Name</th>
+              <th data-translator-en="Cost (€)" data-translator-es="Costo (€)">Cost (€)</th>
+              <th class="text-end text-right" data-translator-en="Actions" data-translator-es="Acciones">Actions</th>
             </tr>
           </thead>
           <tbody>
             {% for ingredient in ingredients %}
             <tr>
-              <td>{{ ingredient.display_name or ingredient.name }}<small class="d-block text-muted">{{ ingredient.name }}</small></td>
-              <td>{{ ingredient.display_name_es or ingredient.display_name or ingredient.name }}</td>
-              <td>{% if ingredient.cost is not none %}{{ '%.2f'|format(ingredient.cost) }}{% else %}<span class="text-muted">-</span>{% endif %}</td>
-              <td class="text-right">
-                <form method="POST" action="{{ url_for('manage_ingredients') }}" onsubmit="return confirm('Delete this ingredient?');">
-                  {{ add_form.csrf_token() }}
-                  <input type="hidden" name="delete_id" value="{{ ingredient.id }}">
-                  <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
-                </form>
+              <td>
+                <strong class="ingredient-en">{{ ingredient.display_name or ingredient.name }}</strong>
+                <small class="d-block text-muted ingredient-code">{{ ingredient.name }}</small>
+              </td>
+              <td class="ingredient-es">{{ ingredient.display_name_es or ingredient.display_name or ingredient.name }}</td>
+              <td>
+                {% if ingredient.cost is not none %}
+                  €{{ '%.2f'|format(ingredient.cost) }}
+                {% else %}
+                  <span class="text-muted">-</span>
+                {% endif %}
+              </td>
+              <td class="text-end text-right">
+                <div class="btn-group btn-group-sm" role="group">
+                  <button type="button" class="btn btn-outline-secondary btn-sm view-ingredient-btn"
+                          data-id="{{ ingredient.id }}"
+                          data-name="{{ ingredient.name }}"
+                          data-display-name="{{ ingredient.display_name or ingredient.name }}"
+                          data-display-name-es="{{ ingredient.display_name_es or ingredient.display_name or ingredient.name }}"
+                          data-cost="{% if ingredient.cost is not none %}{{ '%.2f'|format(ingredient.cost) }}{% endif %}"
+                          data-usage="{{ ingredient.product_items|length }}"
+                          data-translator-en="View" data-translator-es="Ver">
+                    View
+                  </button>
+                  <button type="button" class="btn btn-outline-secondary btn-sm edit-ingredient-btn"
+                          data-id="{{ ingredient.id }}"
+                          data-name="{{ ingredient.name }}"
+                          data-display-name="{{ ingredient.display_name or ingredient.name }}"
+                          data-display-name-es="{{ ingredient.display_name_es or ingredient.display_name or ingredient.name }}"
+                          data-cost="{% if ingredient.cost is not none %}{{ '%.2f'|format(ingredient.cost) }}{% endif %}"
+                          data-translator-en="Edit" data-translator-es="Editar">
+                    Edit
+                  </button>
+                  <form method="POST" action="{{ url_for('manage_ingredients') }}" class="d-inline" onsubmit="return confirm('Delete this ingredient? / ¿Eliminar este ingrediente?');">
+                    {{ add_form.csrf_token() }}
+                    <input type="hidden" name="delete_id" value="{{ ingredient.id }}">
+                    <button type="submit" class="btn btn-outline-danger btn-sm" data-translator-en="Delete" data-translator-es="Eliminar">Delete</button>
+                  </form>
+                </div>
               </td>
             </tr>
             {% endfor %}
@@ -77,10 +134,146 @@
         </table>
       </div>
       {% else %}
-      <p class="text-muted">No ingredients available.</p>
+      <p class="text-muted" data-translator-en="No ingredients available." data-translator-es="No hay ingredientes disponibles.">No ingredients available.</p>
       {% endif %}
     </div>
   </div>
 </div>
+
+<!-- View Ingredient Modal -->
+<div class="modal fade" id="viewIngredientModal" tabindex="-1" aria-labelledby="viewIngredientModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header text-white" style="background-color: var(--gray_tom);">
+        <h5 class="modal-title" id="viewIngredientModalLabel" data-translator-en="Ingredient Details" data-translator-es="Detalles del Ingrediente">Ingredient Details</h5>
+        <button type="button" class="close text-white border-0 bg-transparent ms-auto" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close" style="font-size: 1.75rem; font-weight: bold; color: white; opacity: 0.9;"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body">
+        <div class="row mb-2">
+          <div class="col-5 fw-bold font-weight-bold" data-translator-en="Internal Code:" data-translator-es="Código Interno:">Internal Code:</div>
+          <div class="col-7" id="view-ing-code"></div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-5 fw-bold font-weight-bold" data-translator-en="English Name:" data-translator-es="Nombre en Inglés:">English Name:</div>
+          <div class="col-7" id="view-ing-name-en"></div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-5 fw-bold font-weight-bold" data-translator-en="Spanish Name:" data-translator-es="Nombre en Español:">Spanish Name:</div>
+          <div class="col-7" id="view-ing-name-es"></div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-5 fw-bold font-weight-bold" data-translator-en="Cost (€):" data-translator-es="Costo (€):">Cost (€):</div>
+          <div class="col-7" id="view-ing-cost"></div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-5 fw-bold font-weight-bold" data-translator-en="Used in Products:" data-translator-es="Usado en Productos:">Used in Products:</div>
+          <div class="col-7" id="view-ing-usage"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-dismiss="modal" data-translator-en="Close" data-translator-es="Cerrar">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Ingredient Modal -->
+<div class="modal fade" id="editIngredientModal" tabindex="-1" aria-labelledby="editIngredientModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <form method="POST" action="{{ url_for('manage_ingredients') }}">
+        {{ edit_form.csrf_token() }}
+        <input type="hidden" name="form_type" value="edit">
+        <input type="hidden" name="action" value="edit">
+        <input type="hidden" name="id" id="edit-ing-id">
+        <div class="modal-header text-white" style="background-color: var(--gray_tom);">
+          <h5 class="modal-title" id="editIngredientModalLabel" data-translator-en="Edit Ingredient" data-translator-es="Editar Ingrediente">Edit Ingredient</h5>
+          <button type="button" class="close text-white border-0 bg-transparent ms-auto" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close" style="font-size: 1.75rem; font-weight: bold; color: white; opacity: 0.9;"><span aria-hidden="true">&times;</span></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label fw-bold font-weight-bold" data-translator-en="Internal Name / Code" data-translator-es="Nombre Interno / Código">Internal Name / Code</label>
+            <input type="text" name="name" id="edit-ing-code" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-bold font-weight-bold" data-translator-en="English Name" data-translator-es="Nombre en Inglés">English Name</label>
+            <input type="text" name="display_name" id="edit-ing-name-en" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-bold font-weight-bold" data-translator-en="Spanish Name" data-translator-es="Nombre en Español">Spanish Name</label>
+            <input type="text" name="display_name_es" id="edit-ing-name-es" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-bold font-weight-bold" data-translator-en="Cost (€)" data-translator-es="Costo (€)">Cost (€)</label>
+            <input type="number" step="0.01" min="0" name="cost" id="edit-ing-cost" class="form-control">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-dismiss="modal" data-translator-en="Cancel" data-translator-es="Cancelar">Cancel</button>
+          <button type="submit" class="btn btn-secondary" style="background-color: var(--gray_tom); border-color: var(--gray_tom);" data-translator-en="Save Changes" data-translator-es="Guardar Cambios">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Search filtering
+  const searchInput = document.getElementById('ingredients-search');
+  const clearBtn = document.getElementById('clear-ingredients-search');
+  const table = document.getElementById('ingredients-table');
+
+  if (searchInput && table) {
+    searchInput.addEventListener('input', function() {
+      const query = this.value.toLowerCase();
+      const rows = table.querySelectorAll('tbody tr');
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(query) ? '' : 'none';
+      });
+    });
+  }
+
+  if (clearBtn && searchInput) {
+    clearBtn.addEventListener('click', function() {
+      searchInput.value = '';
+      searchInput.dispatchEvent(new Event('input'));
+    });
+  }
+
+  // View modal populate
+  const viewBtns = document.querySelectorAll('.view-ingredient-btn');
+  viewBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.getElementById('view-ing-code').textContent = this.dataset.name || '';
+      document.getElementById('view-ing-name-en').textContent = this.dataset.displayName || '';
+      document.getElementById('view-ing-name-es').textContent = this.dataset.displayNameEs || '';
+      document.getElementById('view-ing-cost').textContent = this.dataset.cost ? '€' + this.dataset.cost : '-';
+      document.getElementById('view-ing-usage').textContent = this.dataset.usage + ' product(s)';
+      
+      const modalEl = document.getElementById('viewIngredientModal');
+      const bsModal = new bootstrap.Modal(modalEl);
+      bsModal.show();
+    });
+  });
+
+  // Edit modal populate
+  const editBtns = document.querySelectorAll('.edit-ingredient-btn');
+  editBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.getElementById('edit-ing-id').value = this.dataset.id || '';
+      document.getElementById('edit-ing-code').value = this.dataset.name || '';
+      document.getElementById('edit-ing-name-en').value = this.dataset.displayName || '';
+      document.getElementById('edit-ing-name-es').value = this.dataset.displayNameEs || '';
+      document.getElementById('edit-ing-cost').value = this.dataset.cost || '';
+      
+      const modalEl = document.getElementById('editIngredientModal');
+      const bsModal = new bootstrap.Modal(modalEl);
+      bsModal.show();
+    });
+  });
+});
+</script>
 
 {% include "footer.html" %}
