@@ -1,21 +1,14 @@
-add optional adress to register form and database,add way to add it in user page.
-add delivery notes to user profile that load when ordering with popup to be accepted or modified. they can be modified from user's profile page
-add darkmode preference and read from borwser
-add option when ordering to send to listed address, to add adress or use location.
-add settings page for admin and users to create preferences
-add search option in order pages by date, or product name.
-add pagination and sorting in relevant pages
-add inventory column to ingredients and view and controllers to manage it.
-update inventory managment logic when ordering and add stats on usage, will need logs to control it with database
-add email verification option in settings for admin
-add ordering alert window
-add staff database with views and timetable management
-add delivery guy option that calulates route will need database mods
-add script to order for legacy users
-improve payed and orders websites
-improve homepage with carousel in computers.
-add option to send email to admin with info on payemtns due and orders for the day
-add popup when order issue
-add verification and sentding prompts when placing an order
-change admin to superadmin and allow him to make admins
-make small screen friendly
+Tier 2 — Backend logic, no schema changes
+Change admin to superadmin, allow making admins (todo #20) — Add is_admin column to User, update admin_required decorator to check is_admin, add UI for superadmin to promote users.
+Add settings page for admin and users to create preferences (todo #5) — Simple preferences stored in session or new UserPreference table.
+Tier 3 — DB schema additions, moderate complexity
+Add inventory column to ingredients and view/controllers (todo #8) — Add stock (Float) column to Ingredient. New admin view to manage stock.
+Update inventory management logic when ordering + stats (todo #9) — Deduct ingredient stock when order placed; add inventory log table; stock stats page.
+Add delivery notes to user profile (todo #2) — Add delivery_notes column to User. Show/edit on profile. Popup when ordering.
+Add option when ordering: send to address, add address, or use location (todo #4) — Order form enhancement with delivery option selector, JS geolocation, address display.
+Add email verification option in settings for admin (todo #10) — Admin toggle for requiring email verification; send verification email link.
+Add option to send email to admin with payment/order info for the day (todo #17) — Admin button/cron to trigger email via Flask-Mail.
+Tier 4 — Complex new features
+Add staff database with views and timetable management (todo #12) — New Staff model, timetable views, admin CRUD.
+Add delivery guy option that calculates route (todo #13) — DeliveryPerson model, route calculation UI using existing haversine logic.
+Add script to order for legacy users (todo #14) — Admin page/form to place orders on behalf of legacy users.
