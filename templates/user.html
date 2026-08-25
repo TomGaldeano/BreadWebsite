@@ -14,6 +14,8 @@
                 <li class="list-group-item ">{{form.group(style="width:200px", value=user_data["group"])}}</li>
                 <li class="list-group-item ">Email</li>
                 <li class="list-group-item ">{{form.email(style="width:200px", value=user_data["email"])}}<span style="color:red">{% if errors[1] %}{{errors[1]}}{% endif %}</span></li>
+                <li class="list-group-item ">Address (optional)</li>
+                <li class="list-group-item ">{{form.address(style="width:300px", value=user_data["address"])}}</li>
                 <li class="list-group-item ">Old Password</li>
                 <li class="list-group-item ">{{form.old_password(style="width:200px")}}</li>
                 <li class="list-group-item">New Password</li>

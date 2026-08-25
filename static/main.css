@@ -4,17 +4,16 @@
   --gray_tom: #6c757d;
   --black_tom: black;
   --white_tom: white;
-
 }
 
 .dark {
   --green_tom: #00ff00;
   --grey_tom: #363636;
   --black_tom: #FFFFFF;
-  --white_tom: #000000;
+  --white_tom: #121212;
   --blue_tom: aqua;
+  --gray_tom: #3a3a3a;
 }
-
 
 img,
 nav {
@@ -22,7 +21,7 @@ nav {
 }
 
 li {
-  color: var(--white_tom);
+  color: var(--black_tom);
   background-color: var(--gray_tom);
 }
 
@@ -30,18 +29,17 @@ li {
   color: var(--black_tom);
 }
 
-a{
+a {
   color: var(--black_tom);
 }
 a:hover {
   color: var(--black_tom);
   text-decoration: underline;
 }
-  a:focus,
-  a:focus-visible {
-    outline: 1px solid var(--green_tom);
-  }
-
+a:focus,
+a:focus-visible {
+  outline: 1px solid var(--green_tom);
+}
 
 body {
   background-color: var(--white_tom);
@@ -50,4 +48,125 @@ body {
 
 td {
   color: var(--black_tom);
+}
+
+/* ── Dark mode table/card overrides ──────────────────────────────────── */
+.dark table,
+.dark .table {
+  color: var(--black_tom);
+  background-color: var(--white_tom);
+}
+.dark .table-hover tbody tr:hover {
+  background-color: rgba(255,255,255,0.07);
+}
+.dark .list-group-item {
+  background-color: var(--gray_tom);
+  border-color: #555;
+  color: var(--black_tom);
+}
+.dark .form-control {
+  background-color: #1e1e1e;
+  color: var(--black_tom);
+  border-color: #555;
+}
+.dark .modal-content {
+  background-color: #1e1e1e;
+  color: var(--black_tom);
+}
+
+/* ── Mobile-friendly improvements ──────────────────────────────────── */
+@media (max-width: 767px) {
+  /* Ensure main container has sensible padding on small screens */
+  main.container {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  /* Tables scroll horizontally on mobile */
+  .table-responsive {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Reduce hero margin-top so content isn't buried on mobile */
+  .container-fluid[style*="margin-top:100px"],
+  .container-fluid[style*="margin-top: 100px"] {
+    margin-top: 70px !important;
+  }
+
+  /* Make input numbers wider-tappable */
+  input[type="number"] {
+    min-width: 55px;
+  }
+
+  /* Stack form fields nicely */
+  .list-group-item {
+    padding: 0.5rem 0.75rem;
+  }
+
+  /* Reduce carousel height */
+  .carousel-item img {
+    max-height: 200px;
+    object-fit: cover;
+  }
+}
+
+/* ── Order confirmation modal ─────────────────────────────────────── */
+.order-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 2000;
+  align-items: center;
+  justify-content: center;
+}
+.order-modal-overlay.show {
+  display: flex;
+}
+.order-modal-box {
+  background: var(--white_tom);
+  color: var(--black_tom);
+  border-radius: 8px;
+  padding: 2rem;
+  max-width: 420px;
+  width: 90%;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  text-align: center;
+}
+.order-modal-box h5 {
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+.order-modal-box .modal-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+/* ── Search bar on order pages ───────────────────────────────────── */
+.order-search-bar {
+  margin-bottom: 1rem;
+}
+
+/* ── Pagination ──────────────────────────────────────────────────── */
+.pagination-bar {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 1rem 0;
+}
+.pagination-bar a,
+.pagination-bar span {
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--gray_tom);
+  border-radius: 4px;
+  text-decoration: none;
+  color: var(--black_tom);
+}
+.pagination-bar .current-page {
+  background: var(--gray_tom);
+  color: var(--black_tom);
+  font-weight: bold;
 }

@@ -2,6 +2,42 @@
 <!-- main content -->
 <div class="container-fluid " style = "margin-top:100px">
   <div class="row justify-content-md-center container d-flex mx-auto">
+
+    <!-- Desktop image carousel (hidden on mobile) -->
+    <div class="d-none d-md-block w-100 mb-4">
+      <div id="breadCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+          <button type="button" data-bs-target="#breadCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Bread"></button>
+          <button type="button" data-bs-target="#breadCarousel" data-bs-slide-to="1" aria-label="Sweet"></button>
+          <button type="button" data-bs-target="#breadCarousel" data-bs-slide-to="2" aria-label="Savory"></button>
+        </div>
+        <div class="carousel-inner rounded" style="max-height:320px;overflow:hidden;">
+          {% set carousel_imgs = [] %}
+          {% for p in bread %}{% if loop.index <= 3 %}{% set _ = carousel_imgs.append(p) %}{% endif %}{% endfor %}
+          {% for p in bread %}
+          <div class="carousel-item {% if loop.first %}active{% endif %}">
+            <img src="static/img/{{ p.name|replace('_',' ') }}.jpg"
+                 class="d-block w-100"
+                 style="object-fit:cover;max-height:320px;"
+                 alt="{{ p.display_name or p.name }}"
+                 onerror="this.closest('.carousel-item').style.display='none'">
+            <div class="carousel-caption d-none d-md-block" style="background:rgba(0,0,0,0.4);border-radius:6px;">
+              <h5>{{ p.display_name or (p.name|replace('_',' ')) }}</h5>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#breadCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#breadCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+    </div>
+
     <!-- Search Box -->
     <div style="width: 100%; max-width: 1200px; margin-bottom: 20px;">
       <div class="input-group">
@@ -17,7 +53,7 @@
       <small class="text-muted" id="search-help" data-translator-en="Search by product name" data-translator-es="Buscar por nombre de producto">Search by product name</small>
     </div>
     <div class="table-responsive">
-         <form method="POST" action="{{ url_for('index') }}">
+         <form method="POST" action="{{ url_for('index') }}" id="order-form">
           <table class="table table-hover">
           {{ order_form.csrf_token() }}
               <h1 id="heading-bread" data-translator-en="Bread" data-translator-es="Pan">Bread</h1>
@@ -26,14 +62,14 @@
               <tr>
                 <td class="align-middle" data-translator-en="{{ p.display_name or (p.name|replace('_',' ')) }}" data-translator-es="{{ p.display_name_es or p.display_name or (p.name|replace('_',' ')) }}">{% if lang == 'es' %}{{ p.display_name_es or p.display_name or (p.name|replace('_',' ')) }}{% else %}{{ p.display_name or (p.name|replace('_',' ')) }}{% endif %}</td>
                 <td class="align-middle">{{ '%.2g'|format(p.price) }}€</td>
-                <td class="align-middle" style="flex-wrap: wrap"><input type="number" name="{{ p.name }}" min="0" max="6" value="0" style="width:50px"></td>
+                <td class="align-middle" style="flex-wrap: wrap"><input type="number" name="{{ p.name }}" min="0" max="6" value="0" style="width:55px" class="form-control d-inline-block p-1"></td>
                 <td class = "d-none d-md-block"><img src="static/img/{{ p.name|replace('_',' ') }}.jpg" alt="Image of {% if lang == 'es' %}{{ p.display_name_es or p.display_name or p.name }}{% else %}{{ p.display_name or p.name }}{% endif %}" class="img-thumbnail  bg-dark text-white" style="width:200px;height:123.6067px" onerror="this.style.display='none'"></td>
               </tr>
               {% endfor %}
             </tbody>
           </table>
 
-        <!-- Sweet section (future products) -->
+        <!-- Sweet section -->
         <table class="table table-hover">
           <h1 id="heading-sweet" data-translator-en="Sweet" data-translator-es="Dulces">Sweet</h1>
         <tbody>
@@ -41,7 +77,7 @@
           <tr>
             <td class="align-middle" data-translator-en="{{ p.display_name or (p.name|replace('_',' ')) }}" data-translator-es="{{ p.display_name_es or p.display_name or (p.name|replace('_',' ')) }}">{% if lang == 'es' %}{{ p.display_name_es or p.display_name or (p.name|replace('_',' ')) }}{% else %}{{ p.display_name or (p.name|replace('_',' ')) }}{% endif %}</td>
             <td class="align-middle">{{ '%.2g'|format(p.price) }}€</td>
-            <td class="align-middle" style="flex-wrap: wrap"><input type="number" name="{{ p.name }}" min="0" max="6" value="0" style="width:50px"></td>
+            <td class="align-middle" style="flex-wrap: wrap"><input type="number" name="{{ p.name }}" min="0" max="6" value="0" style="width:55px" class="form-control d-inline-block p-1"></td>
             <td class = "d-none d-md-block"><img src="static/img/{{ p.name|replace('_',' ') }}.jpg" alt="Image of {% if lang == 'es' %}{{ p.display_name_es or p.display_name or p.name }}{% else %}{{ p.display_name or p.name }}{% endif %}" class="img-thumbnail bg-dark text-white" style="width:200px;height:123.6067px" onerror="this.style.display='none'"> </td>
           </tr>
           {% else %}
@@ -50,7 +86,7 @@
         </tbody>
       </table>
 
-      <!-- Savory section (future products) -->
+      <!-- Savory section -->
       <table class="table table-hover">
         <h1 id="heading-savory" data-translator-en="Savory" data-translator-es="Salados">Savory</h1>
       <tbody>
@@ -58,7 +94,7 @@
         <tr>
           <td class="align-middle" data-translator-en="{{ p.display_name or (p.name|replace('_',' ')) }}" data-translator-es="{{ p.display_name_es or p.display_name or (p.name|replace('_',' ')) }}">{% if lang == 'es' %}{{ p.display_name_es or p.display_name or (p.name|replace('_',' ')) }}{% else %}{{ p.display_name or (p.name|replace('_',' ')) }}{% endif %}</td>
           <td class="align-middle">{{ '%.2g'|format(p.price) }}€</td>
-          <td class="align-middle" style="flex-wrap: wrap"><input type="number" name="{{ p.name }}" min="0" max="6" value="0" style="width:50px"></td>
+          <td class="align-middle" style="flex-wrap: wrap"><input type="number" name="{{ p.name }}" min="0" max="6" value="0" style="width:55px" class="form-control d-inline-block p-1"></td>
           <td class = "d-none d-md-block"><img src="static/img/{{ p.name|replace('_',' ') }}.jpg" alt="Image of {% if lang == 'es' %}{{ p.display_name_es or p.display_name or p.name }}{% else %}{{ p.display_name or p.name }}{% endif %}" class="img-thumbnail bg-dark text-white" style="width:200px;height:123.6067px" onerror="this.style.display='none'"> </td>
         </tr>
         {% else %}
@@ -72,19 +108,26 @@
   <div class="mx-auto d-md-none d-block"><h6 id="must-login-mobile" data-translator-en="Must use your account to log in" data-translator-es="Debe usar su cuenta para iniciar sesión">Must use your account to log in</h6></div>
   {% endif %}
   {% if current_user.is_authenticated: %}
+    <!-- Error alerts shown as styled banners if order was just attempted -->
+    {% if errors[0] or errors[2] or errors[3] %}
+    <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
+      {% if errors[3] %}<strong>{{ errors[3] }}</strong><br>{% endif %}
+      {% if errors[0] %}<strong>{{ errors[0] }}</strong><br>{% endif %}
+      {% if errors[2] %}<strong>{{ errors[2] }}</strong><br>{% endif %}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
     <div class="container-fluid position-absoulte">
-      <div class="container align-self-center" style="margin-top:100px">
+      <div class="container align-self-center" style="margin-top:40px">
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto" style="bottom:0">
           <ul class="list-group list-group-flush">
-            {% if errors[3] %}<li class="list-group-item align-self-center"><span style="color:red">{{errors[3]}}</span></li>{% endif %}
-            {% if errors[2] %}<li class="list-group-item align-self-center"><span style="color:red">{{errors[2]}}</span></li>{% endif %}
            <li class="list-group-item align-self-center">{{order_form.date}}<span style="color:red">{% if errors[0] %}{{errors[0]}}{% endif %}</span></li>
            <li class="list-group-item align-self-center">{{order_form.day_time(style="width:120px")}}<span style="color:red">{% if errors[1] %}{{errors[1]}}{% endif %}</span></li>
            <li class="list-group-item align-self-center">{{order_form.recurring(style="width:120px")}}</li>
              <li id="consecutive-weeks" class="list-group-item align-self-center" data-translator-en="Number of consecutive weeks to order" data-translator-es="Número de semanas consecutivas para pedir">Number of consecutive weeks to order</li>
 
-           <li class="list-group-item align-self-center"><input id="order-submit" type="submit" value="order" class="btn btn-dark" data-translator-en="order" data-translator-es="pedir"></li>
+           <li class="list-group-item align-self-center"><button id="order-submit-btn" type="button" class="btn btn-dark" data-translator-en="order" data-translator-es="pedir">order</button></li>
               </ul>
            </div>
           </div>
@@ -94,7 +137,18 @@
     </form>
   </div>
 </div>
-<!-- footer -->
+
+<!-- Order confirmation modal (todos #11 #18 #19) -->
+<div class="order-modal-overlay" id="order-confirm-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="order-modal-box">
+    <h5 id="modal-title" data-translator-en="Confirm your order" data-translator-es="Confirmar tu pedido">Confirm your order</h5>
+    <p id="modal-summary" class="text-muted" style="font-size:0.95em;"></p>
+    <div class="modal-actions">
+      <button class="btn btn-dark" id="modal-confirm-btn" data-translator-en="Place order" data-translator-es="Hacer pedido">Place order</button>
+      <button class="btn btn-outline-secondary" id="modal-cancel-btn" data-translator-en="Cancel" data-translator-es="Cancelar">Cancel</button>
+    </div>
+  </div>
+</div>
 
 <!-- Search and Filter Script -->
 <script>
@@ -111,9 +165,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const rows = table.querySelectorAll('tr');
         rows.forEach(row => {
           const cells = row.querySelectorAll('td');
-          let match = false;
+          let match = !query; // show all if empty
           
-          // Check first cell (product name) and second cell (price)
           if (cells.length >= 2) {
             const productName = cells[0].textContent.toLowerCase();
             if (productName.includes(query)) {
@@ -131,6 +184,59 @@ document.addEventListener('DOMContentLoaded', function() {
     clearBtn.addEventListener('click', function() {
       searchInput.value = '';
       searchInput.dispatchEvent(new Event('input'));
+    });
+  }
+
+  // ── Order confirmation modal (todos #11 #19) ──────────────────────
+  const orderForm = document.getElementById('order-form');
+  const orderSubmitBtn = document.getElementById('order-submit-btn');
+  const modal = document.getElementById('order-confirm-modal');
+  const modalSummary = document.getElementById('modal-summary');
+  const modalConfirm = document.getElementById('modal-confirm-btn');
+  const modalCancel = document.getElementById('modal-cancel-btn');
+
+  if (orderSubmitBtn && modal) {
+    orderSubmitBtn.addEventListener('click', function () {
+      // Build a summary of what was ordered
+      const inputs = orderForm.querySelectorAll('input[type="number"]');
+      const lines = [];
+      inputs.forEach(function(inp) {
+        const qty = parseInt(inp.value, 10);
+        if (qty > 0) {
+          const row = inp.closest('tr');
+          const name = row ? row.querySelector('td').textContent.trim() : inp.name.replace(/_/g, ' ');
+          lines.push(qty + ' × ' + name);
+        }
+      });
+
+      if (lines.length === 0) {
+        // Nothing selected – just submit (server will reject with an error)
+        orderForm.submit();
+        return;
+      }
+
+      modalSummary.textContent = lines.join(', ');
+      modal.classList.add('show');
+      modalConfirm.focus();
+    });
+
+    modalConfirm.addEventListener('click', function () {
+      modal.classList.remove('show');
+      orderForm.submit();
+    });
+
+    modalCancel.addEventListener('click', function () {
+      modal.classList.remove('show');
+    });
+
+    // Close on overlay click
+    modal.addEventListener('click', function (e) {
+      if (e.target === modal) modal.classList.remove('show');
+    });
+
+    // Close on Escape
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') modal.classList.remove('show');
     });
   }
 });

@@ -4,15 +4,31 @@
       <div class="row justify-content-md-center container d-flex mx-auto">
       <h1 data-translator-en="Unpaid Orders" data-translator-es="Pedidos Sin Pagar">Unpaid Orders</h1>
     </div>
+
+    <!-- Search bar -->
+    <div class="row justify-content-md-center mb-3">
+      <div class="col-md-8">
+        <div class="input-group order-search-bar">
+          <input type="text" class="form-control" id="payment-search"
+                 placeholder="Search by client or date..."
+                 data-translator-placeholder-en="Search by client or date..."
+                 data-translator-placeholder-es="Buscar por cliente o fecha...">
+          <button class="btn btn-outline-secondary" type="button" id="clear-payment-search"
+                  data-translator-en="Clear" data-translator-es="Limpiar">Clear</button>
+        </div>
+      </div>
+    </div>
+
     <div class="row justify-content-md-center">
-      <div class="table-responsive" style="padding-left: 10%;padding-right: 10%;">
-        <table class="table table-hover">
+      <div class="table-responsive" style="padding-left: 5%;padding-right: 5%;">
+        <table class="table table-hover" id="payments-table">
           <thead>
             <tr>
               <th data-translator-en="Date" data-translator-es="Fecha">Date</th>
               <th data-translator-en="Client" data-translator-es="Cliente">Client</th>
+              <th data-translator-en="Order" data-translator-es="Pedido">Order</th>
               <th data-translator-en="Price" data-translator-es="Precio">Price</th>
-              <th data-translator-en="Paid" data-translator-es="Pagado">Paid</th>
+              <th data-translator-en="Mark Paid" data-translator-es="Marcar Pagado">Mark Paid</th>
             </tr>
           </thead>
           <tbody>
@@ -22,21 +38,65 @@
             <tr>
               <td>{{ delivered_orders.date }}</td>
               <td>{{ delivered_orders.customer }}</td>
+              <td>{{ delivered_orders.message }}</td>
               <td>{{ delivered_orders.price }}€</td>
               <td>{{ delivered_orders.form_data }}</td>
             </tr>
           {% endfor %}
           <tr>
-            <td><button class ="btn btn-dark"><a class="nav-link text-white" href="{{ url_for('future_payments') }}" data-translator-en="Future Payments" data-translator-es="Pagos Futuros">Future Payments</a></td>
-            <td></td>
-            <td></td>
-            <td><input type="submit" value="Mark as Paid" class="btn btn-dark" data-translator-en="Mark as Paid" data-translator-es="Marcar como Pagado"></td>
+            <td colspan="3">
+              <a href="{{ url_for('future_payments') }}" class="btn btn-outline-secondary btn-sm"
+                 data-translator-en="Future Payments" data-translator-es="Pagos Futuros">Future Payments</a>
+            </td>
+            <td colspan="2"><input type="submit" value="Mark as Paid" class="btn btn-dark"
+                 data-translator-en="Mark as Paid" data-translator-es="Marcar como Pagado"></td>
           </tr>
           </form>
           </tbody>
         </table>
      </div>
     </div>
+
+    <!-- Pagination -->
+    {% if pagination %}
+    <div class="row justify-content-md-center mt-2">
+      <div class="pagination-bar">
+        {% if pagination.has_prev %}
+          <a href="{{ url_for('payments', page=pagination.prev_num) }}">&laquo; Prev</a>
+        {% endif %}
+        <span class="current-page">Page {{ pagination.page }} / {{ pagination.pages }}</span>
+        {% if pagination.has_next %}
+          <a href="{{ url_for('payments', page=pagination.next_num) }}">Next &raquo;</a>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const searchInput = document.getElementById('payment-search');
+  const clearBtn = document.getElementById('clear-payment-search');
+  const table = document.getElementById('payments-table');
+
+  function filterTable(query) {
+    if (!table) return;
+    const q = query.toLowerCase();
+    table.querySelectorAll('tbody tr').forEach(function(row) {
+      if (!q) { row.style.display = ''; return; }
+      // skip the submit/nav row
+      if (row.querySelector('input[type="submit"]') || row.querySelector('a[href]')) {
+        row.style.display = '';
+        return;
+      }
+      row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+    });
+  }
+
+  if (searchInput) searchInput.addEventListener('input', function() { filterTable(this.value); });
+  if (clearBtn) clearBtn.addEventListener('click', function() { searchInput.value = ''; filterTable(''); });
+});
+</script>
 <!-- footer -->
 {% include "footer.html" %}

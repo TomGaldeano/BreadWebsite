@@ -41,6 +41,13 @@
             <div class="text-danger">{{ err }}</div>
             {% endfor %}
           </div>
+          <div class="form-group">
+            <label for="address" data-translator-en="Address (optional)" data-translator-es="Dirección (opcional)">Address (optional)</label>
+            {{ form.address(class_="form-control", id="address") }}
+            {% for err in form.address.errors %}
+            <div class="text-danger">{{ err }}</div>
+            {% endfor %}
+          </div>
           <div class="form-group mt-3">
             <input type="submit" value="Register" class="btn btn-dark" data-translator-en="Register" data-translator-es="Registro">
           </div>

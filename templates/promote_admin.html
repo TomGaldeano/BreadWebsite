@@ -1,0 +1,78 @@
+{% include "header.html" %}
+<div class="container-fluid" style="margin-top:100px">
+  <div class="row justify-content-md-center container d-flex mx-auto">
+    <h1>Admin Promotion</h1>
+    <p class="text-muted">Grant or revoke admin access for users. Only you (superadmin) can access this page.</p>
+  </div>
+
+  {% if message %}
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endif %}
+  {% if error %}
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    {{ error }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endif %}
+
+  <div class="row justify-content-md-center">
+    <div class="col-md-10">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Group</th>
+              <th>Admin?</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for user in users %}
+            <tr>
+              <td>{{ user.id }}</td>
+              <td>{{ user.username }}</td>
+              <td>{{ user.email }}</td>
+              <td>{{ user.group }}</td>
+              <td>
+                {% if user.is_admin %}
+                  <span class="badge bg-success">Admin</span>
+                {% else %}
+                  <span class="badge bg-secondary">User</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if user.is_admin %}
+                <form method="POST" action="{{ url_for('promote_admin') }}" style="display:inline;">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <input type="hidden" name="user_id" value="{{ user.id }}">
+                  <input type="hidden" name="action" value="revoke">
+                  <button type="submit" class="btn btn-sm btn-outline-danger"
+                          onclick="return confirm('Revoke admin from {{ user.username }}?')">Revoke Admin</button>
+                </form>
+                {% else %}
+                <form method="POST" action="{{ url_for('promote_admin') }}" style="display:inline;">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <input type="hidden" name="user_id" value="{{ user.id }}">
+                  <input type="hidden" name="action" value="grant">
+                  <button type="submit" class="btn btn-sm btn-dark"
+                          onclick="return confirm('Grant admin to {{ user.username }}?')">Make Admin</button>
+                </form>
+                {% endif %}
+              </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="6" class="text-muted">No users found.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% include "footer.html" %}

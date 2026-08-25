@@ -26,6 +26,8 @@ class RegisterForm(FlaskForm):
                                     NoneOf(data.invalid_characters, message="invalid symbol used")])
     email = StringField(validators=[DataRequired(message="required field"),
                                     NoneOf(data.invalid_characters, message="invalid symbol used")])
+    address = StringField("Address (optional)", validators=[Length(max=500),
+                                                              NoneOf(data.invalid_characters, message="invalid symbol used")])
     password = PasswordField(validators=[DataRequired(), NoneOf(data.invalid_characters, message="invalid symbol used"),
                                          Length(min = 8, max= 50, message= "password must be 8 to 50 characters long")])
     submit = SubmitField("Register")
@@ -121,6 +123,8 @@ class ModifyUser(FlaskForm):
                                     NoneOf(data.invalid_characters, message="invalid symbol used")])
     email = StringField(validators=[DataRequired(message="required field"),
                                     NoneOf(data.invalid_characters, message="invalid symbol used")])
+    address = StringField("Address (optional)", validators=[Length(max=500),
+                                                              NoneOf(data.invalid_characters, message="invalid symbol used")])
 
 class ModifyUserSumbmit(FlaskForm):
     submit = SubmitField("Save changes")

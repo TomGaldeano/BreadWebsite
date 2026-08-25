@@ -58,6 +58,19 @@
   <div class="row justify-content-md-center container d-flex mx-auto">
     <h1 data-translator-en="Future Orders" data-translator-es="Pedidos Futuros">Future Orders</h1>
   </div>
+  <!-- Search bar for future orders -->
+  <div class="row justify-content-md-center mb-3">
+    <div class="col-md-10">
+      <div class="input-group order-search-bar">
+        <input type="text" class="form-control" id="future-order-search"
+               placeholder="Search by client, product, or date..."
+               data-translator-placeholder-en="Search by client, product, or date..."
+               data-translator-placeholder-es="Buscar por cliente, producto o fecha...">
+        <button class="btn btn-outline-secondary" type="button" id="clear-future-search"
+                data-translator-en="Clear" data-translator-es="Limpiar">Clear</button>
+      </div>
+    </div>
+  </div>
   <div class="row justify-content-md-center">
     <div class="table-responsive" style="padding-left: 10%;padding-right: 10%;">
       <table class="table table-hover">
@@ -129,4 +142,30 @@
     </div>
   </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const searchInput = document.getElementById('future-order-search');
+  const clearBtn = document.getElementById('clear-future-search');
+  // The future orders table is the second table in the page (after today's + simplified)
+  const futureTbody = (function() {
+    const tables = document.querySelectorAll('table');
+    // future orders table is the 3rd table (index 2)
+    return tables[2] ? tables[2].querySelector('tbody') : null;
+  })();
+
+  function filterFutureOrders(query) {
+    if (!futureTbody) return;
+    const q = query.toLowerCase();
+    futureTbody.querySelectorAll('tr').forEach(function(row) {
+      if (row.querySelector('input[type="submit"]')) { row.style.display = ''; return; }
+      if (!q) { row.style.display = ''; return; }
+      row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+    });
+  }
+
+  if (searchInput) searchInput.addEventListener('input', function() { filterFutureOrders(this.value); });
+  if (clearBtn) clearBtn.addEventListener('click', function() { searchInput.value = ''; filterFutureOrders(''); });
+});
+</script>
 {% include "footer.html" %}

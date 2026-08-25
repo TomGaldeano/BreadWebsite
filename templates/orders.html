@@ -1,14 +1,31 @@
 {% include "header.html" %}
 <!-- main content -->
-<div class="container-fluid" style = "margin-top:100px">
+<div class="container-fluid" style="margin-top:100px">
   <div class="row justify-content-md-center container d-flex mx-auto">
     <h1 data-translator-en="Current Orders" data-translator-es="Pedidos Actuales">Current Orders</h1>
   </div>
+
+  <!-- Search bar -->
+  <div class="row justify-content-md-center mb-3">
+    <div class="col-md-8">
+      <div class="input-group order-search-bar">
+        <input type="text" class="form-control" id="order-search"
+               placeholder="Search by product or date..."
+               data-translator-placeholder-en="Search by product or date..."
+               data-translator-placeholder-es="Buscar por producto o fecha...">
+        <button class="btn btn-outline-secondary" type="button" id="clear-order-search"
+                data-translator-en="Clear" data-translator-es="Limpiar">Clear</button>
+      </div>
+    </div>
+  </div>
+
   <div class="row justify-content-md-center">
       <form method="POST" action="{{ url_for('orders') }}">
         {{ form.csrf_token() }}
-    <div class="table-responsive d-md-block d-none" style="padding-left: 10%;padding-right: 10%;">
-      <table class="table table-hover d-md-block d-none">
+
+    <!-- Desktop table -->
+    <div class="table-responsive d-md-block d-none" style="padding-left: 5%;padding-right: 5%;">
+      <table class="table table-hover" id="orders-table-desktop">
         <thead>
           <tr>
             <th data-translator-en="Date" data-translator-es="Fecha">Date</th>
@@ -31,12 +48,15 @@
         </tbody>
       </table>
       </div>
-    <div class="table-responsive d-md-none" style="padding-left: 10%;padding-right: 10%;">
-      <table class="table table-hover">
+
+    <!-- Mobile card-style table -->
+    <div class="table-responsive d-md-none" style="padding-left: 5%;padding-right: 5%;">
+      <table class="table table-hover" id="orders-table-mobile">
         <tbody>
           {% for i in undelivered_orders%}
+            <tr class="table-separator-row"><td colspan="2" style="background:var(--gray_tom);height:4px;padding:0;"></td></tr>
             <tr>
-                <td style="font-weight: bold;" data-translator-en="Date" data-translator-es="Fecha">Date</td>
+                <td style="font-weight: bold;width:40%;" data-translator-en="Date" data-translator-es="Fecha">Date</td>
                 <td>{{ undelivered_orders.date }}</td>
             </tr>
             <tr>
@@ -65,20 +85,37 @@
              <li class="list-group-item "><input type="submit" value="Delete" class="btn btn-dark" data-translator-en="Delete" data-translator-es="Eliminar"></li>
         </ul>
     </div>
+
+    <!-- Pagination -->
+    {% if pagination %}
+    <div class="row justify-content-md-center mt-2">
+      <div class="pagination-bar">
+        {% if pagination.has_prev %}
+          <a href="{{ url_for('orders', page=pagination.prev_num) }}">&laquo; Prev</a>
+        {% endif %}
+        <span class="current-page">Page {{ pagination.page }} / {{ pagination.pages }}</span>
+        {% if pagination.has_next %}
+          <a href="{{ url_for('orders', page=pagination.next_num) }}">Next &raquo;</a>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+
       </form>
-<div class="container-fluid d-md-block d-none" style = "margin-top:100px">
+
+<div class="container-fluid d-md-block" style="margin-top:60px">
   <div class="row justify-content-md-center container d-flex mx-auto">
-    <h1>Old Orders</h1>
+    <h1 data-translator-en="Order History" data-translator-es="Historial de Pedidos">Order History</h1>
   </div>
   <div class="row justify-content-md-center">
-    <div class="table-responsive" style="padding-left: 10%;padding-right: 10%;">
-      <table class="table table-hover">
+    <div class="table-responsive" style="padding-left: 5%;padding-right: 5%;">
+      <table class="table table-hover" id="history-table">
         <thead>
           <tr>
-            <th>Date</th>
-            <th>Order</th>
-            <th>Price</th>
-            <th>Time of day</th>
+            <th data-translator-en="Date" data-translator-es="Fecha">Date</th>
+            <th data-translator-en="Order" data-translator-es="Pedido">Order</th>
+            <th data-translator-en="Price" data-translator-es="Precio">Price</th>
+            <th data-translator-en="Time of day" data-translator-es="Hora del día">Time of day</th>
           </tr>
         </thead>
         <tbody>
@@ -87,12 +124,67 @@
             <td>{{ delivered_orders.date }}</td>
             <td>{{ delivered_orders.message }}</td>
             <td>{{ delivered_orders.price }}€</td>
-            <td>{{ undelivered_orders.time_day }}</td>
+            <td>{{ delivered_orders.time_day }}</td>
           </tr>
         {% endfor %}
         </tbody>
       </table>
-   </div>
+    </div>
   </div>
 </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const searchInput = document.getElementById('order-search');
+  const clearBtn = document.getElementById('clear-order-search');
+
+  function filterTables(query) {
+    const q = query.toLowerCase();
+    // filter desktop
+    ['orders-table-desktop', 'history-table'].forEach(function(tid) {
+      const table = document.getElementById(tid);
+      if (!table) return;
+      table.querySelectorAll('tbody tr').forEach(function(row) {
+        if (!q) { row.style.display = ''; return; }
+        row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+      });
+    });
+    // filter mobile (groups of 6 rows: separator + 5 data rows)
+    const mobileTable = document.getElementById('orders-table-mobile');
+    if (mobileTable) {
+      const rows = Array.from(mobileTable.querySelectorAll('tbody tr'));
+      let i = 0;
+      while (i < rows.length) {
+        if (rows[i].classList.contains('table-separator-row')) {
+          // gather this group (separator + up to 5 rows)
+          const group = [rows[i]];
+          let j = i + 1;
+          while (j < rows.length && !rows[j].classList.contains('table-separator-row')) {
+            group.push(rows[j]);
+            j++;
+          }
+          const text = group.map(function(r){ return r.textContent; }).join(' ').toLowerCase();
+          const show = !q || text.includes(q);
+          group.forEach(function(r){ r.style.display = show ? '' : 'none'; });
+          i = j;
+        } else {
+          i++;
+        }
+      }
+    }
+  }
+
+  if (searchInput) {
+    searchInput.addEventListener('input', function() { filterTables(this.value); });
+  }
+  if (clearBtn) {
+    clearBtn.addEventListener('click', function() {
+      searchInput.value = '';
+      filterTables('');
+    });
+  }
+});
+</script>
+
 {% include "footer.html" %}

@@ -80,6 +80,17 @@ class User(db.Model, UserMixin):
     date = db.Column(db.String(255), nullable=False)
     verified = db.Column(db.Boolean(), nullable=False, default=False)
     legacy = db.Column(db.Boolean(), nullable=False, default=False)
+    address = db.Column(db.String(500), nullable=True)
+    is_admin = db.Column(db.Boolean(), nullable=False, default=False)
+
+    def is_superadmin(self):
+        """User with id=1 is the superadmin."""
+        return self.id == 1
+
+    def has_admin_access(self):
+        """True for superadmin (id=1) and any promoted admin."""
+        return self.id == 1 or self.is_admin
+
 
 class Order(db.Model):
     __tablename__ = 'orders'
@@ -149,21 +160,29 @@ def calculate_distance_km(latitude_one, longitude_one, latitude_two, longitude_t
 
 def admin_required(f):
     """
-    Makes sure only admin (user.id == 1) can acces when decorating page function and redirects to home if not
+    Allows access to users with admin access (superadmin id=1 or is_admin=True).
+    Redirects to home if not authenticated or not admin.
     """
     @wraps(f)
     def decorated_function(*args, **kwargs):
-    #try:
         if current_user.is_authenticated:
-            if current_user.id != 1:
-               return redirect(url_for('home', next=request.url))
+            if current_user.has_admin_access():
+                return f(*args, **kwargs)
             else:
-               return f(*args, **kwargs)
+                return redirect(url_for('home', next=request.url))
         else:
-               return redirect(url_for('home', next=request.url))
-    #except AttributeError:
-        #return "Item not found", 400
+            return redirect(url_for('home', next=request.url))
     return decorated_function
+
+def superadmin_required(f):
+    """Only the superadmin (id=1) can access. Used for admin promotion pages."""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if current_user.is_authenticated and current_user.id == 1:
+            return f(*args, **kwargs)
+        return redirect(url_for('home', next=request.url))
+    return decorated_function
+
 
 def user_required(f):
     @wraps(f)
@@ -347,9 +366,10 @@ def register():
             verifier = ReVerify(loggin_logger)
             if verifier.verify_string(form.username.data) and verifier.verify_string(
                     form.password.data) and verifier.verify_string(form.group.data) and verifier.verify_string(
-                form.email.data):
+                form.email.data) and (not form.address.data or verifier.verify_string(form.address.data)):
                 new_user = User(username=form.username.data, password=generate_password_hash(str(form.password.data),
-                    method="pbkdf2:sha256",salt_length=14),group=form.group.data, email=form.email.data, date=str(datetime.date.today()), verified = 0, legacy = 0)
+                    method="pbkdf2:sha256",salt_length=14),group=form.group.data, email=form.email.data,
+                    address=form.address.data.strip() or None, date=str(datetime.date.today()), verified = 0, legacy = 0)
                 db.session.add(new_user)
                 db.session.commit()
                 login_user(new_user)
@@ -407,11 +427,18 @@ def orders():
     Presents the user with their orders and allows them to delete them
     """
     user_id = current_user.id
+    page = request.args.get('page', 1, type=int)
+    per_page = 20
+
     undelivered_orders = OrderViewer(db.session.query(Order).filter(
         and_(Order.user_id == user_id, Order.date > (datetime.date.today() - datetime.timedelta(days=1)))).all(), "en")
-    delivered_orders = OrderViewer(db.session.query(Order).filter(
-        and_(Order.user_id == user_id, Order.date < (datetime.date.today() - datetime.timedelta(days=1)))).order_by(desc(Order.id)).all(), "en")
-    form = generate_basic_form(message="Delete",num_entries = 10)
+
+    delivered_query = db.session.query(Order).filter(
+        and_(Order.user_id == user_id, Order.date < (datetime.date.today() - datetime.timedelta(days=1)))).order_by(desc(Order.id))
+    pagination = delivered_query.paginate(page=page, per_page=per_page, error_out=False)
+    delivered_orders = OrderViewer(pagination.items, "en")
+
+    form = generate_basic_form(message="Delete", num_entries=10)
     form = form()
     undelivered_orders.add_form(form)
     form.validate_on_submit()
@@ -421,7 +448,9 @@ def orders():
                 db.session.delete(undelivered_orders.order_instance)
         db.session.commit()
         return redirect(url_for("orders"))
-    return render_template("orders.html", form=form, delivered_orders=delivered_orders,undelivered_orders=undelivered_orders)
+    return render_template("orders.html", form=form, delivered_orders=delivered_orders,
+                           undelivered_orders=undelivered_orders, pagination=pagination)
+
 
 @app.route('/account', methods=['POST', 'GET'])
 @user_required
@@ -432,7 +461,8 @@ def account():
     form = ModifyUser()
     form.validate_on_submit()
     errors = [None, None]
-    user_data = {"user": current_user.username, "email": current_user.email, "group": current_user.group}
+    user_data = {"user": current_user.username, "email": current_user.email, "group": current_user.group,
+                 "address": current_user.address or ""}
     if form.validate_on_submit():
         valid = True
         user = User.query.filter_by(username=current_user.username).first()
@@ -449,6 +479,7 @@ def account():
                 user.username = form.username.data
                 user.email = form.email.data
                 user.group = form.group.data
+                user.address = form.address.data.strip() or None
                 if form.new_password.data:
                     user.password = generate_password_hash(str(form.new_password.data), method="pbkdf2:sha256",
                                                            salt_length=14)
@@ -691,11 +722,15 @@ def baker():
 @admin_required
 def payments():
     """
-    Admin page to see all orders and delete future ones
+    Admin page to see all unpaid orders and mark them as paid, with pagination.
     """
-    delivered_orders = OrderViewer(db.session.query(Order).filter(
-        Order.date <= datetime.date.today(),Order.payed == 0).all(), "en")
-    form = generate_basic_form(message ="Mark as payed",num_entries = 50)
+    page = request.args.get('page', 1, type=int)
+    per_page = 50
+    delivered_query = db.session.query(Order).filter(
+        Order.date <= datetime.date.today(), Order.payed == 0).order_by(desc(Order.id))
+    pagination = delivered_query.paginate(page=page, per_page=per_page, error_out=False)
+    delivered_orders = OrderViewer(pagination.items, "en")
+    form = generate_basic_form(message="Mark as payed", num_entries=50)
     form = form()
     delivered_orders.add_form(form)
     form.validate_on_submit()
@@ -706,7 +741,8 @@ def payments():
                 db.session.execute(stmt)
         db.session.commit()
         return redirect(url_for("payments"))
-    return render_template("payments.html", form=form, delivered_orders=delivered_orders)
+    return render_template("payments.html", form=form, delivered_orders=delivered_orders, pagination=pagination)
+
 
 @app.route('/future_payments', methods=['POST', 'GET'])
 @admin_required
@@ -830,6 +866,36 @@ def baker_users():
 
     users = db.session.query(User).order_by(User.id).all()
     return render_template("admin_users.html", users=users, form=form, add_form=add_form, edit_form=edit_form, message=message, error=error)
+
+@app.route('/admin/promote', methods=['POST', 'GET'])
+@superadmin_required
+def promote_admin():
+    """
+    Superadmin-only page to grant or revoke admin privileges for users.
+    """
+    message = None
+    error = None
+    action = request.form.get('action', '')
+    target_id = request.form.get('user_id', type=int)
+
+    if request.method == 'POST' and target_id:
+        if target_id == 1:
+            error = "Cannot change the superadmin's admin status."
+        else:
+            user = db.session.get(User, target_id)
+            if not user:
+                error = "User not found."
+            elif action == 'grant':
+                user.is_admin = True
+                db.session.commit()
+                message = f"Admin access granted to {user.username}."
+            elif action == 'revoke':
+                user.is_admin = False
+                db.session.commit()
+                message = f"Admin access revoked from {user.username}."
+
+    all_users = db.session.query(User).filter(User.id != 1).order_by(User.username).all()
+    return render_template("promote_admin.html", users=all_users, message=message, error=error)
 
 @app.route('/statistics')
 @admin_required
