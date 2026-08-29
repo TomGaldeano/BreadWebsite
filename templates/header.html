@@ -40,64 +40,46 @@
               <span data-translator-en="Delivery" data-translator-es="Entrega">Delivery</span>
             </a>
           </li>
-        {% if current_user.is_authenticated and current_user.id != 1: %}
+        {% if current_user.is_authenticated and not current_user.has_admin_access(): %}
         <li class="nav-item  ">
           <a class="nav-link " style="padding: .5rem" href="{{ url_for('orders') }}"><img src="{{ url_for('static', filename='icons/cart.png') }}"
               alt="order menu" class="" style="height:30px"></a>
         </li>
         {% endif %}
-        {% if current_user.is_authenticated and current_user.id == 1: %}
+        {% if current_user.is_authenticated and current_user.has_admin_access(): %}
         <li class="nav-item dropdown">
           <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
             data-bs-toggle="dropdown" aria-expanded="false">
-            <img src="{{ url_for('static', filename='icons/menu.png') }}" alt="account" class="" style="height:30px"></a>
+            <img src="{{ url_for('static', filename='icons/menu.png') }}" alt="admin menu" class="" style="height:30px"></a>
           <ul class="dropdown-menu " aria-labelledby="dropdownMenuLink">
-            <li class="link-item  ">
-              <a class="nav-link " style="padding: .5rem" href="{{ url_for('baker') }}"><img
-                  src="{{ url_for('static', filename='icons/bread.png') }}" alt="baker" class="" style="height:30px"></a>
-            </li>
-            <li class="link-item  ">
-              <a class="nav-link " style="padding: .5rem" href="{{ url_for('baker_users') }}"><img
-                  src="{{ url_for('static', filename='icons/user.png') }}" alt="users" class="" style="height:30px"></a>
-            </li>
-            <li class="link-item   gap-0 me-0">
-              <a class="nav-link " style="padding: .5rem" href="{{ url_for('statistics') }}"><img
-                  src="{{ url_for('static', filename='icons/graph.png') }}" alt="statistics" class="" style="height:30px"></a>
-            </li>
-            <li class="link-item  ">
-              <a class="nav-link " style="padding: .5rem" href="{{ url_for('payments') }}"><img
-                  src="{{ url_for('static', filename='icons/profit.png') }}" alt="payments" class="" style="height:30px"></a>
-            </li>
-            <li class="nav-item  ">
-              <a class="nav-link " style="padding: .5rem" href="{{ url_for('orders') }}"><img
-              src="{{ url_for('static', filename='icons/cart.png') }}" alt="orders" class="" style="height:30px"></a>
-            </li>
-            <li class="nav-item  ">
-              <a class="nav-link " style="padding: .5rem" href="{{ url_for('bot_control') }}">bots</a>
-            </li>
-            <li class="nav-item  ">
-              <a class="nav-link " style="padding: .5rem" href="{{ url_for('verify') }}">verify</a>
-            </li>
-            <li class="nav-item  ">
-              <a class="nav-link " style="padding: .5rem" href="{{ url_for('manage_ingredients') }}">ingredients</a>
-            </li>
-            <li class="nav-item  ">
-              <a class="nav-link " style="padding: .5rem" href="{{ url_for('manage_bakeries') }}">bakeries</a>
-            </li>
-            <li class="nav-item  ">
-              <a class="nav-link " style="padding: .5rem" href="{{ url_for('promote_admin') }}">manage admins</a>
-            </li>
+            <li class="dropdown-header font-weight-bold fw-bold">Bakery & Orders</li>
+            <li><a class="dropdown-item" href="{{ url_for('baker') }}">Baker Orders</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('orders') }}">My Orders</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('payments') }}">Payments</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('daily_summary') }}">Daily Summary (todo #17)</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('statistics') }}">Statistics</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li class="dropdown-header font-weight-bold fw-bold">Operations & Inventory</li>
+            <li><a class="dropdown-item" href="{{ url_for('manage_inventory') }}">Inventory & Stock (todo #8, #9)</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('manage_ingredients') }}">Ingredients</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('manage_bakeries') }}">Bakeries</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('manage_staff') }}">Staff Directory (todo #12)</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('manage_timetable') }}">Staff Timetable (todo #12)</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('delivery_routes') }}">Delivery Routes (todo #13)</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('legacy_order') }}">Order for Legacy (todo #14)</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li class="dropdown-header font-weight-bold fw-bold">Users & Administration</li>
+            <li><a class="dropdown-item" href="{{ url_for('baker_users') }}">User Management</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('verify') }}">Verify Users</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('admin_settings') }}">Site Settings (todo #5, #10)</a></li>
+            {% if current_user.id == 1 %}
+            <li><a class="dropdown-item text-primary font-weight-bold fw-bold" href="{{ url_for('promote_admin') }}">Manage Admins (Superadmin)</a></li>
+            {% endif %}
           </ul>
         </li>
         {% endif %}
-        {% if current_user.is_authenticated and current_user.id != 1: %}
-        <li class="nav-item  ">
-          <a class="nav-link " style="padding: .5rem" href="{{url_for('info')}}"><img src="{{ url_for('static', filename='icons/info.png') }}"
-              alt="info" class="" style="height:30px"> </a>
-        </li>
-        {% endif %}
       </ul>
-      <ul class="nav justify-content-end">
+      <ul class="nav justify-content-end align-items-center">
         <li class="nav-item">
           <button id="color_changer" type="button" aria-label="Toggle theme" title="Toggle theme" class="btn"><img src="{{ url_for('static', filename='icons/ColorChanger.png') }}" alt="ColorChanger" style="height:30px"></button>
         </li>
@@ -105,22 +87,26 @@
         <li class="nav-item  ">
           <a class="nav-link " style="padding: .5rem" href="{{ url_for('login') }}">Login</a>
         </li>
-        {% endif %}
-        {% if not current_user.is_authenticated: %}
         <li class="nav-item  ">
           <a class="nav-link " style="padding: .5rem" href="{{ url_for('register') }}">Register</a>
         </li>
         {% endif %}
         {% if current_user.is_authenticated: %}
-        <li class="nav-item  ">
-            <a class="nav-link " style="padding: .5rem" href="{{ url_for('logout') }}"><img
-              src="{{ url_for('static', filename='icons/power-switch.png') }}" alt="logout" class="" style="height:30px"></a>
+        <li class="nav-item">
+          <a class="nav-link" style="padding: .5rem" href="{{ url_for('user_settings') }}" title="Settings / Preferences">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16">
+              <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492M5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0"/>
+              <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.185 1.184l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.185l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115z"/>
+            </svg>
+          </a>
         </li>
-        {% endif %}
-        {% if current_user.is_authenticated: %}
         <li class="nav-item  ">
-          <a class="nav-link " style="padding: .5rem" href="{{ url_for('account') }}"><img src="{{ url_for('static', filename='icons/user.png') }}"
+          <a class="nav-link " style="padding: .5rem" href="{{ url_for('account') }}" title="Account Profile"><img src="{{ url_for('static', filename='icons/user.png') }}"
               alt="account" class="" style="height:30px"></a>
+        </li>
+        <li class="nav-item  ">
+            <a class="nav-link " style="padding: .5rem" href="{{ url_for('logout') }}" title="Logout"><img
+              src="{{ url_for('static', filename='icons/power-switch.png') }}" alt="logout" class="" style="height:30px"></a>
         </li>
         {% endif %}
         <li class="nav-item">

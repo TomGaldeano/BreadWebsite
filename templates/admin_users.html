@@ -41,7 +41,7 @@
         </div>
         <div class="card-body">
           <form method="POST" action="{{ url_for('baker_users') }}">
-            {{ add_form.csrf_token() }}
+            {{ add_form.hidden_tag() }}
             <input type="hidden" name="form_type" value="add">
             <div class="form-row row">
               <div class="form-group col-md-6 mb-3">
@@ -146,7 +146,7 @@
                   </button>
                   {% if u.id != 1 %}
                   <form method="POST" action="{{ url_for('baker_users') }}" class="d-inline" onsubmit="return confirm('Delete user {{ u.username }}? / ¿Eliminar usuario {{ u.username }}?');">
-                    {{ form.csrf_token() }}
+                    {{ form.hidden_tag() }}
                     <input type="hidden" name="delete_id" value="{{ u.id }}">
                     <button type="submit" class="btn btn-outline-danger btn-sm" data-translator-en="Delete" data-translator-es="Eliminar">Delete</button>
                   </form>
@@ -164,7 +164,7 @@
         <div class="card-body">
           <h5 class="card-title" data-translator-en="Bulk User Delete" data-translator-es="Eliminación Masiva de Usuarios">Bulk User Delete</h5>
           <form method="POST" action="{{ url_for('baker_users') }}" class="row align-items-center">
-            {{ form.csrf_token() }}
+            {{ form.hidden_tag() }}
             <div class="col-md-8 mb-2 mb-md-0">
               {{ form.users_to_delete(class="form-control", placeholder="Enter comma-separated User IDs (e.g. 2, 3)", **{'data-translator-placeholder-en': 'Enter comma-separated User IDs (e.g. 2, 3)', 'data-translator-placeholder-es': 'Ingrese IDs de usuario separados por coma (p. ej. 2, 3)'}) }}
             </div>
@@ -233,7 +233,7 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <form method="POST" action="{{ url_for('baker_users') }}">
-        {{ edit_form.csrf_token() }}
+        {{ edit_form.hidden_tag() }}
         <input type="hidden" name="form_type" value="edit">
         <input type="hidden" name="action" value="edit">
         <input type="hidden" name="id" id="edit-user-id">

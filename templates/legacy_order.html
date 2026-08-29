@@ -1,0 +1,104 @@
+{% include "header.html" %}
+
+<div class="container-fluid" style="margin-top: 100px;">
+  <div class="row justify-content-md-center">
+    <div class="col-12" style="max-width: 900px;">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 data-translator-en="Place Order for Legacy User" data-translator-es="Realizar Pedido para Usuario Legacy">Place Order for Legacy User (todo #14)</h1>
+        <a href="{{ url_for('legacymanager') }}" class="btn btn-outline-secondary" data-translator-en="Legacy Manager" data-translator-es="Gestor Legacy">Manage Legacy Users</a>
+      </div>
+
+      {% if message %}
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {% endif %}
+      {% if error %}
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ error }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {% endif %}
+
+      {% if legacy_users %}
+      <form method="POST" action="{{ url_for('legacy_order') }}" id="legacy-order-form">
+        {{ form.hidden_tag() }}
+
+        <!-- Customer & Delivery Selection -->
+        <div class="card shadow-sm mb-4">
+          <div class="card-header text-white" style="background-color: var(--gray_tom, #555);">
+            <h5 class="mb-0">1. Customer & Delivery Info</h5>
+          </div>
+          <div class="card-body">
+            <div class="form-group mb-3">
+              <label class="form-label font-weight-bold fw-bold">Select Legacy Customer</label>
+              {{ form.user_id(class="form-select form-control") }}
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label font-weight-bold fw-bold">Delivery Date</label>
+                {{ form.date(class="form-control") }}
+                {% for err in form.date.errors %}<small class="text-danger">{{ err }}</small>{% endfor %}
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label font-weight-bold fw-bold">Time of Day</label>
+                {{ form.day_time(class="form-select form-control") }}
+              </div>
+            </div>
+
+            <div class="form-group mb-3">
+              <label class="form-label font-weight-bold fw-bold">Delivery Notes / Instructions</label>
+              {{ form.delivery_notes(class="form-control", placeholder="e.g., Leave on doorstep, call on arrival") }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Product Quantities -->
+        <div class="card shadow-sm mb-4">
+          <div class="card-header text-white" style="background-color: var(--gray_tom, #555);">
+            <h5 class="mb-0">2. Select Bread & Bakery Products</h5>
+          </div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-hover table-striped mb-0 align-middle">
+                <thead class="table-light">
+                  <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th style="width: 120px;">Quantity</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for p in products %}
+                  <tr>
+                    <td>
+                      <strong>{{ p.display_name or (p.name|replace('_', ' ')) }}</strong>
+                      <small class="d-block text-muted">{{ p.category }}</small>
+                    </td>
+                    <td>€{{ '%.2f'|format(p.price) }}</td>
+                    <td>
+                      <input type="number" name="{{ p.name }}" min="0" max="6" value="0" class="form-control" style="width: 75px;">
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-dark btn-lg w-100 mb-5">Submit Order for Legacy Customer</button>
+      </form>
+      {% else %}
+      <div class="alert alert-info">
+        No legacy users are currently registered. You can flag existing users as legacy in the <a href="{{ url_for('legacymanager') }}">Legacy Manager</a> or <a href="{{ url_for('baker_users') }}">User Management</a>.
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+
+{% include "footer.html" %}

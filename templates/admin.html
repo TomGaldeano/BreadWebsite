@@ -86,7 +86,7 @@
         </thead>
         <tbody>
           <form method="POST" action="{{ url_for('baker') }}">
-            {{ form.csrf_token() }}
+            {{ form.hidden_tag() }}
             {% for i in undelivered_orders%}
             <tr>
               <td>{{ undelivered_orders.date }}</td>

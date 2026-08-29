@@ -61,19 +61,31 @@
                 {{ add_form.display_name_es(class="form-control", placeholder="e.g. Harina de centeno", **{'data-translator-placeholder-en': 'e.g. Rye flour (Spanish)', 'data-translator-placeholder-es': 'p. ej. Harina de centeno'}) }}
                 {% for error in add_form.display_name_es.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
               </div>
-              <div class="form-group col-md-6 mb-3">
+              <div class="form-group col-md-2 mb-3">
                 <label class="font-weight-bold fw-bold" data-translator-en="Cost (€)" data-translator-es="Costo (€)">Cost (€)</label>
                 {{ add_form.cost(class="form-control", min="0", step="0.01", placeholder="0.00") }}
                 {% for error in add_form.cost.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
               </div>
+              <div class="form-group col-md-2 mb-3">
+                <label class="font-weight-bold fw-bold">Stock (todo #8)</label>
+                {{ add_form.stock(class="form-control", min="0", step="0.01", placeholder="0.00") }}
+              </div>
+              <div class="form-group col-md-2 mb-3">
+                <label class="font-weight-bold fw-bold">Unit</label>
+                {{ add_form.unit(class="form-control", placeholder="kg") }}
+              </div>
             </div>
             <button type="submit" class="btn btn-secondary" style="background-color: var(--gray_tom); border-color: var(--gray_tom);" data-translator-en="Add Ingredient" data-translator-es="Añadir Ingrediente">Add Ingredient</button>
+            <a href="{{ url_for('manage_inventory') }}" class="btn btn-outline-dark ms-2">Go to Inventory & Logs</a>
           </form>
         </div>
       </div>
 
       <!-- Existing Ingredients Table -->
-      <h2 class="h4 mb-3" data-translator-en="Existing Ingredients" data-translator-es="Ingredientes Existentes">Existing Ingredients</h2>
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="h4 mb-0" data-translator-en="Existing Ingredients" data-translator-es="Ingredientes Existentes">Existing Ingredients</h2>
+        <a href="{{ url_for('manage_inventory') }}" class="btn btn-sm btn-outline-secondary">View Stock Management</a>
+      </div>
       {% if ingredients %}
       <div class="table-responsive">
         <table class="table table-hover table-striped align-middle" id="ingredients-table">
@@ -82,6 +94,7 @@
               <th data-translator-en="English Name / Internal Code" data-translator-es="Nombre en Inglés / Código Interno">English Name / Internal Code</th>
               <th data-translator-en="Spanish Name" data-translator-es="Nombre en Español">Spanish Name</th>
               <th data-translator-en="Cost (€)" data-translator-es="Costo (€)">Cost (€)</th>
+              <th>Current Stock</th>
               <th class="text-end text-right" data-translator-en="Actions" data-translator-es="Acciones">Actions</th>
             </tr>
           </thead>
@@ -98,6 +111,12 @@
                   €{{ '%.2f'|format(ingredient.cost) }}
                 {% else %}
                   <span class="text-muted">-</span>
+                {% endif %}
+              </td>
+              <td>
+                <strong>{{ '%.2f'|format(ingredient.stock or 0.0) }}</strong> {{ ingredient.unit }}
+                {% if (ingredient.stock or 0.0) <= 5.0 %}
+                  <span class="badge bg-warning text-dark ms-1">Low</span>
                 {% endif %}
               </td>
               <td class="text-end text-right">
@@ -122,7 +141,7 @@
                     Edit
                   </button>
                   <form method="POST" action="{{ url_for('manage_ingredients') }}" class="d-inline" onsubmit="return confirm('Delete this ingredient? / ¿Eliminar este ingrediente?');">
-                    {{ add_form.csrf_token() }}
+                    {{ add_form.hidden_tag() }}
                     <input type="hidden" name="delete_id" value="{{ ingredient.id }}">
                     <button type="submit" class="btn btn-outline-danger btn-sm" data-translator-en="Delete" data-translator-es="Eliminar">Delete</button>
                   </form>
@@ -182,7 +201,7 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <form method="POST" action="{{ url_for('manage_ingredients') }}">
-        {{ edit_form.csrf_token() }}
+        {{ edit_form.hidden_tag() }}
         <input type="hidden" name="form_type" value="edit">
         <input type="hidden" name="action" value="edit">
         <input type="hidden" name="id" id="edit-ing-id">

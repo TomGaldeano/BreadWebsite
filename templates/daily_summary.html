@@ -1,0 +1,149 @@
+{% include "header.html" %}
+
+<div class="container-fluid" style="margin-top: 100px;">
+  <div class="row justify-content-md-center">
+    <div class="col-12" style="max-width: 1100px;">
+      <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <h1 data-translator-en="Daily Orders & Payments Summary" data-translator-es="Resumen Diario de Pedidos y Pagos">Daily Orders & Payments Summary (todo #17)</h1>
+        
+        <form method="GET" action="{{ url_for('daily_summary') }}" class="d-flex align-items-center gap-2">
+          <input type="date" name="date" value="{{ summary.date }}" class="form-control" onchange="this.form.submit()">
+          <button type="submit" class="btn btn-outline-secondary">Filter</button>
+        </form>
+      </div>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, msg in messages %}
+          <div class="alert alert-{{ category if category != 'error' else 'danger' }} alert-dismissible fade show" role="alert">
+            {{ msg }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <!-- Top Summary Metrics Cards -->
+      <div class="row mb-4">
+        <div class="col-md-3 col-sm-6 mb-3">
+          <div class="card text-center shadow-sm h-100 border-primary">
+            <div class="card-body">
+              <h6 class="text-muted text-uppercase">Total Orders</h6>
+              <h2 class="font-weight-bold fw-bold text-primary">{{ summary.total_orders }}</h2>
+              <small class="text-muted">{{ summary.total_loaves }} loaves, {{ summary.total_sticks }} sticks</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+          <div class="card text-center shadow-sm h-100 border-success">
+            <div class="card-body">
+              <h6 class="text-muted text-uppercase">Total Revenue</h6>
+              <h2 class="font-weight-bold fw-bold text-success">€{{ '%.2f'|format(summary.total_revenue) }}</h2>
+              <small class="text-muted">Estimated gross</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+          <div class="card text-center shadow-sm h-100 border-info">
+            <div class="card-body">
+              <h6 class="text-muted text-uppercase">Paid Orders</h6>
+              <h2 class="font-weight-bold fw-bold text-info">{{ summary.paid_count }}</h2>
+              <small class="text-muted">€{{ '%.2f'|format(summary.paid_revenue) }} collected</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+          <div class="card text-center shadow-sm h-100 border-warning">
+            <div class="card-body">
+              <h6 class="text-muted text-uppercase">Unpaid Orders</h6>
+              <h2 class="font-weight-bold fw-bold text-warning">{{ summary.unpaid_count }}</h2>
+              <small class="text-muted">€{{ '%.2f'|format(summary.unpaid_revenue) }} outstanding</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action: Trigger Email -->
+      <div class="card mb-4 shadow-sm">
+        <div class="card-body d-flex justify-content-between align-items-center flex-wrap gap-2">
+          <div>
+            <h5 class="mb-1">Send Summary Email</h5>
+            <p class="text-muted mb-0">Recipient: <strong>{{ summary.admin_email }}</strong> (configured in <a href="{{ url_for('admin_settings') }}">Settings</a>)</p>
+          </div>
+          <form method="POST" action="{{ url_for('send_daily_summary_email') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="date" value="{{ summary.date }}">
+            <button type="submit" class="btn btn-dark">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-envelope me-1" viewBox="0 0 16 16">
+                <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"/>
+              </svg>
+              Send Daily Report Email
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Detailed Orders List -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header text-white" style="background-color: var(--gray_tom, #555);">
+          <h5 class="mb-0">Orders on {{ summary.date.strftime('%A, %B %d, %Y') }}</h5>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover table-striped mb-0 align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>Order #</th>
+                  <th>Customer</th>
+                  <th>Time of Day</th>
+                  <th>Products Ordered</th>
+                  <th>Total (€)</th>
+                  <th>Delivery Address / Notes</th>
+                  <th>Payment Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for ord in summary.orders %}
+                <tr>
+                  <td>#{{ ord.id }}</td>
+                  <td><strong>{{ ord.client }}</strong></td>
+                  <td>{{ ord.time_day }}</td>
+                  <td>
+                    <ul class="mb-0 ps-3">
+                      {% for item_name, qty in ord['items'].items() %}
+                      <li>{{ qty }}x {{ item_name|replace('_', ' ') }}</li>
+                      {% endfor %}
+                    </ul>
+                  </td>
+                  <td><strong>€{{ '%.2f'|format(ord.price) }}</strong></td>
+                  <td>
+                    <small>
+                      {% if ord.address %}<div><strong>Address:</strong> {{ ord.address }}</div>{% endif %}
+                      {% if ord.notes %}<div><strong>Notes:</strong> {{ ord.notes }}</div>{% endif %}
+                      {% if not ord.address and not ord.notes %}<span class="text-muted">Standard pickup/profile</span>{% endif %}
+                    </small>
+                  </td>
+                  <td>
+                    {% if ord.payed %}
+                      <span class="badge bg-success text-white">Paid</span>
+                    {% else %}
+                      <span class="badge bg-danger text-white">Unpaid</span>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% else %}
+                <tr>
+                  <td colspan="7" class="text-center text-muted py-4">No orders placed for {{ summary.date }}.</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% include "footer.html" %}

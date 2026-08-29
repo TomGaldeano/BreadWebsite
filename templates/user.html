@@ -2,7 +2,7 @@
 <div class="container-fluid position-absoulte">
   <div class="container align-self-center" style="margin-top:100px">
     <form method="POST" action="{{ url_for('account') }}">
-    {{ form.csrf_token() }}
+    {{ form.hidden_tag() }}
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto" style="bottom:0">
           <div class="row">
@@ -16,19 +16,20 @@
                 <li class="list-group-item ">{{form.email(style="width:200px", value=user_data["email"])}}<span style="color:red">{% if errors[1] %}{{errors[1]}}{% endif %}</span></li>
                 <li class="list-group-item ">Address (optional)</li>
                 <li class="list-group-item ">{{form.address(style="width:300px", value=user_data["address"])}}</li>
+                <li class="list-group-item ">Delivery Notes (optional)</li>
+                <li class="list-group-item ">{{form.delivery_notes(style="width:300px", value=user_data["delivery_notes"], placeholder="e.g. Leave by back porch")}}</li>
                 <li class="list-group-item ">Old Password</li>
                 <li class="list-group-item ">{{form.old_password(style="width:200px")}}</li>
                 <li class="list-group-item">New Password</li>
                 <li class="list-group-item ">{{form.new_password(style="width:200px")}}</li>
                 <li class="list-group-item "><input type="submit" value="Save Changes" class="btn btn-dark"></li>
-                <li class="list-group-item "></li><button class ="btn btn-dark"><a id="delete-account-link" class="nav-link text-white" href="{{ url_for('delete') }}" data-translator-en="Delete Account" data-translator-es="Eliminar Cuenta">Delete Account</a>
+                <li class="list-group-item "><a id="delete-account-link" class="btn btn-danger" href="{{ url_for('delete') }}" onclick="return confirm('Are you sure you want to delete your account?');" data-translator-en="Delete Account" data-translator-es="Eliminar Cuenta">Delete Account</a></li>
               </ul>
             </div>
           </div>
         </div>
       </div>
     </form>
-    </button>
   </div>
 </div>
 {% include "footer.html" %}

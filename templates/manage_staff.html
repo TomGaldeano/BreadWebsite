@@ -1,0 +1,127 @@
+{% include "header.html" %}
+
+<div class="container-fluid" style="margin-top: 100px;">
+  <div class="row justify-content-md-center">
+    <div class="col-12" style="max-width: 1000px;">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 data-translator-en="Staff Directory & Management" data-translator-es="Directorio y Gestión de Personal">Staff Directory & Management (todo #12)</h1>
+        <a href="{{ url_for('manage_timetable') }}" class="btn btn-outline-secondary" data-translator-en="View Timetable" data-translator-es="Ver Horarios">View Timetable</a>
+      </div>
+
+      {% if message %}
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {% endif %}
+      {% if error %}
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ error }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {% endif %}
+
+      <!-- Add/Edit Staff Form -->
+      <div class="card mb-4 shadow-sm">
+        <div class="card-header text-white" style="background-color: var(--gray_tom, #555);">
+          <h5 class="mb-0">{% if edit_id %}Edit Staff Member{% else %}Add New Staff Member{% endif %}</h5>
+        </div>
+        <div class="card-body">
+          <form method="POST" action="{{ url_for('manage_staff') }}">
+            {{ form.hidden_tag() }}
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label font-weight-bold fw-bold">Full Name</label>
+                {{ form.name(class="form-control", placeholder="e.g. Maria Perez") }}
+                {% for err in form.name.errors %}<small class="text-danger">{{ err }}</small>{% endfor %}
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label font-weight-bold fw-bold">Role / Position</label>
+                {{ form.role(class="form-control", placeholder="e.g. Head Baker, Assistant, Delivery Driver") }}
+                {% for err in form.role.errors %}<small class="text-danger">{{ err }}</small>{% endfor %}
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label font-weight-bold fw-bold">Email (optional)</label>
+                {{ form.email(class="form-control", placeholder="maria@breadshop.com") }}
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label font-weight-bold fw-bold">Phone (optional)</label>
+                {{ form.phone(class="form-control", placeholder="+34 600 000 000") }}
+              </div>
+            </div>
+
+            <div class="form-check mb-3">
+              {{ form.active(class="form-check-input") }}
+              <label class="form-check-label">Active Employee</label>
+            </div>
+
+            <button type="submit" class="btn btn-dark">{% if edit_id %}Update Staff Member{% else %}Add Staff Member{% endif %}</button>
+            {% if edit_id %}
+            <a href="{{ url_for('manage_staff') }}" class="btn btn-outline-secondary ms-2">Cancel Edit</a>
+            {% endif %}
+          </form>
+        </div>
+      </div>
+
+      <!-- Staff List -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header text-white" style="background-color: var(--gray_tom, #555);">
+          <h5 class="mb-0">Staff Members</h5>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover table-striped mb-0 align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>Name</th>
+                  <th>Role</th>
+                  <th>Contact</th>
+                  <th>Status</th>
+                  <th class="text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for s in staff %}
+                <tr>
+                  <td><strong>{{ s.name }}</strong></td>
+                  <td><span class="badge bg-secondary text-white">{{ s.role }}</span></td>
+                  <td>
+                    <small>
+                      {% if s.email %}<div>{{ s.email }}</div>{% endif %}
+                      {% if s.phone %}<div>{{ s.phone }}</div>{% endif %}
+                      {% if not s.email and not s.phone %}<span class="text-muted">No contact info</span>{% endif %}
+                    </small>
+                  </td>
+                  <td>
+                    {% if s.active %}
+                      <span class="badge bg-success text-white">Active</span>
+                    {% else %}
+                      <span class="badge bg-light text-muted border">Inactive</span>
+                    {% endif %}
+                  </td>
+                  <td class="text-end">
+                    <a href="{{ url_for('manage_staff', edit=s.id) }}" class="btn btn-sm btn-outline-primary me-1">Edit</a>
+                    <a href="{{ url_for('manage_staff', toggle_id=s.id) }}" class="btn btn-sm btn-outline-warning me-1">Toggle Status</a>
+                    <a href="{{ url_for('manage_staff', delete_id=s.id) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this staff member and all their scheduled shifts?');">Delete</a>
+                  </td>
+                </tr>
+                {% else %}
+                <tr>
+                  <td colspan="5" class="text-center text-muted py-4">No staff members added yet.</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% include "footer.html" %}

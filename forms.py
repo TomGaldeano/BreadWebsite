@@ -71,6 +71,8 @@ class AddIngredientForm(FlaskForm):
     display_name = StringField("Display name", validators=[DataRequired(), Length(max=255)])
     display_name_es = StringField("Spanish display name", validators=[DataRequired(), Length(max=255)])
     cost = FloatField("Cost", validators=[NumberRange(min=0)])
+    stock = FloatField("Current Stock", validators=[NumberRange(min=0)], default=0.0)
+    unit = StringField("Unit (e.g. kg, g)", validators=[Length(max=50)], default="kg")
     submit = SubmitField("Add ingredient")
 
 class EditIngredientForm(FlaskForm):
@@ -79,7 +81,16 @@ class EditIngredientForm(FlaskForm):
     display_name = StringField("Display name", validators=[DataRequired(), Length(max=255)])
     display_name_es = StringField("Spanish display name", validators=[DataRequired(), Length(max=255)])
     cost = FloatField("Cost", validators=[NumberRange(min=0)])
+    stock = FloatField("Current Stock", validators=[NumberRange(min=0)], default=0.0)
+    unit = StringField("Unit (e.g. kg, g)", validators=[Length(max=50)], default="kg")
     submit = SubmitField("Save ingredient")
+
+class StockAdjustmentForm(FlaskForm):
+    ingredient_id = SelectField("Ingredient", coerce=int, validators=[DataRequired()])
+    adjustment_type = SelectField("Adjustment Type", choices=[('add', 'Add Stock (Restock)'), ('set', 'Set Exact Stock'), ('deduct', 'Deduct Stock (Correction)')], default='add')
+    amount = FloatField("Amount", validators=[InputRequired(), NumberRange(min=0.01)])
+    reason = StringField("Reason / Note", validators=[Length(max=255)])
+    submit = SubmitField("Apply Stock Adjustment")
 
 class AdminEditUserForm(FlaskForm):
     id = HiddenField()
@@ -91,6 +102,50 @@ class AdminEditUserForm(FlaskForm):
     new_password = PasswordField("New Password (optional)", validators=[NoneOf(data.invalid_characters, message="invalid symbol used")])
     submit = SubmitField("Save user")
 
+class UserPreferencesForm(FlaskForm):
+    preferred_language = SelectField("Preferred Language", choices=[('en', 'English'), ('es', 'Español')], default='en')
+    dark_mode = BooleanField("Enable Dark Theme")
+    default_delivery_notes = StringField("Default Delivery Instructions", validators=[Length(max=500)])
+    submit = SubmitField("Save Preferences")
+
+class AdminSettingsForm(FlaskForm):
+    require_email_verification = BooleanField("Require Email Verification Before Ordering")
+    admin_notification_email = StringField("Admin Notification Email", validators=[DataRequired(), Length(max=255)])
+    submit = SubmitField("Save Site Settings")
+
+class StaffForm(FlaskForm):
+    id = HiddenField()
+    name = StringField("Staff Name", validators=[DataRequired(), Length(max=255)])
+    role = StringField("Role / Position", validators=[DataRequired(), Length(max=255)])
+    email = StringField("Email (optional)", validators=[Length(max=255)])
+    phone = StringField("Phone (optional)", validators=[Length(max=50)])
+    active = BooleanField("Active", default=True)
+    submit = SubmitField("Save Staff Member")
+
+class TimetableForm(FlaskForm):
+    id = HiddenField()
+    staff_id = SelectField("Staff Member", coerce=int, validators=[DataRequired()])
+    day_of_week = SelectField("Day of Week", choices=[('0', 'Monday'), ('1', 'Tuesday'), ('2', 'Wednesday'), ('3', 'Thursday'), ('4', 'Friday'), ('5', 'Saturday'), ('6', 'Sunday')], default='0')
+    shift_date = DateField("Specific Date (optional)", validators=[], format='%Y-%m-%d')
+    start_time = StringField("Start Time (e.g. 06:00)", validators=[DataRequired(), Length(max=20)], default="06:00")
+    end_time = StringField("End Time (e.g. 14:00)", validators=[DataRequired(), Length(max=20)], default="14:00")
+    notes = StringField("Notes / Assigned Station", validators=[Length(max=255)])
+    submit = SubmitField("Save Shift")
+
+class DeliveryPersonForm(FlaskForm):
+    id = HiddenField()
+    name = StringField("Driver Name", validators=[DataRequired(), Length(max=255)])
+    phone = StringField("Phone Number", validators=[DataRequired(), Length(max=50)])
+    vehicle_type = StringField("Vehicle Type (e.g. Van, Bike, Scooter)", validators=[Length(max=100)], default="Van")
+    active = BooleanField("Active", default=True)
+    submit = SubmitField("Save Driver")
+
+class LegacyOrderForm(FlaskForm):
+    user_id = SelectField("Legacy Customer", coerce=int, validators=[DataRequired()])
+    date = DateField("Delivery Date", default=date.today() + timedelta(days=1), validators=[DataRequired(message="required field"), FutureDaysOnly()])
+    day_time = SelectField("Time of Day", choices=[('Evening', 'Evening'), ('Morning', 'Morning')], default='Evening')
+    delivery_notes = StringField("Delivery Notes (optional)", validators=[Length(max=500)])
+    submit = SubmitField("Place Order for Legacy User")
 
 class DeliveryCostForm(FlaskForm):
     bakery_id = SelectField("Bakery", coerce=int, validators=[DataRequired()])
@@ -125,6 +180,8 @@ class ModifyUser(FlaskForm):
                                     NoneOf(data.invalid_characters, message="invalid symbol used")])
     address = StringField("Address (optional)", validators=[Length(max=500),
                                                               NoneOf(data.invalid_characters, message="invalid symbol used")])
+    delivery_notes = StringField("Delivery notes (optional)", validators=[Length(max=500),
+                                                              NoneOf(data.invalid_characters, message="invalid symbol used")])
 
 class ModifyUserSumbmit(FlaskForm):
     submit = SubmitField("Save changes")
@@ -157,7 +214,11 @@ class BreadOrderForm(FlaskForm):
     recurring = IntegerField(validators=[NumberRange(min=0, max=12, message="Invalid Number")],
                              default=0, label="Number of Weeks")
     day_time = SelectField(choices=[('Evening', 'Evening')])
-    #day_time = SelectField(choices=[('Evening', 'Evening'),('Morning', "Morning")])
+    delivery_option = SelectField(choices=[('profile', 'Use profile address'), ('custom', 'Enter custom address'), ('location', 'Use current GPS location')], default='profile')
+    delivery_address = StringField(validators=[Length(max=500)])
+    delivery_notes = StringField(validators=[Length(max=500)])
+    delivery_latitude = HiddenField()
+    delivery_longitude = HiddenField()
     submit = SubmitField("Order")
 
 
@@ -198,5 +259,10 @@ class PedidoPan(FlaskForm):
     recurring = IntegerField(validators=[NumberRange(min=0, max=12, message="Invalid Number")],
                              default=0, label="Number of Weeks")
     day_time = SelectField(choices=[('Evening', "Tarde")])
-    #day_time = SelectField(choices=[('Morning', "Mañana"), ('Evening', 'Tarde')])
+    delivery_option = SelectField(choices=[('profile', 'Usar dirección de perfil'), ('custom', 'Introducir dirección'), ('location', 'Usar ubicación GPS actual')], default='profile')
+    delivery_address = StringField(validators=[Length(max=500)])
+    delivery_notes = StringField(validators=[Length(max=500)])
+    delivery_latitude = HiddenField()
+    delivery_longitude = HiddenField()
     submit = SubmitField("Order")
+

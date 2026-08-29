@@ -128,7 +128,7 @@
                     Edit
                   </button>
                   <form method="POST" action="{{ url_for('manage_bakeries') }}" class="d-inline" onsubmit="return confirm('Delete this bakery? / ¿Eliminar esta panadería?');">
-                    {{ form.csrf_token() }}
+                    {{ form.hidden_tag() }}
                     <input type="hidden" name="delete_id" value="{{ bakery.id }}">
                     <button type="submit" class="btn btn-outline-danger btn-sm" data-translator-en="Delete" data-translator-es="Eliminar">Delete</button>
                   </form>
@@ -192,7 +192,7 @@
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
       <form method="POST" action="{{ url_for('manage_bakeries') }}">
-        {{ form.csrf_token() }}
+        {{ form.hidden_tag() }}
         <input type="hidden" name="id" id="edit-bakery-id">
         <div class="modal-header text-white" style="background-color: var(--gray_tom);">
           <h5 class="modal-title" id="editBakeryModalLabel" data-translator-en="Edit Bakery" data-translator-es="Editar Panadería">Edit Bakery</h5>

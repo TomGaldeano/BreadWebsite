@@ -29,7 +29,7 @@
 
 <div class="container d-flex justify-content-center">
   <form method="POST" action="{{ url_for('baker_users') }}">
-    {{ form.csrf_token() }}
+    {{ form.hidden_tag() }}
     <div class>{{ form.users_to_delete}}
     </div>
     <div class="mx-auto" style="height: 10px;">

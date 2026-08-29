@@ -1,3 +1,53 @@
 2026-08-23 19:02:47,309 - login ssuccseful - user testuser from group GroupA registered correctly
 2026-08-23 19:03:21,719 - login ssuccseful - user testuser from group GroupA registered correctly
 2026-08-23 19:03:23,651 - login ssuccseful - user testuser logged in correctly
+2026-08-27 21:58:32,415 - login ssuccseful - user superadmin logged in correctly
+2026-08-27 21:59:30,078 - login ssuccseful - user superadmin logged in correctly
+2026-08-27 21:59:40,404 - login ssuccseful - user superadmin logged in correctly
+2026-08-27 21:59:48,289 - login ssuccseful - error in string
+2026-08-27 21:59:58,846 - login ssuccseful - user superadmin logged in correctly
+2026-08-27 22:00:15,166 - login ssuccseful - error in string
+2026-08-27 22:00:24,911 - login ssuccseful - user superadmin logged in correctly
+2026-08-27 22:00:34,525 - login ssuccseful - user superadmin logged in correctly
+2026-08-27 22:00:42,410 - login ssuccseful - error in string
+2026-08-27 22:11:28,611 - login ssuccseful - user superadmin logged in correctly
+2026-08-27 22:11:28,767 - login ssuccseful - error in string
+2026-08-27 22:11:38,133 - login ssuccseful - user superadmin logged in correctly
+2026-08-27 22:11:45,655 - login ssuccseful - error in string
+2026-08-27 22:11:55,029 - login ssuccseful - user superadmin logged in correctly
+2026-08-27 22:12:10,055 - login ssuccseful - error in string
+2026-08-27 22:12:19,812 - login ssuccseful - user superadmin logged in correctly
+2026-08-27 22:12:30,883 - login ssuccseful - user superadmin logged in correctly
+2026-08-27 22:12:39,477 - login ssuccseful - error in string
+2026-08-27 22:15:05,685 - login ssuccseful - user superadmin logged in correctly
+2026-08-27 22:15:07,685 - login ssuccseful - user johndoe logged in correctly
+2026-08-27 22:15:17,220 - login ssuccseful - user superadmin logged in correctly
+2026-08-27 22:15:26,607 - login ssuccseful - user johndoe logged in correctly
+2026-08-27 22:15:37,666 - login ssuccseful - user superadmin logged in correctly
+2026-08-27 22:15:54,230 - login ssuccseful - user johndoe logged in correctly
+2026-08-27 22:16:03,479 - login ssuccseful - user superadmin logged in correctly
+2026-08-27 22:16:12,734 - login ssuccseful - user superadmin logged in correctly
+2026-08-27 22:16:21,968 - login ssuccseful - user johndoe logged in correctly
+2026-08-27 22:16:23,845 - login ssuccseful - user superadmin logged in correctly
+2026-08-27 22:19:52,839 - login ssuccseful - user superadmin logged in correctly
+2026-08-27 22:19:54,860 - login ssuccseful - user johndoe logged in correctly
+2026-08-27 22:20:03,891 - login ssuccseful - user superadmin logged in correctly
+2026-08-27 22:20:12,995 - login ssuccseful - user johndoe logged in correctly
+2026-08-27 22:20:24,155 - login ssuccseful - user superadmin logged in correctly
+2026-08-27 22:20:40,511 - login ssuccseful - user johndoe logged in correctly
+2026-08-27 22:20:42,365 - login ssuccseful - user superadmin logged in correctly
+2026-08-27 22:20:51,631 - login ssuccseful - user superadmin logged in correctly
+2026-08-27 22:21:00,920 - login ssuccseful - user superadmin logged in correctly
+2026-08-27 22:21:10,164 - login ssuccseful - user johndoe logged in correctly
+2026-08-27 22:21:11,984 - login ssuccseful - user superadmin logged in correctly
+2026-08-27 22:21:50,969 - login ssuccseful - user superadmin logged in correctly
+2026-08-27 22:21:52,972 - login ssuccseful - user johndoe logged in correctly
+2026-08-27 22:22:02,147 - login ssuccseful - user superadmin logged in correctly
+2026-08-27 22:22:11,264 - login ssuccseful - user johndoe logged in correctly
+2026-08-27 22:22:22,227 - login ssuccseful - user superadmin logged in correctly
+2026-08-27 22:22:39,585 - login ssuccseful - user johndoe logged in correctly
+2026-08-27 22:22:41,514 - login ssuccseful - user superadmin logged in correctly
+2026-08-27 22:22:51,741 - login ssuccseful - user superadmin logged in correctly
+2026-08-27 22:23:01,438 - login ssuccseful - user superadmin logged in correctly
+2026-08-27 22:23:11,228 - login ssuccseful - user johndoe logged in correctly
+2026-08-27 22:23:13,185 - login ssuccseful - user superadmin logged in correctly

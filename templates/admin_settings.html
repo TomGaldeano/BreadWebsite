@@ -1,0 +1,66 @@
+{% include "header.html" %}
+
+<div class="container-fluid" style="margin-top: 100px;">
+  <div class="row justify-content-md-center">
+    <div class="col-12" style="max-width: 800px;">
+      <h1 class="mb-4" data-translator-en="Site Settings & Configuration" data-translator-es="Configuración Global del Sitio">Site Settings & Configuration</h1>
+
+      {% if message %}
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {% endif %}
+
+      <div class="card mb-4">
+        <div class="card-header text-white" style="background-color: var(--gray_tom, #555);">
+          <h5 class="mb-0" data-translator-en="Authentication & Order Security" data-translator-es="Autenticación y Seguridad">Authentication & Order Security</h5>
+        </div>
+        <div class="card-body">
+          <form method="POST" action="{{ url_for('admin_settings') }}">
+            {{ form.hidden_tag() }}
+
+            <div class="form-check form-switch mb-3">
+              {{ form.require_email_verification(class="form-check-input") }}
+              <label class="form-check-label font-weight-bold fw-bold" data-translator-en="Require Email Verification Before Placing Orders" data-translator-es="Requerir Verificación de Correo Antes de Realizar Pedidos">
+                Require Email Verification Before Placing Orders (todo #10)
+              </label>
+              <small class="form-text text-muted d-block">
+                When enabled, accounts that are unverified will be prevented from placing new bread orders until verified.
+              </small>
+            </div>
+
+            <div class="form-group mb-3">
+              <label class="form-label font-weight-bold fw-bold" data-translator-en="Admin Notification Email" data-translator-es="Correo de Notificación del Administrador">Admin Notification Email (todo #17)</label>
+              {{ form.admin_notification_email(class="form-control") }}
+              <small class="form-text text-muted">
+                Address where the daily order & payment summary reports and alerts will be sent.
+              </small>
+            </div>
+
+            <button type="submit" class="btn btn-dark" data-translator-en="Save Settings" data-translator-es="Guardar Configuración">Save Settings</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="card mb-4">
+        <div class="card-header text-white" style="background-color: var(--gray_tom, #555);">
+          <h5 class="mb-0" data-translator-en="Quick Management Links" data-translator-es="Accesos Rápidos de Gestión">Quick Management Links</h5>
+        </div>
+        <div class="card-body">
+          <div class="d-flex flex-wrap gap-2">
+            <a href="{{ url_for('daily_summary') }}" class="btn btn-outline-dark me-2 mb-2">Daily Summary Report</a>
+            <a href="{{ url_for('manage_inventory') }}" class="btn btn-outline-dark me-2 mb-2">Inventory & Stock</a>
+            <a href="{{ url_for('manage_staff') }}" class="btn btn-outline-dark me-2 mb-2">Staff Directory</a>
+            <a href="{{ url_for('manage_timetable') }}" class="btn btn-outline-dark me-2 mb-2">Staff Timetable</a>
+            <a href="{{ url_for('delivery_routes') }}" class="btn btn-outline-dark me-2 mb-2">Delivery Routes</a>
+            <a href="{{ url_for('legacy_order') }}" class="btn btn-outline-dark me-2 mb-2">Order for Legacy User</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% include "footer.html" %}

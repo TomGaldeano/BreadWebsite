@@ -1,3 +1,21 @@
 2026-08-23 19:03:23,690 - order succseful - valid order:True
 2026-08-23 19:03:23,693 - order succseful - [2]--
 2026-08-23 19:03:23,698 - order succseful - order received
+2026-08-27 22:12:10,062 - order succseful - valid order:False
+2026-08-27 22:15:17,274 - order succseful - [DAILY SUMMARY EMAIL TO admin@breadshop.com] Date: 2026-08-27 | Orders: 1 | Revenue: €6.00
+2026-08-27 22:15:28,485 - order succseful - valid order:False
+2026-08-27 22:15:54,242 - order succseful - valid order:False
+2026-08-27 22:20:03,947 - order succseful - [DAILY SUMMARY EMAIL TO admin@breadshop.com] Date: 2026-08-27 | Orders: 1 | Revenue: €6.00
+2026-08-27 22:20:14,853 - order succseful - valid order:True
+2026-08-27 22:20:14,856 - order succseful - [1]--
+2026-08-27 22:20:14,877 - order succseful - order received
+2026-08-27 22:20:40,522 - order succseful - valid order:True
+2026-08-27 22:20:40,524 - order succseful - [2]--
+2026-08-27 22:20:40,532 - order succseful - order received
+2026-08-27 22:22:02,201 - order succseful - [DAILY SUMMARY EMAIL TO admin@breadshop.com] Date: 2026-08-27 | Orders: 1 | Revenue: €6.00
+2026-08-27 22:22:13,093 - order succseful - valid order:True
+2026-08-27 22:22:13,096 - order succseful - [1]--
+2026-08-27 22:22:13,114 - order succseful - order received
+2026-08-27 22:22:39,595 - order succseful - valid order:True
+2026-08-27 22:22:39,597 - order succseful - [2]--
+2026-08-27 22:22:39,604 - order succseful - order received

@@ -21,7 +21,7 @@
 
   <div class="row justify-content-md-center">
       <form method="POST" action="{{ url_for('orders') }}">
-        {{ form.csrf_token() }}
+        {{ form.hidden_tag() }}
 
     <!-- Desktop table -->
     <div class="table-responsive d-md-block d-none" style="padding-left: 5%;padding-right: 5%;">

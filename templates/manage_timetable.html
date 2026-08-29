@@ -1,0 +1,121 @@
+{% include "header.html" %}
+
+<div class="container-fluid" style="margin-top: 100px;">
+  <div class="row justify-content-md-center">
+    <div class="col-12" style="max-width: 1100px;">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 data-translator-en="Staff Timetable & Shift Scheduling" data-translator-es="Horarios y Turnos del Personal">Staff Timetable & Shift Scheduling (todo #12)</h1>
+        <a href="{{ url_for('manage_staff') }}" class="btn btn-outline-secondary" data-translator-en="Manage Staff" data-translator-es="Gestionar Personal">Manage Staff</a>
+      </div>
+
+      {% if message %}
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {% endif %}
+      {% if error %}
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ error }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {% endif %}
+
+      <!-- Add Shift Card -->
+      <div class="card mb-4 shadow-sm">
+        <div class="card-header text-white" style="background-color: var(--gray_tom, #555);">
+          <h5 class="mb-0">Schedule New Shift</h5>
+        </div>
+        <div class="card-body">
+          {% if staff %}
+          <form method="POST" action="{{ url_for('manage_timetable') }}">
+            {{ form.hidden_tag() }}
+
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                <label class="form-label font-weight-bold fw-bold">Staff Member</label>
+                {{ form.staff_id(class="form-select form-control") }}
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label font-weight-bold fw-bold">Day of Week</label>
+                {{ form.day_of_week(class="form-select form-control") }}
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label font-weight-bold fw-bold">Specific Date (optional)</label>
+                {{ form.shift_date(class="form-control") }}
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-3 mb-3">
+                <label class="form-label font-weight-bold fw-bold">Start Time</label>
+                {{ form.start_time(class="form-control", placeholder="06:00") }}
+              </div>
+              <div class="col-md-3 mb-3">
+                <label class="form-label font-weight-bold fw-bold">End Time</label>
+                {{ form.end_time(class="form-control", placeholder="14:00") }}
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label font-weight-bold fw-bold">Notes / Station</label>
+                {{ form.notes(class="form-control", placeholder="e.g. Sourdough prep, Oven station, Morning delivery") }}
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-dark">Add Shift to Timetable</button>
+          </form>
+          {% else %}
+          <div class="alert alert-info mb-0">
+            No active staff members found. Please <a href="{{ url_for('manage_staff') }}">add staff members</a> before creating shifts.
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Weekly Calendar View -->
+      <h3 class="mb-3">Weekly Schedule</h3>
+      <div class="row">
+        {% for day_idx in range(7) %}
+        <div class="col-lg-4 col-md-6 mb-4">
+          <div class="card shadow-sm h-100">
+            <div class="card-header bg-light font-weight-bold fw-bold d-flex justify-content-between">
+              <span>{{ days[day_idx] }}</span>
+              <span class="badge bg-secondary">{{ weekly_shifts[day_idx]|length }} shifts</span>
+            </div>
+            <div class="card-body p-2">
+              {% if weekly_shifts[day_idx] %}
+                <ul class="list-group list-group-flush">
+                  {% for shift in weekly_shifts[day_idx] %}
+                  <li class="list-group-item p-2">
+                    <div class="d-flex justify-content-between align-items-start">
+                      <div>
+                        <strong>{{ shift.staff.name if shift.staff else 'Unknown' }}</strong>
+                        <span class="badge bg-light text-dark border ms-1">{{ shift.staff.role if shift.staff else '' }}</span>
+                        <div class="text-primary mt-1">
+                          <small><strong>{{ shift.start_time }} - {{ shift.end_time }}</strong></small>
+                          {% if shift.shift_date %}<small class="text-muted">({{ shift.shift_date }})</small>{% endif %}
+                        </div>
+                        {% if shift.notes %}<div class="text-muted small"><em>{{ shift.notes }}</em></div>{% endif %}
+                      </div>
+                      <form method="POST" action="{{ url_for('manage_timetable') }}" onsubmit="return confirm('Delete this shift?');">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="delete_id" value="{{ shift.id }}">
+                        <button type="submit" class="btn btn-sm btn-outline-danger py-0 px-1" title="Delete shift">&times;</button>
+                      </form>
+                    </div>
+                  </li>
+                  {% endfor %}
+                </ul>
+              {% else %}
+                <p class="text-muted small text-center my-3">No shifts scheduled</p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% include "footer.html" %}

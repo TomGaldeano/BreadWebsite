@@ -1,0 +1,175 @@
+{% include "header.html" %}
+
+<div class="container-fluid" style="margin-top: 100px;">
+  <div class="row justify-content-md-center">
+    <div class="col-12" style="max-width: 1100px;">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 data-translator-en="Inventory & Stock Management" data-translator-es="Gestión de Inventario y Stock">Inventory & Stock Management</h1>
+        <a href="{{ url_for('manage_ingredients') }}" class="btn btn-outline-secondary" data-translator-en="Manage Ingredients" data-translator-es="Gestionar Ingredientes">Manage Ingredients</a>
+      </div>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, msg in messages %}
+          <div class="alert alert-{{ category if category != 'error' else 'danger' }} alert-dismissible fade show" role="alert">
+            {{ msg }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <!-- Low Stock Alerts -->
+      {% if low_stock %}
+      <div class="alert alert-warning mb-4 shadow-sm" role="alert">
+        <h5 class="alert-heading font-weight-bold fw-bold">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-exclamation-triangle me-2" viewBox="0 0 16 16">
+            <path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.15.15 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.2.2 0 0 1-.054.06.1.1 0 0 1-.066.017H1.146a.1.1 0 0 1-.066-.017.2.2 0 0 1-.054-.06.18.18 0 0 1 .002-.183L7.884 2.073a.15.15 0 0 1 .054-.057m1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767z"/>
+            <path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z"/>
+          </svg>
+          Low Stock Warning
+        </h5>
+        <p class="mb-0">The following ingredients are low in stock (&le; 5 units/kg):</p>
+        <ul class="mb-0 mt-2">
+          {% for ing in low_stock %}
+          <li><strong>{{ ing.display_name or ing.name }}</strong>: {{ '%.2f'|format(ing.stock or 0.0) }} {{ ing.unit }} remaining</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      <div class="row mb-4">
+        <!-- Stock Adjustment Form -->
+        <div class="col-md-5 mb-3">
+          <div class="card shadow-sm h-100">
+            <div class="card-header text-white" style="background-color: var(--gray_tom, #555);">
+              <h5 class="mb-0" data-translator-en="Adjust / Restock Inventory" data-translator-es="Ajustar / Reabastecer Stock">Adjust / Restock Inventory</h5>
+            </div>
+            <div class="card-body">
+              <form method="POST" action="{{ url_for('adjust_inventory') }}">
+                {{ form.hidden_tag() }}
+
+                <div class="form-group mb-3">
+                  <label class="form-label font-weight-bold fw-bold" data-translator-en="Ingredient" data-translator-es="Ingrediente">Ingredient</label>
+                  {{ form.ingredient_id(class="form-select form-control") }}
+                </div>
+
+                <div class="form-group mb-3">
+                  <label class="form-label font-weight-bold fw-bold" data-translator-en="Action Type" data-translator-es="Tipo de Ajuste">Action Type</label>
+                  {{ form.adjustment_type(class="form-select form-control") }}
+                </div>
+
+                <div class="form-group mb-3">
+                  <label class="form-label font-weight-bold fw-bold" data-translator-en="Amount" data-translator-es="Cantidad">Amount</label>
+                  {{ form.amount(class="form-control", min="0.01", step="0.01", placeholder="e.g., 25.0") }}
+                </div>
+
+                <div class="form-group mb-3">
+                  <label class="form-label font-weight-bold fw-bold" data-translator-en="Reason / Note" data-translator-es="Motivo / Nota">Reason / Note</label>
+                  {{ form.reason(class="form-control", placeholder="e.g., Weekly delivery, Waste, Calibration") }}
+                </div>
+
+                <button type="submit" class="btn btn-dark w-100" data-translator-en="Apply Adjustment" data-translator-es="Aplicar Ajuste">Apply Adjustment</button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Current Stock Levels Table -->
+        <div class="col-md-7 mb-3">
+          <div class="card shadow-sm h-100">
+            <div class="card-header text-white" style="background-color: var(--gray_tom, #555);">
+              <h5 class="mb-0" data-translator-en="Current Stock Levels" data-translator-es="Niveles Actuales de Stock">Current Stock Levels</h5>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive" style="max-height: 380px; overflow-y: auto;">
+                <table class="table table-hover table-striped mb-0 align-middle">
+                  <thead class="table-light sticky-top">
+                    <tr>
+                      <th>Ingredient</th>
+                      <th>Current Stock</th>
+                      <th>Unit Cost</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for ing in ingredients %}
+                    <tr>
+                      <td>
+                        <strong>{{ ing.display_name or ing.name }}</strong>
+                        <small class="d-block text-muted">{{ ing.name }}</small>
+                      </td>
+                      <td>
+                        <strong style="font-size: 1.1em;">{{ '%.2f'|format(ing.stock or 0.0) }}</strong> {{ ing.unit }}
+                      </td>
+                      <td>
+                        {% if ing.cost is not none %}€{{ '%.2f'|format(ing.cost) }}{% else %}-{% endif %}
+                      </td>
+                      <td>
+                        {% if (ing.stock or 0.0) <= 0 %}
+                          <span class="badge bg-danger text-white">Out of stock</span>
+                        {% elif (ing.stock or 0.0) <= 5.0 %}
+                          <span class="badge bg-warning text-dark">Low stock</span>
+                        {% else %}
+                          <span class="badge bg-success text-white">In stock</span>
+                        {% endif %}
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Inventory Change Logs -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header text-white d-flex justify-content-between align-items-center" style="background-color: var(--gray_tom, #555);">
+          <h5 class="mb-0" data-translator-en="Inventory Transaction Logs" data-translator-es="Historial de Movimientos de Inventario">Inventory Transaction Logs (todo #9)</h5>
+          <small>Showing recent changes</small>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive" style="max-height: 350px; overflow-y: auto;">
+            <table class="table table-hover table-striped mb-0 align-middle">
+              <thead class="table-light sticky-top">
+                <tr>
+                  <th>Timestamp</th>
+                  <th>Ingredient</th>
+                  <th>Change</th>
+                  <th>Stock After</th>
+                  <th>Reason / Note</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for log in logs %}
+                <tr>
+                  <td><small>{{ log.timestamp.strftime('%Y-%m-%d %H:%M:%S') if log.timestamp else '-' }}</small></td>
+                  <td><strong>{{ log.ingredient.display_name or log.ingredient.name if log.ingredient else 'Unknown' }}</strong></td>
+                  <td>
+                    {% if log.change_amount > 0 %}
+                      <span class="text-success font-weight-bold fw-bold">+{{ '%.2f'|format(log.change_amount) }}</span>
+                    {% else %}
+                      <span class="text-danger font-weight-bold fw-bold">{{ '%.2f'|format(log.change_amount) }}</span>
+                    {% endif %}
+                  </td>
+                  <td>{{ '%.2f'|format(log.current_stock) }}</td>
+                  <td><span class="badge bg-light text-dark border">{{ log.reason }}</span></td>
+                </tr>
+                {% else %}
+                <tr>
+                  <td colspan="5" class="text-center text-muted py-3">No inventory logs recorded yet. Place orders or adjust stock to see history.</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% include "footer.html" %}

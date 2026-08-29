@@ -55,7 +55,7 @@
     <div class="table-responsive">
          <form method="POST" action="{{ url_for('index') }}" id="order-form">
           <table class="table table-hover">
-          {{ order_form.csrf_token() }}
+          {{ order_form.hidden_tag() }}
               <h1 id="heading-bread" data-translator-en="Bread" data-translator-es="Pan">Bread</h1>
               <tbody>
               {% for p in bread %}
@@ -117,32 +117,93 @@
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     {% endif %}
-    <div class="container-fluid position-absoulte">
-      <div class="container align-self-center" style="margin-top:40px">
-      <div class="row">
-        <div class="col-lg-8 col-md-10 mx-auto" style="bottom:0">
-          <ul class="list-group list-group-flush">
-           <li class="list-group-item align-self-center">{{order_form.date}}<span style="color:red">{% if errors[0] %}{{errors[0]}}{% endif %}</span></li>
-           <li class="list-group-item align-self-center">{{order_form.day_time(style="width:120px")}}<span style="color:red">{% if errors[1] %}{{errors[1]}}{% endif %}</span></li>
-           <li class="list-group-item align-self-center">{{order_form.recurring(style="width:120px")}}</li>
-             <li id="consecutive-weeks" class="list-group-item align-self-center" data-translator-en="Number of consecutive weeks to order" data-translator-es="Número de semanas consecutivas para pedir">Number of consecutive weeks to order</li>
+    <div class="container-fluid position-relative">
+      <div class="container align-self-center" style="margin-top:40px; max-width: 750px;">
+        <div class="card shadow-sm mb-4">
+          <div class="card-header text-white" style="background-color: var(--gray_tom, #555);">
+            <h5 class="mb-0" data-translator-en="Order & Delivery Options" data-translator-es="Opciones de Pedido y Entrega">Order & Delivery Options (todos #2 #4)</h5>
+          </div>
+          <div class="card-body">
+            <!-- Timing & Recurrence -->
+            <div class="row mb-3">
+              <div class="col-md-6 mb-2">
+                <label class="form-label font-weight-bold fw-bold" data-translator-en="Delivery Date" data-translator-es="Fecha de Entrega">Delivery Date</label>
+                {{ order_form.date(class="form-control") }}
+                <span style="color:red">{% if errors[0] %}{{errors[0]}}{% endif %}</span>
+              </div>
+              <div class="col-md-6 mb-2">
+                <label class="form-label font-weight-bold fw-bold" data-translator-en="Time of Day" data-translator-es="Momento del Día">Time of Day</label>
+                {{ order_form.day_time(class="form-select form-control") }}
+                <span style="color:red">{% if errors[1] %}{{errors[1]}}{% endif %}</span>
+              </div>
+            </div>
 
-           <li class="list-group-item align-self-center"><button id="order-submit-btn" type="button" class="btn btn-dark" data-translator-en="order" data-translator-es="pedir">order</button></li>
-              </ul>
-           </div>
+            <div class="row mb-3">
+              <div class="col-md-6 mb-2">
+                <label class="form-label font-weight-bold fw-bold" data-translator-en="Consecutive Weeks" data-translator-es="Semanas Consecutivas">Consecutive Weeks (Recurring)</label>
+                {{ order_form.recurring(class="form-control", min="0", max="12") }}
+              </div>
+              <div class="col-md-6 mb-2">
+                <label class="form-label font-weight-bold fw-bold" data-translator-en="Delivery Method" data-translator-es="Método de Entrega">Delivery Destination</label>
+                <select name="delivery_option" id="delivery_option_select" class="form-select form-control">
+                  <option value="profile" selected>Use my saved profile address</option>
+                  <option value="custom">Deliver to a different address</option>
+                  <option value="location">Use my current GPS location</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Profile address indicator -->
+            <div id="profile-address-box" class="p-2 mb-3 bg-light rounded border">
+              <small class="text-muted d-block">Saved address:</small>
+              <strong>{{ current_user.address or 'No address saved in profile. You can enter one below or update your profile.' }}</strong>
+            </div>
+
+            <!-- Custom Address Input -->
+            <div id="custom-address-box" class="mb-3" style="display: none;">
+              <label class="form-label font-weight-bold fw-bold">Custom Delivery Address</label>
+              <input type="text" name="delivery_address" id="delivery_address_input" class="form-control" placeholder="Street name, number, floor, city">
+            </div>
+
+            <!-- Geolocation Location Box -->
+            <div id="location-address-box" class="mb-3" style="display: none;">
+              <label class="form-label font-weight-bold fw-bold">GPS Coordinates</label>
+              <div class="input-group">
+                <input type="text" id="gps_display" class="form-control" placeholder="Coordinates will appear here" readonly>
+                <button type="button" id="btn-get-location" class="btn btn-outline-primary">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
+                    <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A32 32 0 0 1 8 14.58a32 32 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10"/>
+                    <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4m0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+                  </svg>
+                  Get Current Location
+                </button>
+              </div>
+              <input type="hidden" name="delivery_latitude" id="delivery_latitude">
+              <input type="hidden" name="delivery_longitude" id="delivery_longitude">
+            </div>
+
+            <!-- Delivery Notes -->
+            <div class="mb-3">
+              <label class="form-label font-weight-bold fw-bold" data-translator-en="Delivery Notes / Instructions" data-translator-es="Notas / Instrucciones de Entrega">Delivery Notes / Instructions (todo #2)</label>
+              <input type="text" name="delivery_notes" id="delivery_notes_input" class="form-control" value="{{ current_user.delivery_notes or '' }}" placeholder="e.g. Leave with doorman, ring bell 2B">
+            </div>
+
+            <button id="order-submit-btn" type="button" class="btn btn-dark btn-lg w-100 mt-2" data-translator-en="order" data-translator-es="pedir">Place Bread Order</button>
           </div>
         </div>
       </div>
+    </div>
     {% endif %}
     </form>
   </div>
 </div>
 
-<!-- Order confirmation modal (todos #11 #18 #19) -->
+<!-- Order confirmation modal (todos #2 #4 #11 #19) -->
 <div class="order-modal-overlay" id="order-confirm-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
   <div class="order-modal-box">
     <h5 id="modal-title" data-translator-en="Confirm your order" data-translator-es="Confirmar tu pedido">Confirm your order</h5>
-    <p id="modal-summary" class="text-muted" style="font-size:0.95em;"></p>
+    <div id="modal-summary" class="mb-2 font-weight-bold fw-bold" style="font-size:1.05em;"></div>
+    <div id="modal-delivery-info" class="p-2 mb-3 bg-light rounded text-start text-muted" style="font-size:0.9em;"></div>
     <div class="modal-actions">
       <button class="btn btn-dark" id="modal-confirm-btn" data-translator-en="Place order" data-translator-es="Hacer pedido">Place order</button>
       <button class="btn btn-outline-secondary" id="modal-cancel-btn" data-translator-en="Cancel" data-translator-es="Cancelar">Cancel</button>
@@ -187,20 +248,62 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // ── Order confirmation modal (todos #11 #19) ──────────────────────
+  // ── Delivery Option Switching & Geolocation (todo #4) ─────────────
+  const delivSelect = document.getElementById('delivery_option_select');
+  const profileBox = document.getElementById('profile-address-box');
+  const customBox = document.getElementById('custom-address-box');
+  const locationBox = document.getElementById('location-address-box');
+  const btnGetLoc = document.getElementById('btn-get-location');
+  const gpsDisplay = document.getElementById('gps_display');
+  const latInput = document.getElementById('delivery_latitude');
+  const lngInput = document.getElementById('delivery_longitude');
+
+  if (delivSelect) {
+    delivSelect.addEventListener('change', function() {
+      const val = this.value;
+      if (profileBox) profileBox.style.display = (val === 'profile') ? 'block' : 'none';
+      if (customBox) customBox.style.display = (val === 'custom') ? 'block' : 'none';
+      if (locationBox) locationBox.style.display = (val === 'location') ? 'block' : 'none';
+    });
+  }
+
+  if (btnGetLoc) {
+    btnGetLoc.addEventListener('click', function() {
+      if (navigator.geolocation) {
+        gpsDisplay.value = "Locating...";
+        navigator.geolocation.getCurrentPosition(
+          function(pos) {
+            const lat = pos.coords.latitude.toFixed(6);
+            const lng = pos.coords.longitude.toFixed(6);
+            gpsDisplay.value = lat + ', ' + lng;
+            if (latInput) latInput.value = lat;
+            if (lngInput) lngInput.value = lng;
+          },
+          function(err) {
+            gpsDisplay.value = "Unable to fetch location: " + err.message;
+          }
+        );
+      } else {
+        gpsDisplay.value = "Geolocation is not supported by this browser.";
+      }
+    });
+  }
+
+  // ── Order confirmation modal (todos #2 #4 #11 #19) ─────────────────
   const orderForm = document.getElementById('order-form');
   const orderSubmitBtn = document.getElementById('order-submit-btn');
   const modal = document.getElementById('order-confirm-modal');
   const modalSummary = document.getElementById('modal-summary');
+  const modalDelivery = document.getElementById('modal-delivery-info');
   const modalConfirm = document.getElementById('modal-confirm-btn');
   const modalCancel = document.getElementById('modal-cancel-btn');
 
   if (orderSubmitBtn && modal) {
     orderSubmitBtn.addEventListener('click', function () {
-      // Build a summary of what was ordered
       const inputs = orderForm.querySelectorAll('input[type="number"]');
       const lines = [];
       inputs.forEach(function(inp) {
+        if (inp.name === 'recurring') return;
         const qty = parseInt(inp.value, 10);
         if (qty > 0) {
           const row = inp.closest('tr');
@@ -210,12 +313,26 @@ document.addEventListener('DOMContentLoaded', function() {
       });
 
       if (lines.length === 0) {
-        // Nothing selected – just submit (server will reject with an error)
         orderForm.submit();
         return;
       }
 
       modalSummary.textContent = lines.join(', ');
+
+      const notesVal = document.getElementById('delivery_notes_input') ? document.getElementById('delivery_notes_input').value : '';
+      const optVal = delivSelect ? delivSelect.value : 'profile';
+      let destText = "Destination: Profile address";
+      if (optVal === 'custom') {
+        const custVal = document.getElementById('delivery_address_input') ? document.getElementById('delivery_address_input').value : '';
+        destText = "Destination: " + (custVal || 'Custom address');
+      } else if (optVal === 'location') {
+        destText = "Destination: GPS (" + (gpsDisplay ? gpsDisplay.value : 'current location') + ")";
+      }
+
+      if (modalDelivery) {
+        modalDelivery.innerHTML = "<div>" + destText + "</div>" + (notesVal ? "<div><strong>Notes:</strong> " + notesVal + "</div>" : "");
+      }
+
       modal.classList.add('show');
       modalConfirm.focus();
     });
@@ -229,12 +346,10 @@ document.addEventListener('DOMContentLoaded', function() {
       modal.classList.remove('show');
     });
 
-    // Close on overlay click
     modal.addEventListener('click', function (e) {
       if (e.target === modal) modal.classList.remove('show');
     });
 
-    // Close on Escape
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') modal.classList.remove('show');
     });

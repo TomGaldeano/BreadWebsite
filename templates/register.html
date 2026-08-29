@@ -6,7 +6,7 @@
       <div class="col-lg-8 col-md-10 mx-auto" style="bottom:0">
         <h1 data-translator-en="Register" data-translator-es="Registro">Register</h1>
         <form method="POST" action="{{ url_for('register') }}">
-          {{ form.csrf_token() }}
+          {{ form.hidden_tag() }}
           <div class="form-group">
             <label for="username" data-translator-en="Username" data-translator-es="Usuario">Username</label>
             {{ form.username(class_="form-control", id="username") }}

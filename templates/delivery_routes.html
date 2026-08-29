@@ -1,0 +1,214 @@
+{% include "header.html" %}
+
+<div class="container-fluid" style="margin-top: 100px;">
+  <div class="row justify-content-md-center">
+    <div class="col-12" style="max-width: 1100px;">
+      <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <h1 data-translator-en="Delivery Route Optimizer" data-translator-es="Optimizador de Rutas de Entrega">Delivery Route Optimizer (todo #13)</h1>
+        <button class="btn btn-outline-secondary" data-bs-toggle="collapse" data-bs-target="#driverManagementCard">Manage Drivers</button>
+      </div>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, msg in messages %}
+          <div class="alert alert-{{ category if category != 'error' else 'danger' }} alert-dismissible fade show" role="alert">
+            {{ msg }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <!-- Manage Delivery Drivers (Collapsible) -->
+      <div class="collapse mb-4" id="driverManagementCard">
+        <div class="card shadow-sm">
+          <div class="card-header text-white" style="background-color: var(--gray_tom, #555);">
+            <h5 class="mb-0">Delivery Drivers</h5>
+          </div>
+          <div class="card-body">
+            <form method="POST" action="{{ url_for('delivery_routes') }}" class="row g-3 mb-4">
+              {{ driver_form.hidden_tag() }}
+              <input type="hidden" name="action" value="add_driver">
+              <div class="col-md-4">
+                <label class="form-label font-weight-bold fw-bold">Driver Name</label>
+                {{ driver_form.name(class="form-control", placeholder="e.g. Carlos Ruiz") }}
+              </div>
+              <div class="col-md-3">
+                <label class="form-label font-weight-bold fw-bold">Phone Number</label>
+                {{ driver_form.phone(class="form-control", placeholder="+34 611 222 333") }}
+              </div>
+              <div class="col-md-3">
+                <label class="form-label font-weight-bold fw-bold">Vehicle Type</label>
+                {{ driver_form.vehicle_type(class="form-control", placeholder="Van / Bike / Scooter") }}
+              </div>
+              <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-dark w-100">Add Driver</button>
+              </div>
+            </form>
+
+            <h6>Current Drivers</h6>
+            <ul class="list-group">
+              {% for d in drivers %}
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                  <strong>{{ d.name }}</strong> ({{ d.phone }})
+                  <span class="badge bg-secondary ms-2">{{ d.vehicle_type }}</span>
+                </div>
+                <div>
+                  {% if d.active %}<span class="badge bg-success">Active</span>{% else %}<span class="badge bg-light text-muted border">Inactive</span>{% endif %}
+                </div>
+              </li>
+              {% else %}
+              <li class="list-group-item text-muted">No drivers registered yet.</li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Route Selector Card -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header text-white" style="background-color: var(--gray_tom, #555);">
+          <h5 class="mb-0">Route Planning Configuration</h5>
+        </div>
+        <div class="card-body">
+          <form method="GET" action="{{ url_for('delivery_routes') }}" class="row g-3 align-items-end">
+            <div class="col-md-5">
+              <label class="form-label font-weight-bold fw-bold">Starting Bakery Depot</label>
+              <select name="bakery_id" class="form-select form-control">
+                {% for b in bakeries %}
+                <option value="{{ b.id }}" {% if selected_bakery and selected_bakery.id == b.id %}selected{% endif %}>
+                  {{ b.name }} ({{ b.address }})
+                </option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label font-weight-bold fw-bold">Delivery Date</label>
+              <input type="date" name="date" value="{{ target_date }}" class="form-control">
+            </div>
+            <div class="col-md-3">
+              <button type="submit" class="btn btn-dark w-100">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt me-1" viewBox="0 0 16 16">
+                  <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A32 32 0 0 1 8 14.58a32 32 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10"/>
+                  <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4m0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+                </svg>
+                Calculate Optimal Route
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      {% if selected_bakery %}
+      <!-- Route Metrics -->
+      <div class="row mb-4">
+        <div class="col-md-4 mb-2">
+          <div class="card text-center shadow-sm p-3 border-dark">
+            <h6 class="text-muted">Total Delivery Stops</h6>
+            <h3 class="font-weight-bold fw-bold">{{ route_stops|length }}</h3>
+          </div>
+        </div>
+        <div class="col-md-4 mb-2">
+          <div class="card text-center shadow-sm p-3 border-success">
+            <h6 class="text-muted">Total Circuit Distance</h6>
+            <h3 class="font-weight-bold fw-bold text-success">{{ '%.2f'|format(total_km) }} km</h3>
+            <small class="text-muted">Starting & returning to {{ selected_bakery.name }}</small>
+          </div>
+        </div>
+        <div class="col-md-4 mb-2">
+          <div class="card text-center shadow-sm p-3 border-primary">
+            <h6 class="text-muted">Est. Driving & Dropoff Time</h6>
+            <h3 class="font-weight-bold fw-bold text-primary">{{ (total_km * 3 + route_stops|length * 5)|round|int }} mins</h3>
+            <small class="text-muted">Based on average transit time</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Turn-by-Turn Delivery Route -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header text-white" style="background-color: var(--gray_tom, #555);">
+          <h5 class="mb-0">Optimal Delivery Sequence</h5>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover table-striped mb-0 align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th style="width: 70px;">Stop #</th>
+                  <th>Customer</th>
+                  <th>Destination Address / Instructions</th>
+                  <th>Items to Deliver</th>
+                  <th>Leg (km)</th>
+                  <th>Total (km)</th>
+                  <th>Map</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="table-secondary">
+                  <td><strong>Start</strong></td>
+                  <td colspan="3"><strong>Departure from: {{ selected_bakery.name }}</strong> ({{ selected_bakery.address }})</td>
+                  <td>0.00 km</td>
+                  <td>0.00 km</td>
+                  <td>-</td>
+                </tr>
+
+                {% for stop in route_stops %}
+                <tr>
+                  <td>
+                    <span class="badge bg-dark text-white rounded-circle p-2" style="width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center;">
+                      {{ stop.step }}
+                    </span>
+                  </td>
+                  <td>
+                    <strong>{{ stop.client }}</strong>
+                    <small class="d-block text-muted">Order #{{ stop.order_id }}</small>
+                  </td>
+                  <td>
+                    <div>{{ stop.address }}</div>
+                    {% if stop.notes %}<small class="text-muted fst-italic">Note: {{ stop.notes }}</small>{% endif %}
+                  </td>
+                  <td>
+                    <ul class="mb-0 ps-3 small">
+                      {% for item, qty in stop['items'].items() %}
+                      <li>{{ qty }}x {{ item|replace('_', ' ') }}</li>
+                      {% endfor %}
+                    </ul>
+                  </td>
+                  <td>+{{ '%.2f'|format(stop.leg_km) }} km</td>
+                  <td><strong>{{ '%.2f'|format(stop.cumulative_km) }} km</strong></td>
+                  <td>
+                    {% if stop.lat and stop.lng %}
+                    <a href="https://www.google.com/maps/search/?api=1&query={{ stop.lat }},{{ stop.lng }}" target="_blank" class="btn btn-sm btn-outline-primary py-0 px-1">Open</a>
+                    {% else %}
+                    -
+                    {% endif %}
+                  </td>
+                </tr>
+                {% else %}
+                <tr>
+                  <td colspan="7" class="text-center text-muted py-4">No deliveries scheduled for {{ target_date }}.</td>
+                </tr>
+                {% endfor %}
+
+                {% if route_stops %}
+                <tr class="table-secondary">
+                  <td><strong>End</strong></td>
+                  <td colspan="3"><strong>Return to depot: {{ selected_bakery.name }}</strong></td>
+                  <td>-</td>
+                  <td><strong>{{ '%.2f'|format(total_km) }} km</strong></td>
+                  <td>-</td>
+                </tr>
+                {% endif %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+
+{% include "footer.html" %}
