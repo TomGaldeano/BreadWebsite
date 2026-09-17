@@ -3,37 +3,90 @@
 <div class="container-fluid " style = "margin-top:100px">
   <div class="row justify-content-md-center container d-flex mx-auto">
 
-    <!-- Desktop image carousel (hidden on mobile) -->
-    <div class="d-none d-md-block w-100 mb-4">
-      <div id="breadCarousel" class="carousel slide" data-bs-ride="carousel">
+    <!-- Featured Artisan Bread Carousel Showcase -->
+    <div class="hero-carousel-container w-100 mb-4">
+      <div id="breadCarousel" class="carousel slide" data-bs-ride="carousel" data-ride="carousel" data-bs-interval="4000" data-interval="4000">
+        <!-- Indicators -->
         <div class="carousel-indicators">
-          <button type="button" data-bs-target="#breadCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Bread"></button>
-          <button type="button" data-bs-target="#breadCarousel" data-bs-slide-to="1" aria-label="Sweet"></button>
-          <button type="button" data-bs-target="#breadCarousel" data-bs-slide-to="2" aria-label="Savory"></button>
+          <button type="button" data-bs-target="#breadCarousel" data-target="#breadCarousel" data-bs-slide-to="0" data-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+          <button type="button" data-bs-target="#breadCarousel" data-target="#breadCarousel" data-bs-slide-to="1" data-slide-to="1" aria-label="Slide 2"></button>
+          <button type="button" data-bs-target="#breadCarousel" data-target="#breadCarousel" data-bs-slide-to="2" data-slide-to="2" aria-label="Slide 3"></button>
+          <button type="button" data-bs-target="#breadCarousel" data-target="#breadCarousel" data-bs-slide-to="3" data-slide-to="3" aria-label="Slide 4"></button>
+          <button type="button" data-bs-target="#breadCarousel" data-target="#breadCarousel" data-bs-slide-to="4" data-slide-to="4" aria-label="Slide 5"></button>
+          <button type="button" data-bs-target="#breadCarousel" data-target="#breadCarousel" data-bs-slide-to="5" data-slide-to="5" aria-label="Slide 6"></button>
         </div>
-        <div class="carousel-inner rounded" style="max-height:320px;overflow:hidden;">
-          {% set carousel_imgs = [] %}
-          {% for p in bread %}{% if loop.index <= 3 %}{% set _ = carousel_imgs.append(p) %}{% endif %}{% endfor %}
-          {% for p in bread %}
-          <div class="carousel-item {% if loop.first %}active{% endif %}">
-            <img src="static/img/{{ p.name|replace('_',' ') }}.jpg"
-                 class="d-block w-100"
-                 style="object-fit:cover;max-height:320px;"
-                 alt="{{ p.display_name or p.name }}"
-                 onerror="this.closest('.carousel-item').style.display='none'">
-            <div class="carousel-caption d-none d-md-block" style="background:rgba(0,0,0,0.4);border-radius:6px;">
-              <h5>{{ p.display_name or (p.name|replace('_',' ')) }}</h5>
+
+        <!-- Carousel Slides with Distinct High-Quality Images -->
+        <div class="carousel-inner">
+          <!-- Slide 1: White Sourdough Loaf -->
+          <div class="carousel-item active">
+            <img src="{{ url_for('static', filename='img/White loaf.jpg') }}" class="d-block w-100" alt="White Sourdough Loaf">
+            <div class="carousel-caption">
+              <span class="carousel-badge" data-translator-en="Freshly Baked Daily" data-translator-es="Recién Horneado">Freshly Baked Daily</span>
+              <h3 class="carousel-title" data-translator-en="Artisanal White Sourdough" data-translator-es="Hogaza de Pan Blanco Artesanal">Artisanal White Sourdough</h3>
+              <p class="carousel-desc" data-translator-en="Traditional slow-fermented wheat sourdough with a golden crisp crust and light, airy crumb." data-translator-es="Masa madre natural de fermentación lenta con corteza crujiente y miga esponjosa.">Traditional slow-fermented wheat sourdough with a golden crisp crust and light, airy crumb.</p>
             </div>
           </div>
-          {% endfor %}
+
+          <!-- Slide 2: Gourmet Pistachio Loaf -->
+          <div class="carousel-item">
+            <img src="{{ url_for('static', filename='img/Pistacho loaf.jpg') }}" class="d-block w-100" alt="Pistachio Loaf">
+            <div class="carousel-caption">
+              <span class="carousel-badge" data-translator-en="House Specialty" data-translator-es="Especialidad de la Casa">House Specialty</span>
+              <h3 class="carousel-title" data-translator-en="Gourmet Pistachio Loaf" data-translator-es="Hogaza Gourmet con Pistachos">Gourmet Pistachio Loaf</h3>
+              <p class="carousel-desc" data-translator-en="Unique handcrafted loaf packed with fragrant roasted pistachios for an exceptional aroma." data-translator-es="Pan artesanal único elaborado con selectos pistachos tostados para un aroma excepcional.">Unique handcrafted loaf packed with fragrant roasted pistachios for an exceptional aroma.</p>
+            </div>
+          </div>
+
+          <!-- Slide 3: Walnut & Sultanas Loaf -->
+          <div class="carousel-item">
+            <img src="{{ url_for('static', filename='img/Walnut and Sultanas loaf.jpg') }}" class="d-block w-100" alt="Walnut and Sultanas Loaf">
+            <div class="carousel-caption">
+              <span class="carousel-badge" data-translator-en="Sweet & Nutty" data-translator-es="Dulce y Crujiente">Sweet & Nutty</span>
+              <h3 class="carousel-title" data-translator-en="Walnut & Sultanas Loaf" data-translator-es="Hogaza de Nueces y Pasas">Walnut & Sultanas Loaf</h3>
+              <p class="carousel-desc" data-translator-en="Crunchy California walnuts blended with naturally sweet sun-dried sultanas." data-translator-es="Nueces crujientes combinadas con pasas dulces secadas al sol de manera natural.">Crunchy California walnuts blended with naturally sweet sun-dried sultanas.</p>
+            </div>
+          </div>
+
+          <!-- Slide 4: Multi-Seed Wholemeal Loaf -->
+          <div class="carousel-item">
+            <img src="{{ url_for('static', filename='img/Wholemeal Seeds loaf.jpg') }}" class="d-block w-100" alt="Wholemeal Seeds Loaf">
+            <div class="carousel-caption">
+              <span class="carousel-badge" data-translator-en="High Fiber" data-translator-es="Rico en Fibra">High Fiber</span>
+              <h3 class="carousel-title" data-translator-en="Wholemeal Multi-Seed Loaf" data-translator-es="Hogaza Integral con Semillas">Wholemeal Multi-Seed Loaf</h3>
+              <p class="carousel-desc" data-translator-en="Nutritious stone-ground whole wheat loaf packed with toasted sesame, flax, and sunflower seeds." data-translator-es="Nutritivo pan integral de trigo con semillas tostadas de sésamo, lino y girasol.">Nutritious stone-ground whole wheat loaf packed with toasted sesame, flax, and sunflower seeds.</p>
+            </div>
+          </div>
+
+          <!-- Slide 5: Wholemeal Rye Loaf -->
+          <div class="carousel-item">
+            <img src="{{ url_for('static', filename='img/Wholemeal Rye loaf.jpg') }}" class="d-block w-100" alt="Wholemeal Rye Loaf">
+            <div class="carousel-caption">
+              <span class="carousel-badge" data-translator-en="European Classic" data-translator-es="Clásico Europeo">European Classic</span>
+              <h3 class="carousel-title" data-translator-en="Rustic Wholemeal Rye" data-translator-es="Centeno Integral Rústico">Rustic Wholemeal Rye</h3>
+              <p class="carousel-desc" data-translator-en="Earthy, hearty dark rye with a distinct tangy crumb, perfect for pairing with cheeses." data-translator-es="Pan de centeno oscuro e intenso, ideal para maridar con quesos y tablas de embutidos.">Earthy, hearty dark rye with a distinct tangy crumb, perfect for pairing with cheeses.</p>
+            </div>
+          </div>
+
+          <!-- Slide 6: Crispy Seeded Breadstick -->
+          <div class="carousel-item">
+            <img src="{{ url_for('static', filename='img/Seeds stick.jpg') }}" class="d-block w-100" alt="Seeds Stick">
+            <div class="carousel-caption">
+              <span class="carousel-badge" data-translator-en="Crispy Snack" data-translator-es="Aperitivo Crujiente">Crispy Snack</span>
+              <h3 class="carousel-title" data-translator-en="Crispy Seeded Breadstick" data-translator-es="Barra Crujiente con Semillas">Crispy Seeded Breadstick</h3>
+              <p class="carousel-desc" data-translator-en="Golden, crunchy artisan sticks topped with toasted seeds, ideal for dipping and tapas." data-translator-es="Barritas doradas y crujientes con semillas tostadas, ideales para tapas y aperitivos.">Golden, crunchy artisan sticks topped with toasted seeds, ideal for dipping and tapas.</p>
+            </div>
+          </div>
         </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#breadCarousel" data-bs-slide="prev">
+
+        <!-- Slide Controls -->
+        <button class="carousel-control-prev" type="button" data-bs-target="#breadCarousel" data-target="#breadCarousel" data-bs-slide="prev" data-slide="prev" aria-label="Previous Slide">
           <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Previous</span>
+          <span class="visually-hidden sr-only">Previous</span>
         </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#breadCarousel" data-bs-slide="next">
+        <button class="carousel-control-next" type="button" data-bs-target="#breadCarousel" data-target="#breadCarousel" data-bs-slide="next" data-slide="next" aria-label="Next Slide">
           <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Next</span>
+          <span class="visually-hidden sr-only">Next</span>
         </button>
       </div>
     </div>
@@ -353,6 +406,135 @@ document.addEventListener('DOMContentLoaded', function() {
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') modal.classList.remove('show');
     });
+  }
+
+  // ── Bulletproof Hero Carousel Controller ───────────────────────────
+  const carouselEl = document.getElementById('breadCarousel');
+  if (carouselEl) {
+    let bsCarousel = null;
+    if (window.bootstrap && typeof bootstrap.Carousel === 'function') {
+      try {
+        bsCarousel = bootstrap.Carousel.getOrCreateInstance(carouselEl, {
+          interval: 4000,
+          ride: 'carousel',
+          wrap: true,
+          pause: 'hover'
+        });
+        bsCarousel.cycle();
+      } catch (e) {
+        console.warn('Bootstrap carousel initialization fallback:', e);
+      }
+    }
+
+    const items = carouselEl.querySelectorAll('.carousel-item');
+    const indicators = carouselEl.querySelectorAll('.carousel-indicators button');
+    let currentIndex = 0;
+    let fallbackTimer = null;
+
+    function getActiveIndex() {
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].classList.contains('active')) return i;
+      }
+      return 0;
+    }
+
+    function updateActiveState(newIndex) {
+      if (!items.length) return;
+      currentIndex = (newIndex + items.length) % items.length;
+      items.forEach((item, idx) => {
+        if (idx === currentIndex) {
+          item.classList.add('active');
+        } else {
+          item.classList.remove('active');
+        }
+      });
+      indicators.forEach((btn, idx) => {
+        if (idx === currentIndex) {
+          btn.classList.add('active');
+          btn.setAttribute('aria-current', 'true');
+        } else {
+          btn.classList.remove('active');
+          btn.removeAttribute('aria-current');
+        }
+      });
+    }
+
+    function slideNext() {
+      if (bsCarousel) {
+        bsCarousel.next();
+      } else {
+        updateActiveState(getActiveIndex() + 1);
+      }
+    }
+
+    function slidePrev() {
+      if (bsCarousel) {
+        bsCarousel.prev();
+      } else {
+        updateActiveState(getActiveIndex() - 1);
+      }
+    }
+
+    function slideTo(idx) {
+      if (bsCarousel) {
+        bsCarousel.to(idx);
+      } else {
+        updateActiveState(idx);
+      }
+    }
+
+    const prevBtn = carouselEl.querySelector('.carousel-control-prev');
+    const nextBtn = carouselEl.querySelector('.carousel-control-next');
+    if (prevBtn) {
+      prevBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        slidePrev();
+      });
+    }
+    if (nextBtn) {
+      nextBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        slideNext();
+      });
+    }
+
+    indicators.forEach((btn, idx) => {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        slideTo(idx);
+      });
+    });
+
+    // Fallback auto-timer if Bootstrap JS transitions are not running
+    if (!bsCarousel) {
+      fallbackTimer = setInterval(slideNext, 4000);
+      carouselEl.addEventListener('mouseenter', () => clearInterval(fallbackTimer));
+      carouselEl.addEventListener('mouseleave', () => {
+        clearInterval(fallbackTimer);
+        fallbackTimer = setInterval(slideNext, 4000);
+      });
+    }
+
+    // Touch Swipe Support for mobile devices
+    let touchStartX = 0;
+    let touchEndX = 0;
+    carouselEl.addEventListener('touchstart', function(e) {
+      if (e.changedTouches && e.changedTouches.length > 0) {
+        touchStartX = e.changedTouches[0].screenX;
+      }
+    }, { passive: true });
+
+    carouselEl.addEventListener('touchend', function(e) {
+      if (e.changedTouches && e.changedTouches.length > 0) {
+        touchEndX = e.changedTouches[0].screenX;
+        const diff = touchStartX - touchEndX;
+        if (diff > 45) {
+          slideNext();
+        } else if (diff < -45) {
+          slidePrev();
+        }
+      }
+    }, { passive: true });
   }
 });
 </script>

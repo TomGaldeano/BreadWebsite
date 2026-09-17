@@ -103,10 +103,176 @@ td {
     padding: 0.5rem 0.75rem;
   }
 
-  /* Reduce carousel height */
-  .carousel-item img {
-    max-height: 200px;
-    object-fit: cover;
+}
+
+/* ── Modern Hero Carousel ─────────────────────────────────────────── */
+.hero-carousel-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto 2rem auto;
+}
+
+#breadCarousel {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  background-color: #1a1a1a;
+}
+
+#breadCarousel .carousel-inner {
+  position: relative;
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+#breadCarousel .carousel-item {
+  height: 360px;
+  background-color: #111;
+  position: relative;
+  transition: transform 0.6s ease-in-out, opacity 0.6s ease-in-out;
+}
+
+#breadCarousel .carousel-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  filter: brightness(0.82);
+  transition: transform 5s ease;
+}
+
+#breadCarousel .carousel-item.active img {
+  transform: scale(1.03);
+}
+
+#breadCarousel .carousel-caption {
+  position: absolute;
+  right: 6%;
+  bottom: 2.2rem;
+  left: 6%;
+  z-index: 10;
+  padding: 1.25rem 1.5rem;
+  color: #fff;
+  text-align: left;
+  background: rgba(15, 15, 15, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+#breadCarousel .carousel-badge {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: 4px;
+  background-color: #e0a800;
+  color: #111;
+  margin-bottom: 0.4rem;
+}
+
+#breadCarousel .carousel-title {
+  font-size: 1.55rem;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+  color: #ffffff;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+#breadCarousel .carousel-desc {
+  font-size: 0.95rem;
+  margin-bottom: 0;
+  color: #f0f0f0;
+  max-width: 700px;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+#breadCarousel .carousel-indicators {
+  bottom: 0.5rem;
+  margin-bottom: 0;
+  z-index: 15;
+}
+
+#breadCarousel .carousel-indicators [data-bs-target],
+#breadCarousel .carousel-indicators [data-target] {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: rgba(255,255,255,0.5);
+  border: 2px solid transparent;
+  margin: 0 5px;
+  transition: all 0.3s ease;
+  opacity: 0.7;
+  cursor: pointer;
+}
+
+#breadCarousel .carousel-indicators .active {
+  width: 28px;
+  border-radius: 5px;
+  background-color: #ffffff;
+  opacity: 1;
+}
+
+#breadCarousel .carousel-control-prev,
+#breadCarousel .carousel-control-next {
+  width: 48px;
+  height: 48px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(255,255,255,0.2);
+  opacity: 0.85;
+  margin: 0 1rem;
+  transition: all 0.25s ease;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#breadCarousel .carousel-control-prev:hover,
+#breadCarousel .carousel-control-next:hover {
+  background: rgba(0,0,0,0.8);
+  opacity: 1;
+  transform: translateY(-50%) scale(1.08);
+}
+
+@media (max-width: 767px) {
+  #breadCarousel .carousel-item {
+    height: 220px;
+  }
+  #breadCarousel .carousel-caption {
+    left: 4%;
+    right: 4%;
+    bottom: 1.6rem;
+    padding: 0.5rem 0.75rem;
+  }
+  #breadCarousel .carousel-title {
+    font-size: 1.05rem;
+    margin-bottom: 0.1rem;
+  }
+  #breadCarousel .carousel-desc {
+    display: none;
+  }
+  #breadCarousel .carousel-badge {
+    font-size: 0.65rem;
+    padding: 0.15rem 0.35rem;
+    margin-bottom: 0.15rem;
+  }
+  #breadCarousel .carousel-control-prev,
+  #breadCarousel .carousel-control-next {
+    width: 34px;
+    height: 34px;
+    margin: 0 0.25rem;
   }
 }
 
