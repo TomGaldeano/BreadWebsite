@@ -88,17 +88,23 @@
           <span class="carousel-control-next-icon" aria-hidden="true"></span>
           <span class="visually-hidden sr-only">Next</span>
         </button>
+        <!-- Pause/Play button (WCAG 2.2.2 AA – mechanism to pause auto-moving content) -->
+        <button id="carousel-pause-btn" type="button" aria-label="Pause carousel" aria-pressed="false">
+          <span aria-hidden="true">⏸ Pause</span>
+        </button>
       </div>
     </div>
 
     <!-- Search Box -->
     <div style="width: 100%; max-width: 1200px; margin-bottom: 20px;">
       <div class="input-group">
+        <label for="product-search" class="visually-hidden sr-only" data-translator-en="Search products" data-translator-es="Buscar productos">Search products</label>
         <input 
           type="text" 
           class="form-control" 
           id="product-search" 
           placeholder="Search products..."
+          aria-describedby="search-help"
           data-translator-placeholder-en="Search products..."
           data-translator-placeholder-es="Buscar productos...">
         <button class="btn btn-outline-secondary" type="button" id="clear-search" data-translator-en="Clear" data-translator-es="Limpiar">Clear</button>
@@ -107,30 +113,30 @@
     </div>
     <div class="table-responsive">
          <form method="POST" action="{{ url_for('index') }}" id="order-form">
-          <table class="table table-hover">
+          <h2 id="heading-bread" data-translator-en="Bread" data-translator-es="Pan">Bread</h2>
+          <table class="table table-hover" aria-labelledby="heading-bread">
           {{ order_form.hidden_tag() }}
-              <h1 id="heading-bread" data-translator-en="Bread" data-translator-es="Pan">Bread</h1>
               <tbody>
               {% for p in bread %}
               <tr>
                 <td class="align-middle" data-translator-en="{{ p.display_name or (p.name|replace('_',' ')) }}" data-translator-es="{{ p.display_name_es or p.display_name or (p.name|replace('_',' ')) }}">{% if lang == 'es' %}{{ p.display_name_es or p.display_name or (p.name|replace('_',' ')) }}{% else %}{{ p.display_name or (p.name|replace('_',' ')) }}{% endif %}</td>
                 <td class="align-middle">{{ '%.2g'|format(p.price) }}€</td>
-                <td class="align-middle" style="flex-wrap: wrap"><input type="number" name="{{ p.name }}" min="0" max="6" value="0" style="width:55px" class="form-control d-inline-block p-1"></td>
+                <td class="align-middle" style="flex-wrap: wrap"><input type="number" name="{{ p.name }}" min="0" max="6" value="0" style="width:55px" class="form-control d-inline-block p-1" aria-label="Quantity of {% if lang == 'es' %}{{ p.display_name_es or p.display_name or p.name }}{% else %}{{ p.display_name or p.name }}{% endif %}"></td>
                 <td class = "d-none d-md-block"><img src="static/img/{{ p.name|replace('_',' ') }}.jpg" alt="Image of {% if lang == 'es' %}{{ p.display_name_es or p.display_name or p.name }}{% else %}{{ p.display_name or p.name }}{% endif %}" class="img-thumbnail  bg-dark text-white" style="width:200px;height:123.6067px" onerror="this.style.display='none'"></td>
               </tr>
               {% endfor %}
             </tbody>
           </table>
 
-        <!-- Sweet section -->
-        <table class="table table-hover">
-          <h1 id="heading-sweet" data-translator-en="Sweet" data-translator-es="Dulces">Sweet</h1>
-        <tbody>
+      <!-- Sweet section -->
+      <h2 id="heading-sweet" data-translator-en="Sweet" data-translator-es="Dulces">Sweet</h2>
+      <table class="table table-hover" aria-labelledby="heading-sweet">
+      <tbody>
           {% for p in sweet %}
           <tr>
             <td class="align-middle" data-translator-en="{{ p.display_name or (p.name|replace('_',' ')) }}" data-translator-es="{{ p.display_name_es or p.display_name or (p.name|replace('_',' ')) }}">{% if lang == 'es' %}{{ p.display_name_es or p.display_name or (p.name|replace('_',' ')) }}{% else %}{{ p.display_name or (p.name|replace('_',' ')) }}{% endif %}</td>
             <td class="align-middle">{{ '%.2g'|format(p.price) }}€</td>
-            <td class="align-middle" style="flex-wrap: wrap"><input type="number" name="{{ p.name }}" min="0" max="6" value="0" style="width:55px" class="form-control d-inline-block p-1"></td>
+            <td class="align-middle" style="flex-wrap: wrap"><input type="number" name="{{ p.name }}" min="0" max="6" value="0" style="width:55px" class="form-control d-inline-block p-1" aria-label="Quantity of {% if lang == 'es' %}{{ p.display_name_es or p.display_name or p.name }}{% else %}{{ p.display_name or p.name }}{% endif %}"></td>
             <td class = "d-none d-md-block"><img src="static/img/{{ p.name|replace('_',' ') }}.jpg" alt="Image of {% if lang == 'es' %}{{ p.display_name_es or p.display_name or p.name }}{% else %}{{ p.display_name or p.name }}{% endif %}" class="img-thumbnail bg-dark text-white" style="width:200px;height:123.6067px" onerror="this.style.display='none'"> </td>
           </tr>
           {% else %}
@@ -140,14 +146,14 @@
       </table>
 
       <!-- Savory section -->
-      <table class="table table-hover">
-        <h1 id="heading-savory" data-translator-en="Savory" data-translator-es="Salados">Savory</h1>
+      <h2 id="heading-savory" data-translator-en="Savory" data-translator-es="Salados">Savory</h2>
+      <table class="table table-hover" aria-labelledby="heading-savory">
       <tbody>
         {% for p in savory %}
         <tr>
           <td class="align-middle" data-translator-en="{{ p.display_name or (p.name|replace('_',' ')) }}" data-translator-es="{{ p.display_name_es or p.display_name or (p.name|replace('_',' ')) }}">{% if lang == 'es' %}{{ p.display_name_es or p.display_name or (p.name|replace('_',' ')) }}{% else %}{{ p.display_name or (p.name|replace('_',' ')) }}{% endif %}</td>
           <td class="align-middle">{{ '%.2g'|format(p.price) }}€</td>
-          <td class="align-middle" style="flex-wrap: wrap"><input type="number" name="{{ p.name }}" min="0" max="6" value="0" style="width:55px" class="form-control d-inline-block p-1"></td>
+          <td class="align-middle" style="flex-wrap: wrap"><input type="number" name="{{ p.name }}" min="0" max="6" value="0" style="width:55px" class="form-control d-inline-block p-1" aria-label="Quantity of {% if lang == 'es' %}{{ p.display_name_es or p.display_name or p.name }}{% else %}{{ p.display_name or p.name }}{% endif %}"></td>
           <td class = "d-none d-md-block"><img src="static/img/{{ p.name|replace('_',' ') }}.jpg" alt="Image of {% if lang == 'es' %}{{ p.display_name_es or p.display_name or p.name }}{% else %}{{ p.display_name or p.name }}{% endif %}" class="img-thumbnail bg-dark text-white" style="width:200px;height:123.6067px" onerror="this.style.display='none'"> </td>
         </tr>
         {% else %}
@@ -180,14 +186,14 @@
             <!-- Timing & Recurrence -->
             <div class="row mb-3">
               <div class="col-md-6 mb-2">
-                <label class="form-label font-weight-bold fw-bold" data-translator-en="Delivery Date" data-translator-es="Fecha de Entrega">Delivery Date</label>
-                {{ order_form.date(class="form-control") }}
-                <span style="color:red">{% if errors[0] %}{{errors[0]}}{% endif %}</span>
+                <label class="form-label font-weight-bold fw-bold" for="order-date" data-translator-en="Delivery Date" data-translator-es="Fecha de Entrega">Delivery Date</label>
+                {{ order_form.date(class="form-control", id="order-date") }}
+                <span class="text-error" role="alert" aria-live="polite">{% if errors[0] %}{{errors[0]}}{% endif %}</span>
               </div>
               <div class="col-md-6 mb-2">
-                <label class="form-label font-weight-bold fw-bold" data-translator-en="Time of Day" data-translator-es="Momento del Día">Time of Day</label>
-                {{ order_form.day_time(class="form-select form-control") }}
-                <span style="color:red">{% if errors[1] %}{{errors[1]}}{% endif %}</span>
+                <label class="form-label font-weight-bold fw-bold" for="order-day-time" data-translator-en="Time of Day" data-translator-es="Momento del Día">Time of Day</label>
+                {{ order_form.day_time(class="form-select form-control", id="order-day-time") }}
+                <span class="text-error" role="alert" aria-live="polite">{% if errors[1] %}{{errors[1]}}{% endif %}</span>
               </div>
             </div>
 
@@ -214,17 +220,17 @@
 
             <!-- Custom Address Input -->
             <div id="custom-address-box" class="mb-3" style="display: none;">
-              <label class="form-label font-weight-bold fw-bold">Custom Delivery Address</label>
+              <label class="form-label font-weight-bold fw-bold" for="delivery_address_input">Custom Delivery Address</label>
               <input type="text" name="delivery_address" id="delivery_address_input" class="form-control" placeholder="Street name, number, floor, city">
             </div>
 
             <!-- Geolocation Location Box -->
             <div id="location-address-box" class="mb-3" style="display: none;">
-              <label class="form-label font-weight-bold fw-bold">GPS Coordinates</label>
+              <label class="form-label font-weight-bold fw-bold" for="gps_display">GPS Coordinates</label>
               <div class="input-group">
-                <input type="text" id="gps_display" class="form-control" placeholder="Coordinates will appear here" readonly>
-                <button type="button" id="btn-get-location" class="btn btn-outline-primary">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
+                <input type="text" id="gps_display" class="form-control" placeholder="Coordinates will appear here" readonly aria-describedby="btn-get-location">
+                <button type="button" id="btn-get-location" class="btn btn-outline-primary" aria-label="Get my current GPS location">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
                     <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A32 32 0 0 1 8 14.58a32 32 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10"/>
                     <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4m0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
                   </svg>
@@ -237,7 +243,7 @@
 
             <!-- Delivery Notes -->
             <div class="mb-3">
-              <label class="form-label font-weight-bold fw-bold" data-translator-en="Delivery Notes / Instructions" data-translator-es="Notas / Instrucciones de Entrega">Delivery Notes / Instructions (todo #2)</label>
+              <label class="form-label font-weight-bold fw-bold" for="delivery_notes_input" data-translator-en="Delivery Notes / Instructions" data-translator-es="Notas / Instrucciones de Entrega">Delivery Notes / Instructions</label>
               <input type="text" name="delivery_notes" id="delivery_notes_input" class="form-control" value="{{ current_user.delivery_notes or '' }}" placeholder="e.g. Leave with doorman, ring bell 2B">
             </div>
 
@@ -535,6 +541,44 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       }
     }, { passive: true });
+
+    // ── Pause / Play control (WCAG 2.2.2 AA) ─────────────────────────
+    const pauseBtn = document.getElementById('carousel-pause-btn');
+    let carouselPaused = false;
+
+    // Stop auto-play for users who prefer reduced motion (WCAG 1.4.13 / 2.3.3)
+    const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) {
+      carouselPaused = true;
+      if (bsCarousel) bsCarousel.pause();
+      if (fallbackTimer) clearInterval(fallbackTimer);
+    }
+
+    function updatePauseBtn() {
+      if (!pauseBtn) return;
+      pauseBtn.setAttribute('aria-pressed', String(carouselPaused));
+      pauseBtn.setAttribute('aria-label', carouselPaused ? 'Play carousel' : 'Pause carousel');
+      pauseBtn.querySelector('span').textContent = carouselPaused ? '▶ Play' : '⏸ Pause';
+    }
+
+    if (pauseBtn) {
+      pauseBtn.addEventListener('click', function () {
+        carouselPaused = !carouselPaused;
+        if (carouselPaused) {
+          if (bsCarousel) bsCarousel.pause();
+          if (fallbackTimer) clearInterval(fallbackTimer);
+        } else {
+          if (bsCarousel) bsCarousel.cycle();
+          else if (!prefersReducedMotion) {
+            clearInterval(fallbackTimer);
+            fallbackTimer = setInterval(slideNext, 4000);
+          }
+        }
+        updatePauseBtn();
+      });
+      // Initialise button label
+      updatePauseBtn();
+    }
   }
 });
 </script>

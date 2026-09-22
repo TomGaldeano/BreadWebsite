@@ -1,9 +1,12 @@
 :root {
   --green_tom: #15400a;
   --blue_tom: #051f8a;
-  --gray_tom: #6c757d;
+  /* Darkened from #6c757d → #5a6471 to reach ≥5.0:1 contrast on white (WCAG 1.4.3 AA) */
+  --gray_tom: #5a6471;
   --black_tom: black;
   --white_tom: white;
+  /* Accessible error red — 5.0:1 on white (WCAG 1.4.3 AA) */
+  --error_color: #c0000a;
 }
 
 .dark {
@@ -12,7 +15,9 @@
   --black_tom: #FFFFFF;
   --white_tom: #121212;
   --blue_tom: aqua;
+  /* Dark mode: keep as background, text on it is white so contrast is fine */
   --gray_tom: #3a3a3a;
+  --error_color: #ff6b6b;
 }
 
 img,
@@ -36,9 +41,16 @@ a:hover {
   color: var(--black_tom);
   text-decoration: underline;
 }
-a:focus,
-a:focus-visible {
-  outline: 1px solid var(--green_tom);
+
+/* ── Accessible focus indicators (WCAG 2.4.7 AA / 2.4.11 AAA) ─────────
+   3px outline, 2px offset, high-contrast colour on all interactive elements */
+*:focus-visible {
+  outline: 3px solid #005fcc;
+  outline-offset: 2px;
+}
+/* Remove browser default outline only when we provide :focus-visible */
+*:focus:not(:focus-visible) {
+  outline: none;
 }
 
 body {
@@ -335,4 +347,81 @@ td {
   background: var(--gray_tom);
   color: var(--black_tom);
   font-weight: bold;
+}
+
+/* ── Skip navigation link (WCAG 2.4.1 AA) ────────────────────────────── */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  z-index: 9999;
+  padding: 0.75rem 1.5rem;
+  background: #005fcc;
+  color: #fff;
+  font-weight: bold;
+  font-size: 1rem;
+  border-radius: 0 0 4px 0;
+  text-decoration: none;
+  transition: top 0.1s;
+}
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid #ffbf00;
+  outline-offset: 2px;
+}
+
+/* ── Bootstrap text-muted contrast override (WCAG 1.4.3 AA) ──────────── */
+.text-muted {
+  color: #5a6471 !important;
+}
+.dark .text-muted {
+  color: #9aa0a9 !important;
+}
+
+/* ── Minimum touch target for nav links (WCAG 2.5.5 AAA / 2.5.8 AA) ─── */
+nav .nav-link,
+nav .btn,
+nav li > a {
+  min-height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Accessible error colour class ───────────────────────────────────── */
+.text-error {
+  color: var(--error_color);
+  font-weight: 600;
+}
+
+/* ── Carousel pause button (WCAG 2.2.2 AA) ───────────────────────────── */
+#carousel-pause-btn {
+  position: absolute;
+  bottom: 0.6rem;
+  right: 1rem;
+  z-index: 25;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  border: 2px solid rgba(255,255,255,0.7);
+  border-radius: 4px;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.78rem;
+  cursor: pointer;
+  line-height: 1;
+}
+#carousel-pause-btn:focus-visible {
+  outline: 3px solid #ffbf00;
+  outline-offset: 2px;
+}
+
+/* ── prefers-reduced-motion: stop carousel transition & auto-advance ─── */
+@media (prefers-reduced-motion: reduce) {
+  #breadCarousel .carousel-item {
+    transition: none !important;
+  }
+  #breadCarousel .carousel-item img {
+    transition: none !important;
+    transform: none !important;
+  }
 }
