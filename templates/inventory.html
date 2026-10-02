@@ -1,3 +1,4 @@
+{% set page_title = "Admin - Inventory" %}
 {% include "header.html" %}
 
 <div class="container-fluid" style="margin-top: 100px;">
@@ -86,10 +87,10 @@
                 <table class="table table-hover table-striped mb-0 align-middle">
                   <thead class="table-light sticky-top">
                     <tr>
-                      <th>Ingredient</th>
-                      <th>Current Stock</th>
-                      <th>Unit Cost</th>
-                      <th>Status</th>
+                      <th scope="col">Ingredient</th>
+                      <th scope="col">Current Stock</th>
+                      <th scope="col">Unit Cost</th>
+                      <th scope="col">Status</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -135,11 +136,11 @@
             <table class="table table-hover table-striped mb-0 align-middle">
               <thead class="table-light sticky-top">
                 <tr>
-                  <th>Timestamp</th>
-                  <th>Ingredient</th>
-                  <th>Change</th>
-                  <th>Stock After</th>
-                  <th>Reason / Note</th>
+                  <th scope="col">Timestamp</th>
+                  <th scope="col">Ingredient</th>
+                  <th scope="col">Change</th>
+                  <th scope="col">Stock After</th>
+                  <th scope="col">Reason / Note</th>
                 </tr>
               </thead>
               <tbody>

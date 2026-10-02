@@ -1,3 +1,4 @@
+{% set page_title = "Admin - Ingredients" %}
 {% include "header.html" %}
 
 <div class="container-fluid" style="margin-top: 100px">
@@ -91,11 +92,11 @@
         <table class="table table-hover table-striped align-middle" id="ingredients-table">
           <thead class="table-light">
             <tr>
-              <th data-translator-en="English Name / Internal Code" data-translator-es="Nombre en Inglés / Código Interno">English Name / Internal Code</th>
-              <th data-translator-en="Spanish Name" data-translator-es="Nombre en Español">Spanish Name</th>
-              <th data-translator-en="Cost (€)" data-translator-es="Costo (€)">Cost (€)</th>
-              <th>Current Stock</th>
-              <th class="text-end text-right" data-translator-en="Actions" data-translator-es="Acciones">Actions</th>
+              <th scope="col" data-translator-en="English Name / Internal Code" data-translator-es="Nombre en Inglés / Código Interno">English Name / Internal Code</th>
+              <th scope="col" data-translator-en="Spanish Name" data-translator-es="Nombre en Español">Spanish Name</th>
+              <th scope="col" data-translator-en="Cost (€)" data-translator-es="Costo (€)">Cost (€)</th>
+              <th scope="col">Current Stock</th>
+              <th scope="col" class="text-end text-right" data-translator-en="Actions" data-translator-es="Acciones">Actions</th>
             </tr>
           </thead>
           <tbody>

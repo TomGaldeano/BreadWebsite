@@ -1,3 +1,4 @@
+{% set page_title = "Admin - Verify Users" %}
 {% include "header.html" %}
 <!-- main content -->
 <div class="container-fluid " style = "margin-top:100px">
@@ -9,11 +10,11 @@
       <table class="table table-hover">
         <thead>
           <tr>
-            <th data-translator-en="User id" data-translator-es="ID de usuario">User id</th>
-            <th data-translator-en="User Name" data-translator-es="Nombre de usuario">User Name</th>
-            <th data-translator-en="User Group" data-translator-es="Grupo">User Group</th>
+            <th scope="col" data-translator-en="User id" data-translator-es="ID de usuario">User id</th>
+            <th scope="col" data-translator-en="User Name" data-translator-es="Nombre de usuario">User Name</th>
+            <th scope="col" data-translator-en="User Group" data-translator-es="Grupo">User Group</th>
             <!--th>User Address</th-->
-            <th data-translator-en="User date" data-translator-es="Fecha">User date</th>
+            <th scope="col" data-translator-en="User date" data-translator-es="Fecha">User date</th>
           </tr>
         </thead>
         <tbody>

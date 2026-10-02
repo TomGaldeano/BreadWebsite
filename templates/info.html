@@ -1,3 +1,4 @@
+{% set page_title = "Information" %}
 {% include "header.html" %}
 <div class="container-fluid " style = "margin-top:100px">
     <div class="row justify-content-md-center container d-flex mx-auto">
@@ -8,13 +9,20 @@
     </div>
     <div class="row justify-content-md-center container d-flex mx-auto">
       <div class="table-responsive" style="padding-left: 10%;padding-right: 10%;">
+      <h2 class="text-center" style="font-size: 2.8rem;" data-translator-en="Ordering" data-translator-es="El pedido">Ordering</h2>
+      <p class="text-center" style="font-size: 1.4rem;" data-translator-en="Currently orders can be placed for the following delivery periods. We hope to expand ordering options in the near future." data-translator-es="De momento se pueden realizar pedidos que serán entregados en los siguientes periodos. Esperamos poder ampliar los pedidos en un futuro próximo">Currently orders can be placed for the following delivery periods. We hope to expand ordering options in the near future.</p>
       <table class="table table-hover">
+        <caption class="visually-hidden sr-only">Delivery schedule by day of week</caption>
+        <thead class="table-light">
+          <tr>
+            <th scope="col" class="text-center" style="font-size: 1.4rem;" data-translator-en="Day" data-translator-es="Día">Day</th>
+            <th scope="col" class="text-center" style="font-size: 1.4rem;" data-translator-en="Delivery Time" data-translator-es="Hora de Entrega">Delivery Time</th>
+          </tr>
+        </thead>
         <tbody>
           <tr>
-          <h1 class="text-center" style="font-size: 3.4rem;" data-translator-en="Ordering" data-translator-es="El pedido">Ordering</h1>
-          <p class="text-center" style="font-size: 1.4rem;" data-translator-en="Currently orders can be placed for the following delivery periods. We hope to expand ordering options in the near future." data-translator-es="De momento se pueden realizar pedidos que serán entregados en los siguientes periodos. Esperamos poder ampliar los pedidos en un futuro próximo">Currently orders can be placed for the following delivery periods. We hope to expand ordering options in the near future.</p>
-                      <td class="text-center" style="font-size: 1.4rem;" data-translator-en="Monday" data-translator-es="Lunes">Monday</td>
-                      <td class="text-center" style="font-size: 1.4rem;" data-translator-en="Afternoon" data-translator-es="Tarde">Afternoon</td>
+            <td class="text-center" style="font-size: 1.4rem;" data-translator-en="Monday" data-translator-es="Lunes">Monday</td>
+            <td class="text-center" style="font-size: 1.4rem;" data-translator-en="Afternoon" data-translator-es="Tarde">Afternoon</td>
           </tr>
           <tr>
             <td class="text-center" style="font-size: 1.4rem;" data-translator-en="Tuesday" data-translator-es="Martes">Tuesday</td>

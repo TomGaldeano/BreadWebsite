@@ -1,3 +1,4 @@
+{% set page_title = "Admin - Legacy Order" %}
 {% include "header.html" %}
 
 <div class="container-fluid" style="margin-top: 100px;">
@@ -65,9 +66,9 @@
               <table class="table table-hover table-striped mb-0 align-middle">
                 <thead class="table-light">
                   <tr>
-                    <th>Product</th>
-                    <th>Price</th>
-                    <th style="width: 120px;">Quantity</th>
+                    <th scope="col">Product</th>
+                    <th scope="col">Price</th>
+                    <th scope="col" style="width: 120px;">Quantity</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -79,7 +80,7 @@
                     </td>
                     <td>€{{ '%.2f'|format(p.price) }}</td>
                     <td>
-                      <input type="number" name="{{ p.name }}" min="0" max="6" value="0" class="form-control" style="width: 75px;">
+                      <input type="number" name="{{ p.name }}" min="0" max="6" value="0" class="form-control" style="width: 75px;" aria-label="Quantity of {{ p.display_name or (p.name|replace('_', ' ')) }}">
                     </td>
                   </tr>
                   {% endfor %}

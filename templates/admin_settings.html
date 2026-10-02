@@ -1,3 +1,4 @@
+{% set page_title = "Admin - Site Settings" %}
 {% include "header.html" %}
 
 <div class="container-fluid" style="margin-top: 100px;">
@@ -14,15 +15,15 @@
 
       <div class="card mb-4">
         <div class="card-header text-white" style="background-color: var(--gray_tom, #555);">
-          <h5 class="mb-0" data-translator-en="Authentication & Order Security" data-translator-es="Autenticación y Seguridad">Authentication & Order Security</h5>
+          <h2 class="h5 mb-0" data-translator-en="Authentication & Order Security" data-translator-es="Autenticación y Seguridad">Authentication & Order Security</h2>
         </div>
         <div class="card-body">
           <form method="POST" action="{{ url_for('admin_settings') }}">
             {{ form.hidden_tag() }}
 
             <div class="form-check form-switch mb-3">
-              {{ form.require_email_verification(class="form-check-input") }}
-              <label class="form-check-label font-weight-bold fw-bold" data-translator-en="Require Email Verification Before Placing Orders" data-translator-es="Requerir Verificación de Correo Antes de Realizar Pedidos">
+              {{ form.require_email_verification(class="form-check-input", id="require_email_verification") }}
+              <label class="form-check-label font-weight-bold fw-bold" for="require_email_verification" data-translator-en="Require Email Verification Before Placing Orders" data-translator-es="Requerir Verificación de Correo Antes de Realizar Pedidos">
                 Require Email Verification Before Placing Orders (todo #10)
               </label>
               <small class="form-text text-muted d-block">
@@ -31,8 +32,8 @@
             </div>
 
             <div class="form-group mb-3">
-              <label class="form-label font-weight-bold fw-bold" data-translator-en="Admin Notification Email" data-translator-es="Correo de Notificación del Administrador">Admin Notification Email (todo #17)</label>
-              {{ form.admin_notification_email(class="form-control") }}
+              <label class="form-label font-weight-bold fw-bold" for="admin_notification_email" data-translator-en="Admin Notification Email" data-translator-es="Correo de Notificación del Administrador">Admin Notification Email (todo #17)</label>
+              {{ form.admin_notification_email(class="form-control", id="admin_notification_email") }}
               <small class="form-text text-muted">
                 Address where the daily order & payment summary reports and alerts will be sent.
               </small>
@@ -45,7 +46,7 @@
 
       <div class="card mb-4">
         <div class="card-header text-white" style="background-color: var(--gray_tom, #555);">
-          <h5 class="mb-0" data-translator-en="Quick Management Links" data-translator-es="Accesos Rápidos de Gestión">Quick Management Links</h5>
+          <h2 class="h5 mb-0" data-translator-en="Quick Management Links" data-translator-es="Accesos Rápidos de Gestión">Quick Management Links</h2>
         </div>
         <div class="card-body">
           <div class="d-flex flex-wrap gap-2">

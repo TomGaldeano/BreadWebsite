@@ -1,3 +1,4 @@
+{% set page_title = "Login" %}
 {% include "header.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 <div class="container-fluid position-absoulte">
@@ -11,21 +12,21 @@
             <label for="username" data-translator-en="Username" data-translator-es="Usuario">Username</label>
             {{ form.username(class_="form-control", id="username") }}
             {% for err in form.username.errors %}
-            <div class="text-danger">{{ err }}</div>
+            <div class="text-error" role="alert">{{ err }}</div>
             {% endfor %}
           </div>
           <div class="form-group">
             <label for="password" data-translator-en="Password" data-translator-es="Contraseña">Password</label>
             {{ form.password(class_="form-control", id="password") }}
             {% for err in form.password.errors %}
-            <div class="text-danger">{{ err }}</div>
+            <div class="text-error" role="alert">{{ err }}</div>
             {% endfor %}
           </div>
           <div class="form-group mt-3">
             <input type="submit" value="Log in" class="btn btn-dark" data-translator-en="Log in" data-translator-es="Acceder">
           </div>
         </form>
-        <span style="color:red">{% if error_no_user %}{{error_no_user}}{% endif %}</span>
+        <span class="text-error" role="alert" aria-live="polite">{% if error_no_user %}{{error_no_user}}{% endif %}</span>
       </div>
     </div>
   </div>

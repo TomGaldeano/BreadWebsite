@@ -1,3 +1,4 @@
+{% set page_title = "Baker Orders" %}
 {% include "header.html" %}
     <!-- main content -->
 
@@ -10,11 +11,11 @@
       <table class="table table-hover">
         <thead>
           <tr>
-            <th data-translator-en="Date" data-translator-es="Fecha">Date</th>
-            <th data-translator-en="Time of day" data-translator-es="Hora del día">Time of day</th>
-            <th data-translator-en="Order" data-translator-es="Pedido">Order</th>
-            <th data-translator-en="Price" data-translator-es="Precio">Price</th>
-            <th data-translator-en="User" data-translator-es="Usuario">User</th>
+            <th scope="col" data-translator-en="Date" data-translator-es="Fecha">Date</th>
+            <th scope="col" data-translator-en="Time of day" data-translator-es="Hora del día">Time of day</th>
+            <th scope="col" data-translator-en="Order" data-translator-es="Pedido">Order</th>
+            <th scope="col" data-translator-en="Price" data-translator-es="Precio">Price</th>
+            <th scope="col" data-translator-en="User" data-translator-es="Usuario">User</th>
           </tr>
         </thead>
         <tbody>
@@ -39,8 +40,10 @@
   <div class="table-responsive" style="padding-left: 10%;padding-right: 10%;">
     <table class="table table-hover">
       <thead>
-        <th data-translator-en="Bread type" data-translator-es="Tipo de pan">Bread type</th>
-        <th data-translator-en="Number" data-translator-es="Número">Number</th>
+        <tr>
+          <th scope="col" data-translator-en="Bread type" data-translator-es="Tipo de pan">Bread type</th>
+          <th scope="col" data-translator-en="Number" data-translator-es="Número">Number</th>
+        </tr>
       </thead>
       {% for i in today_orders.simple_order.keys() %}
       {% if today_orders.simple_order[i] != 0 %}
@@ -62,6 +65,7 @@
   <div class="row justify-content-md-center mb-3">
     <div class="col-md-10">
       <div class="input-group order-search-bar">
+        <label for="future-order-search" class="visually-hidden sr-only" data-translator-en="Search future orders" data-translator-es="Buscar pedidos futuros">Search future orders</label>
         <input type="text" class="form-control" id="future-order-search"
                placeholder="Search by client, product, or date..."
                data-translator-placeholder-en="Search by client, product, or date..."
@@ -76,12 +80,12 @@
       <table class="table table-hover">
         <thead>
           <tr>
-            <th data-translator-en="Date" data-translator-es="Fecha">Date</th>
-            <th data-translator-en="Time of day" data-translator-es="Hora del día">Time of day</th>
-            <th data-translator-en="Order" data-translator-es="Pedido">Order</th>
-            <th data-translator-en="Price" data-translator-es="Precio">Price</th>
-            <th data-translator-en="User" data-translator-es="Usuario">User</th>
-            <th data-translator-en="Delete" data-translator-es="Eliminar">Delete</th>
+            <th scope="col" data-translator-en="Date" data-translator-es="Fecha">Date</th>
+            <th scope="col" data-translator-en="Time of day" data-translator-es="Hora del día">Time of day</th>
+            <th scope="col" data-translator-en="Order" data-translator-es="Pedido">Order</th>
+            <th scope="col" data-translator-en="Price" data-translator-es="Precio">Price</th>
+            <th scope="col" data-translator-en="User" data-translator-es="Usuario">User</th>
+            <th scope="col" data-translator-en="Delete" data-translator-es="Eliminar">Delete</th>
           </tr>
         </thead>
         <tbody>
@@ -120,11 +124,11 @@
       <table class="table table-hover">
         <thead>
           <tr>
-            <th>Date</th>
-            <th>Time of day</th>
-            <th>Order</th>
-            <th>Price</th>
-            <th>User</th>
+            <th scope="col">Date</th>
+            <th scope="col">Time of day</th>
+            <th scope="col">Order</th>
+            <th scope="col">Price</th>
+            <th scope="col">User</th>
           </tr>
         </thead>
         <tbody>

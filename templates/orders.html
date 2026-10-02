@@ -1,3 +1,4 @@
+{% set page_title = "My Orders" %}
 {% include "header.html" %}
 <!-- main content -->
 <div class="container-fluid" style="margin-top:100px">
@@ -9,6 +10,7 @@
   <div class="row justify-content-md-center mb-3">
     <div class="col-md-8">
       <div class="input-group order-search-bar">
+        <label for="order-search" class="visually-hidden sr-only" data-translator-en="Search orders" data-translator-es="Buscar pedidos">Search orders</label>
         <input type="text" class="form-control" id="order-search"
                placeholder="Search by product or date..."
                data-translator-placeholder-en="Search by product or date..."
@@ -28,11 +30,11 @@
       <table class="table table-hover" id="orders-table-desktop">
         <thead>
           <tr>
-            <th data-translator-en="Date" data-translator-es="Fecha">Date</th>
-            <th data-translator-en="Order" data-translator-es="Pedido">Order</th>
-            <th data-translator-en="Price" data-translator-es="Precio">Price</th>
-            <th data-translator-en="Time of day" data-translator-es="Hora del día">Time of day</th>
-            <th data-translator-en="Delete?" data-translator-es="Eliminar?">Delete?</th>
+            <th scope="col" data-translator-en="Date" data-translator-es="Fecha">Date</th>
+            <th scope="col" data-translator-en="Order" data-translator-es="Pedido">Order</th>
+            <th scope="col" data-translator-en="Price" data-translator-es="Precio">Price</th>
+            <th scope="col" data-translator-en="Time of day" data-translator-es="Hora del día">Time of day</th>
+            <th scope="col" data-translator-en="Delete?" data-translator-es="Eliminar?">Delete?</th>
           </tr>
         </thead>
         <tbody>
@@ -112,10 +114,10 @@
       <table class="table table-hover" id="history-table">
         <thead>
           <tr>
-            <th data-translator-en="Date" data-translator-es="Fecha">Date</th>
-            <th data-translator-en="Order" data-translator-es="Pedido">Order</th>
-            <th data-translator-en="Price" data-translator-es="Precio">Price</th>
-            <th data-translator-en="Time of day" data-translator-es="Hora del día">Time of day</th>
+            <th scope="col" data-translator-en="Date" data-translator-es="Fecha">Date</th>
+            <th scope="col" data-translator-en="Order" data-translator-es="Pedido">Order</th>
+            <th scope="col" data-translator-en="Price" data-translator-es="Precio">Price</th>
+            <th scope="col" data-translator-en="Time of day" data-translator-es="Hora del día">Time of day</th>
           </tr>
         </thead>
         <tbody>

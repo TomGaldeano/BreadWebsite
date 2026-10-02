@@ -1,26 +1,29 @@
+{% set page_title = "Statistics" %}
 {% include "header.html" %}
 <!-- main content -->
-<div class="row justify-content-md-center container d-flex mx-auto">
+<div class="row justify-content-md-center container d-flex mx-auto" style="margin-top: 100px;">
       <h1 data-translator-en="Monthly report" data-translator-es="Informe Mensual">Monthly report</h1>
 </div>
-<div class="container-fluid " style = "margin-top:100px">
+<div class="container-fluid">
     <div class="row justify-content-md-center container d-flex mx-auto">
         <h2 data-translator-en="Accounting Info" data-translator-es="Información Contable">Accounting Info</h2>
     </div>
     <div class="row justify-content-md-center">
       <div class="table-responsive" style="padding-left: 10%;padding-right: 10%;">
         <table class="table table-hover">
+          <thead class="table-light">
+              <tr>
+                <th scope="col"><span class="visually-hidden sr-only">Period</span></th>
+                <th scope="col" data-translator-en="Gross Income" data-translator-es="Ingresos Brutos">Gross Income</th>
+                <th scope="col" data-translator-en="Production costs" data-translator-es="Costes de Producción">Production costs</th>
+                <th scope="col" data-translator-en="Benefits" data-translator-es="Beneficios">Benefits</th>
+                <th scope="col" data-translator-en="Sold Loaves" data-translator-es="Pan Vendido">Sold Loaves</th>
+                <th scope="col" data-translator-en="Sold Sticks" data-translator-es="Palitos Vendidos">Sold Sticks</th>
+              </tr>
+          </thead>
           <tbody>
               <tr>
-                <td></td>
-                   <td data-translator-en="Gross Income" data-translator-es="Ingresos Brutos">Gross Income</td>
-                   <td data-translator-en="Production costs" data-translator-es="Costes de Producción">Production costs</td>
-                   <td data-translator-en="Benefits" data-translator-es="Beneficios">Benefits</td>
-                   <td data-translator-en="Sold Loaves" data-translator-es="Pan Vendido">Sold Loaves</td>
-                   <td data-translator-en="Sold Sticks" data-translator-es="Palitos Vendidos">Sold Sticks</td>
-              </tr>
-              <tr>
-                   <td data-translator-en="Previous month" data-translator-es="Mes Anterior">Previous month</td>
+                <th scope="row" data-translator-en="Previous month" data-translator-es="Mes Anterior">Previous month</th>
                 <td>{{ data.past_month["gross"] }}</td>
                 <td>{{ data.past_month["costs"] }}</td>
                 <td>{{ data.past_month["benefit"] }}</td>
@@ -28,7 +31,7 @@
                 <td>{{ data.past_month["sticks"] }}</td>
               </tr>
               <tr>
-                   <td data-translator-en="Current month" data-translator-es="Mes Actual">Current month</td>
+                <th scope="row" data-translator-en="Current month" data-translator-es="Mes Actual">Current month</th>
                 <td>{{ data.present_month["gross"] }}</td>
                 <td>{{ data.present_month["costs"] }}</td>
                 <td>{{ data.present_month["benefit"] }}</td>
@@ -40,7 +43,7 @@
       </div>
     </div>
 </div>
-<div class="container-fluid " style = "margin-top:100px">
+<div class="container-fluid " style = "margin-top:40px">
   <div class="row justify-content-md-center container d-flex mx-auto">
         <h2 data-translator-en="Bread ordered last month" data-translator-es="Pan pedido el mes pasado">Bread ordered last month</h2>
   </div>
@@ -48,16 +51,20 @@
 <div class="row justify-content-md-center">
   <div class="table-responsive" style="padding-left: 10%;padding-right: 10%;">
     <table class="table table-hover">
-      <thead>
-        <th>Bread type</th>
-        <th>Number</th>
+      <thead class="table-light">
+        <tr>
+          <th scope="col">Bread type</th>
+          <th scope="col">Number</th>
+        </tr>
       </thead>
+      <tbody>
       {% for i in data.num_breads.keys() %}
       <tr>
         <td>{{ i }}</td>
         <td>{{ data.num_breads[i] }}</td>
       </tr>
       {% endfor %}
+      </tbody>
     </table>
   </div>
 </div>

@@ -1,3 +1,4 @@
+{% set page_title = "Admin - User Management" %}
 {% include "header.html" %}
 
 <div class="container-fluid" style="margin-top:100px">
@@ -88,14 +89,14 @@
         <table class="table table-hover table-striped align-middle" id="users-table">
           <thead class="table-light">
             <tr>
-              <th data-translator-en="ID" data-translator-es="ID">ID</th>
-              <th data-translator-en="Username" data-translator-es="Nombre de Usuario">Username</th>
-              <th data-translator-en="Email" data-translator-es="Correo Electrónico">Email</th>
-              <th data-translator-en="Group" data-translator-es="Grupo">Group</th>
-              <th data-translator-en="Verified" data-translator-es="Verificado">Verified</th>
-              <th data-translator-en="Legacy" data-translator-es="Legado">Legacy</th>
-              <th data-translator-en="Date" data-translator-es="Fecha">Date</th>
-              <th class="text-end text-right" data-translator-en="Actions" data-translator-es="Acciones">Actions</th>
+              <th scope="col" data-translator-en="ID" data-translator-es="ID">ID</th>
+              <th scope="col" data-translator-en="Username" data-translator-es="Nombre de Usuario">Username</th>
+              <th scope="col" data-translator-en="Email" data-translator-es="Correo Electrónico">Email</th>
+              <th scope="col" data-translator-en="Group" data-translator-es="Grupo">Group</th>
+              <th scope="col" data-translator-en="Verified" data-translator-es="Verificado">Verified</th>
+              <th scope="col" data-translator-en="Legacy" data-translator-es="Legado">Legacy</th>
+              <th scope="col" data-translator-en="Date" data-translator-es="Fecha">Date</th>
+              <th scope="col" class="text-end text-right" data-translator-en="Actions" data-translator-es="Acciones">Actions</th>
             </tr>
           </thead>
           <tbody>

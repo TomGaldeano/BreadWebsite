@@ -1,3 +1,4 @@
+{% set page_title = "Account Settings" %}
 {% include "header.html" %}
 <div class="container-fluid position-absoulte">
   <div class="container align-self-center" style="margin-top:100px">
@@ -7,21 +8,22 @@
         <div class="col-lg-8 col-md-10 mx-auto" style="bottom:0">
           <div class="row">
             <div class="col-lg-8 col-md-10 mx-auto" style="bottom:0">
+              <h1 class="mb-4">Account Profile</h1>
               <ul class="list-group list-group-flush">
-                <li class="list-group-item ">Username </li>
-                <li class="list-group-item ">{{form.username(style="width:200px", value=user_data["user"])}} <span style="color:red">{% if errors[0] %}{{errors[0]}}{% endif %}</span></li>
-                <li class="list-group-item ">Group</li>
-                <li class="list-group-item ">{{form.group(style="width:200px", value=user_data["group"])}}</li>
-                <li class="list-group-item ">Email</li>
-                <li class="list-group-item ">{{form.email(style="width:200px", value=user_data["email"])}}<span style="color:red">{% if errors[1] %}{{errors[1]}}{% endif %}</span></li>
-                <li class="list-group-item ">Address (optional)</li>
-                <li class="list-group-item ">{{form.address(style="width:300px", value=user_data["address"])}}</li>
-                <li class="list-group-item ">Delivery Notes (optional)</li>
-                <li class="list-group-item ">{{form.delivery_notes(style="width:300px", value=user_data["delivery_notes"], placeholder="e.g. Leave by back porch")}}</li>
-                <li class="list-group-item ">Old Password</li>
-                <li class="list-group-item ">{{form.old_password(style="width:200px")}}</li>
-                <li class="list-group-item">New Password</li>
-                <li class="list-group-item ">{{form.new_password(style="width:200px")}}</li>
+                <li class="list-group-item "><label for="account-username">Username</label></li>
+                <li class="list-group-item ">{{form.username(id="account-username", class_="form-control d-inline-block", style="width:200px", value=user_data["user"])}} <span class="text-error" role="alert">{% if errors[0] %}{{errors[0]}}{% endif %}</span></li>
+                <li class="list-group-item "><label for="account-group">Group</label></li>
+                <li class="list-group-item ">{{form.group(id="account-group", class_="form-control d-inline-block", style="width:200px", value=user_data["group"])}}</li>
+                <li class="list-group-item "><label for="account-email">Email</label></li>
+                <li class="list-group-item ">{{form.email(id="account-email", class_="form-control d-inline-block", style="width:200px", value=user_data["email"])}}<span class="text-error" role="alert">{% if errors[1] %}{{errors[1]}}{% endif %}</span></li>
+                <li class="list-group-item "><label for="account-address">Address (optional)</label></li>
+                <li class="list-group-item ">{{form.address(id="account-address", class_="form-control d-inline-block", style="width:300px", value=user_data["address"])}}</li>
+                <li class="list-group-item "><label for="account-notes">Delivery Notes (optional)</label></li>
+                <li class="list-group-item ">{{form.delivery_notes(id="account-notes", class_="form-control d-inline-block", style="width:300px", value=user_data["delivery_notes"], placeholder="e.g. Leave by back porch")}}</li>
+                <li class="list-group-item "><label for="account-old-pw">Old Password</label></li>
+                <li class="list-group-item ">{{form.old_password(id="account-old-pw", class_="form-control d-inline-block", style="width:200px")}}</li>
+                <li class="list-group-item"><label for="account-new-pw">New Password</label></li>
+                <li class="list-group-item ">{{form.new_password(id="account-new-pw", class_="form-control d-inline-block", style="width:200px")}}</li>
                 <li class="list-group-item "><input type="submit" value="Save Changes" class="btn btn-dark"></li>
                 <li class="list-group-item "><a id="delete-account-link" class="btn btn-danger" href="{{ url_for('delete') }}" onclick="return confirm('Are you sure you want to delete your account?');" data-translator-en="Delete Account" data-translator-es="Eliminar Cuenta">Delete Account</a></li>
               </ul>

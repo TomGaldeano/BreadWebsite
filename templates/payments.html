@@ -1,3 +1,4 @@
+{% set page_title = "Payments" %}
 {% include "header.html" %}
 <!-- main content -->
 <div class="container-fluid " style = "margin-top:100px">
@@ -9,6 +10,7 @@
     <div class="row justify-content-md-center mb-3">
       <div class="col-md-8">
         <div class="input-group order-search-bar">
+          <label for="payment-search" class="visually-hidden sr-only" data-translator-en="Search payments" data-translator-es="Buscar pagos">Search payments</label>
           <input type="text" class="form-control" id="payment-search"
                  placeholder="Search by client or date..."
                  data-translator-placeholder-en="Search by client or date..."
@@ -24,11 +26,11 @@
         <table class="table table-hover" id="payments-table">
           <thead>
             <tr>
-              <th data-translator-en="Date" data-translator-es="Fecha">Date</th>
-              <th data-translator-en="Client" data-translator-es="Cliente">Client</th>
-              <th data-translator-en="Order" data-translator-es="Pedido">Order</th>
-              <th data-translator-en="Price" data-translator-es="Precio">Price</th>
-              <th data-translator-en="Mark Paid" data-translator-es="Marcar Pagado">Mark Paid</th>
+              <th scope="col" data-translator-en="Date" data-translator-es="Fecha">Date</th>
+              <th scope="col" data-translator-en="Client" data-translator-es="Cliente">Client</th>
+              <th scope="col" data-translator-en="Order" data-translator-es="Pedido">Order</th>
+              <th scope="col" data-translator-en="Price" data-translator-es="Precio">Price</th>
+              <th scope="col" data-translator-en="Mark Paid" data-translator-es="Marcar Pagado">Mark Paid</th>
             </tr>
           </thead>
           <tbody>
