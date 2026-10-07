@@ -30,11 +30,6 @@
               src="{{ url_for('static', filename='icons/info.png') }}" alt="" class="" style="height:30px"></a>
           </li>
           <li class="link-item">
-            <a class="nav-link" style="padding: .5rem" href="{{ url_for('products') }}" title="Products">
-              <span data-translator-en="Products" data-translator-es="Productos">Products</span>
-            </a>
-          </li>
-          <li class="link-item">
             <a class="nav-link" style="padding: .5rem" href="{{ url_for('delivery_cost') }}" title="Delivery cost">
               <span data-translator-en="Delivery" data-translator-es="Entrega">Delivery</span>
             </a>
@@ -51,6 +46,7 @@
             data-bs-toggle="dropdown" aria-expanded="false" aria-label="Admin menu">
             <img src="{{ url_for('static', filename='icons/menu.png') }}" alt="" class="" style="height:30px"></a>
           <ul class="dropdown-menu " aria-labelledby="dropdownMenuLink">
+            
             <li class="dropdown-header font-weight-bold fw-bold">Bakery &amp; Orders</li>
             <li><a class="dropdown-item" href="{{ url_for('baker') }}">Baker Orders</a></li>
             <li><a class="dropdown-item" href="{{ url_for('orders') }}">My Orders</a></li>
